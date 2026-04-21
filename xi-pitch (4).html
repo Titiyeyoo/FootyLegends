@@ -1,0 +1,1961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>My Legendary XI</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --gold:#c8960c;--green:#00ff41;--orange:#ff6600;--red:#ff3300;
+  --px:'Press Start 2P',monospace;
+}
+body{background:#0a0a0a;font-family:var(--px);
+  display:flex;flex-direction:column;align-items:center;
+  min-height:100vh;padding:10px 6px 40px}
+h1{font-size:8px;color:var(--gold);letter-spacing:3px;margin-bottom:10px;text-align:center}
+#wrap{position:relative;width:min(340px,94vw)}
+canvas#pitch{display:block;width:100%}
+
+/* PLAYER DOTS */
+.pdot{
+  position:absolute;
+  display:flex;flex-direction:column;align-items:center;
+  cursor:pointer;z-index:10;user-select:none;touch-action:none;
+  transition:left .35s ease, top .35s ease;
+  transform:translate(-50%,-50%);
+}
+.pdot:active{cursor:grabbing}
+.pcircle{
+  width:34px;height:34px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--px);font-size:7px;
+  transition:border-color .2s, background .2s;
+}
+.pdot:active .pcircle{transform:scale(1.12)}
+.pname{
+  font-size:6px;letter-spacing:.5px;margin-top:3px;
+  text-align:center;white-space:nowrap;
+  text-shadow:1px 1px 0 #000,0 0 6px #000,0 0 10px #000;
+  max-width:62px;overflow:hidden;text-overflow:ellipsis;
+}
+.empty .pcircle{border:2px dashed #2a2a2a;background:rgba(0,0,0,.45);color:#2a2a2a}
+.filled .pcircle{border:2.5px solid;background:rgba(0,0,0,.75);font-size:10px;font-weight:bold}
+
+/* colours by group */
+.grp-gk .pcircle{border-color:#ffdd00!important;color:#ffdd00}
+.grp-gk .pname{color:#ffdd00}
+.grp-df .pcircle{border-color:#88ff44!important;color:#88ff44}
+.grp-df .pname{color:#88ff44}
+.grp-mf .pcircle{border-color:#ff6600!important;color:#ff6600}
+.grp-mf .pname{color:#ff6600}
+.grp-fw .pcircle{border-color:#ff2200!important;color:#ff2200}
+.grp-fw .pname{color:#ff2200}
+
+/* Chemistry highlight classes */
+.chem-era .pcircle{
+  border-color:#bbbbbb!important;color:#bbbbbb!important;
+  box-shadow:0 0 0 2px #bbbbbb!important}
+.chem-era .pname{color:#bbbbbb!important}
+
+.chem-club .pcircle{
+  border-color:#00ddff!important;color:#00ddff!important}
+.chem-club .pname{color:#00ddff!important}
+
+/* Double border: era + club */
+.chem-both .pcircle{
+  border-color:#00ddff!important;color:#00ddff!important;
+  outline:2px solid #888888;outline-offset:3px}
+.chem-both .pname{color:#00ddff!important}
+
+/* 1966 — golden glow, overrides all */
+.chem-1966 .pcircle{
+  border-color:#ffd700!important;color:#ffd700!important;
+  box-shadow:0 0 0 3px #ffd700,0 0 12px #ffd700!important;
+  outline:none!important}
+.chem-1966 .pname{color:#ffd700!important}
+
+/* LEGEND */
+
+/* TOAST */
+.toast{position:fixed;top:10px;left:50%;
+  transform:translateX(-50%) translateY(-80px);
+  background:#000;border:2px solid var(--green);color:var(--green);
+  font-family:var(--px);font-size:8px;padding:8px 14px;letter-spacing:2px;
+  z-index:999;white-space:nowrap;transition:.2s;pointer-events:none}
+.toast.on{transform:translateX(-50%) translateY(0)}
+.toast.err{border-color:var(--red);color:var(--red)}
+.toast.warn{border-color:var(--gold);color:var(--gold)}
+
+/* MODAL */
+#modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);
+  z-index:100;align-items:flex-end;justify-content:center;padding:0;
+  overflow-y:auto}
+#modal.on{display:flex}
+#mbox{background:#050f05;border:2px solid var(--green);border-bottom:none;
+  width:100%;max-width:420px;padding:16px 14px 28px;
+  /* Ensure mbox stays above keyboard on mobile */
+  margin-bottom:env(keyboard-inset-height, 0px)}
+#mtitle{font-size:7px;color:var(--green);letter-spacing:2px;margin-bottom:14px}
+
+/* DROPDOWN */
+.mrow{margin-bottom:12px}
+.mrow label{font-size:6px;color:#777;letter-spacing:1px;display:block;margin-bottom:6px}
+.msel{width:100%;background:#000;border:2px solid var(--green);color:#fff;
+  font-family:var(--px);font-size:9px;padding:10px 8px;outline:none;
+  letter-spacing:1px;cursor:pointer;appearance:none;-webkit-appearance:none}
+.msel option{background:#000;color:#fff;font-family:monospace;font-size:12px;padding:4px}
+.msel optgroup{font-family:monospace;font-size:11px}
+
+/* name + number row */
+#mname-row{display:flex;gap:8px;align-items:flex-end;margin-bottom:10px}
+.minp{background:#000;border:2px solid var(--green);color:#fff;
+  font-family:var(--px);font-size:13px;padding:8px;outline:none;letter-spacing:1px}
+#mname{flex:1;text-transform:uppercase}
+#mnum{width:62px;text-align:center}
+
+/* suggestions */
+
+/* buttons */
+#mbtns{display:flex;gap:6px;margin-top:12px}
+#msave{flex:2;background:var(--green);color:#000;border:none;
+  font-family:var(--px);font-size:8px;padding:11px;cursor:pointer}
+#mclear{flex:1;background:#000;color:#444;border:2px solid #222;
+  font-family:var(--px);font-size:6px;padding:11px;cursor:pointer}
+#mcancel{width:100%;margin-top:6px;background:#000;color:#333;
+  border:2px solid #111;font-family:var(--px);font-size:6px;padding:8px;cursor:pointer}
+</style>
+</head>
+<body>
+<h1>⚽ MY LEGENDARY XI</h1>
+<div class="toast" id="toast"></div>
+<div style="width:min(340px,94vw);margin-bottom:6px;display:flex;gap:6px;flex-wrap:wrap" id="formation-btns">
+  <button onclick="setFormation('442')" style="flex:1;background:#000;border:1px solid #333;color:#888;font-family:var(--px);font-size:6px;padding:6px 2px;cursor:pointer;letter-spacing:1px">4·4·2</button>
+  <button onclick="setFormation('433')" style="flex:1;background:#000;border:1px solid #333;color:#888;font-family:var(--px);font-size:6px;padding:6px 2px;cursor:pointer;letter-spacing:1px">4·3·3</button>
+  <button onclick="setFormation('352')" style="flex:1;background:#000;border:1px solid #333;color:#888;font-family:var(--px);font-size:6px;padding:6px 2px;cursor:pointer;letter-spacing:1px">3·5·2</button>
+  <button onclick="setFormation('532')" style="flex:1;background:#000;border:1px solid #333;color:#888;font-family:var(--px);font-size:6px;padding:6px 2px;cursor:pointer;letter-spacing:1px">5·3·2</button>
+  <button onclick="setFormation('4231')" style="flex:1;background:#000;border:1px solid #333;color:#888;font-family:var(--px);font-size:6px;padding:6px 2px;cursor:pointer;letter-spacing:1px">4·2·3·1</button>
+  <button onclick="setFormation('343')" style="flex:1;background:#000;border:1px solid #333;color:#888;font-family:var(--px);font-size:6px;padding:6px 2px;cursor:pointer;letter-spacing:1px">3·4·3</button>
+</div>
+<div id="wrap"><canvas id="pitch"></canvas></div>
+<div style="width:min(340px,94vw);margin-top:8px">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+    <span style="font-size:6px;color:#444;letter-spacing:1px">PLAYERS ADDED</span>
+    <span id="xi-counter" style="font-size:7px;color:#444;letter-spacing:2px">0/11</span>
+  </div>
+  <button id="chem-btn" onclick="calculateChemistry()" disabled
+    style="width:100%;background:#000;border:2px solid #222;color:#333;font-family:var(--px);font-size:8px;padding:12px;cursor:not-allowed;letter-spacing:2px;transition:all .3s">
+    ⚗ CALCULATE CHEMISTRY
+  </button>
+</div>
+
+<!-- CHEMISTRY RESULTS — shown inline below pitch -->
+<div id="chem-results" style="display:none;width:min(340px,94vw);margin-top:0;background:#000;border:2px solid var(--gold);border-top:none;padding:14px 12px">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+    <div style="font-size:6px;color:#555;letter-spacing:1px">TEAM CHEMISTRY</div>
+    <div id="chem-score" style="font-size:20px;color:var(--gold);letter-spacing:3px;font-weight:bold"></div>
+  </div>
+  <div id="chem-bar-wrap" style="background:#111;height:8px;border:1px solid #222;margin-bottom:10px;border-radius:1px">
+    <div id="chem-bar" style="height:100%;width:0%;transition:width 1s ease;border-radius:1px"></div>
+  </div>
+  <div id="chem-title" style="font-size:9px;color:#fff;letter-spacing:2px;margin-bottom:10px;line-height:1.6;text-align:center"></div>
+  <div id="chem-breakdown" style="font-size:6px;color:#444;letter-spacing:1px;line-height:2"></div>
+</div></div>
+
+<div id="modal">
+<div id="mbox">
+  <div class="mrow">
+    <select id="mpos" class="msel" onchange="onPosChange()">
+      <optgroup label="── GOALKEEPER ──">
+        <option value="GK">GK — Goalkeeper</option>
+      </optgroup>
+      <optgroup label="── DEFENDERS ──">
+        <option value="RB">RB — Right Back</option>
+        <option value="CB">CB — Centre Back</option>
+        <option value="LB">LB — Left Back</option>
+        <option value="RWB">RWB — Right Wing Back</option>
+        <option value="LWB">LWB — Left Wing Back</option>
+        <option value="SW">SW — Sweeper</option>
+      </optgroup>
+      <optgroup label="── MIDFIELDERS ──">
+        <option value="CM">CM — Central Midfield</option>
+        <option value="DM">DM — Defensive Mid</option>
+        <option value="AM">AM — Attacking Mid</option>
+        <option value="RM">RM — Right Midfield</option>
+        <option value="LM">LM — Left Midfield</option>
+        <option value="RW">RW — Right Wing</option>
+        <option value="LW">LW — Left Wing</option>
+      </optgroup>
+      <optgroup label="── FORWARDS ──">
+        <option value="ST">ST — Striker</option>
+        <option value="SS">SS — Second Striker</option>
+      </optgroup>
+    </select>
+  </div>
+
+  <div id="mname-row">
+    <div style="flex:1">
+      <label style="font-size:6px;color:#777;letter-spacing:1px;display:block;margin-bottom:6px">PLAYER NAME</label>
+      <input id="mname" class="minp" type="text" maxlength="20"
+        placeholder="TYPE NAME..." autocomplete="off"
+        oninput="onNameInput()"
+        onkeydown="if(event.key==='Enter'){event.preventDefault();saveSlot();}"
+        autocorrect="off" spellcheck="false">
+    </div>
+    <div>
+      <label style="font-size:6px;color:#777;letter-spacing:1px;display:block;margin-bottom:6px">SHIRT #</label>
+      <input id="mnum" class="minp" type="number" min="1" max="99" value="2">
+    </div>
+  </div>
+  <div id="mconfirm" style="font-size:7px;letter-spacing:1px;margin-top:6px;min-height:14px"></div>
+  <div id="mbtns">
+    <button id="msave" onclick="saveSlot()">✓ CONFIRM</button>
+    <button id="mclear" onclick="clearSlot()">✕ CLEAR</button>
+  </div>
+  <button id="mcancel" onclick="closeModal()">← CANCEL</button>
+</div>
+</div>
+
+<script>
+const DB = [
+  {n:"Gordon West",a:["gordon west","west"],e:"C",p:"GK",c:["everton"]},
+  {n:"Gerry Byrne",a:["gerry byrne"],e:"C",p:"DF",c:["liverpool"]},
+  {n:"Gordon Banks",a:["banks","gordon banks"],e:"C",p:"GK",c:["leicester","stoke"]},
+  {n:"Peter Bonetti",a:["bonetti","peter bonetti","the cat"],e:"C",p:"GK",c:["chelsea"]},
+  {n:"Ron Springett",a:["springett","ron springett"],e:"G",p:"GK",c:["sheffield wednesday"]},
+  {n:"Peter Shilton",a:["shilton","peter shilton"],e:"C",p:"GK",c:["nottingham forest","leicester"]},
+  {n:"Ray Clemence",a:["clemence","ray clemence"],e:"C",p:"GK",c:["liverpool","tottenham"]},
+  {n:"Joe Corrigan",a:["corrigan","joe corrigan"],e:"G",p:"GK",c:["man city"]},
+  {n:"Phil Parkes",a:["parkes","phil parkes"],e:"G",p:"GK",c:["west ham"]},
+  {n:"Chris Woods",a:["woods","chris woods"],e:"G",p:"GK",c:["rangers","sheffield wednesday"]},
+  {n:"David Seaman",a:["seaman","david seaman"],e:"G",p:"GK",c:["arsenal"]},
+  {n:"Nigel Martyn",a:["martyn","nigel martyn"],e:"G",p:"GK",c:["leeds","everton"]},
+  {n:"Tim Flowers",a:["flowers","tim flowers"],e:"G",p:"GK",c:["blackburn"]},
+  {n:"Ian Walker",a:["ian walker"],e:"G",p:"GK",c:["tottenham"]},
+  {n:"David James",a:["james","david james"],e:"G",p:"GK",c:["liverpool","aston villa"]},
+  {n:"Paul Robinson",a:["paul robinson"],e:"G",p:"GK",c:["tottenham","blackburn"]},
+  {n:"Chris Kirkland",a:["kirkland","chris kirkland"],e:"G",p:"GK",c:["liverpool","wigan"]},
+  {n:"Robert Green",a:["robert green"],e:"G",p:"GK",c:["west ham"]},
+  {n:"Scott Carson",a:["carson","scott carson"],e:"G",p:"GK",c:["aston villa","west brom"]},
+  {n:"Ben Foster",a:["ben foster"],e:"G",p:"GK",c:["man utd","west brom"]},
+  {n:"Joe Hart",a:["hart","joe hart"],e:"M",p:"GK",c:["man city"]},
+  {n:"Jack Butland",a:["butland","jack butland"],e:"M",p:"GK",c:["stoke","crystal palace"]},
+  {n:"Tom Heaton",a:["heaton","tom heaton"],e:"M",p:"GK",c:["burnley","aston villa"]},
+  {n:"Fraser Forster",a:["forster","fraser forster"],e:"M",p:"GK",c:["southampton","celtic"]},
+  {n:"Jordan Pickford",a:["pickford","jordan pickford"],e:"M",p:"GK",c:["everton"]},
+  {n:"Nick Pope",a:["pope","nick pope"],e:"M",p:"GK",c:["burnley","newcastle"]},
+  {n:"Aaron Ramsdale",a:["ramsdale","aaron ramsdale"],e:"M",p:"GK",c:["arsenal"]},
+  {n:"Sam Johnstone",a:["johnstone","sam johnstone"],e:"M",p:"GK",c:["west brom","crystal palace"]},
+  {n:"Dean Henderson",a:["dean henderson"],e:"M",p:"GK",c:["man utd","nottingham forest"]},
+  {n:"John Ruddy",a:["ruddy","john ruddy"],e:"G",p:"GK",c:["norwich","wolves"]},
+  {n:"Alex Stepney",a:["stepney","alex stepney"],e:"G",p:"GK",c:["man utd"]},
+  {n:"Jimmy Rimmer",a:["rimmer","jimmy rimmer"],e:"G",p:"GK",c:["man utd","aston villa"]},
+  {n:"Steve Ogrizovic",a:["ogrizovic","steve ogrizovic"],e:"G",p:"GK",c:["coventry"]},
+  {n:"Bob Wilson",a:["bob wilson"],e:"G",p:"GK",c:["arsenal"]},
+  {n:"Bobby Moore",a:["moore","bobby moore"],e:"C",p:"DF",c:["west ham"]},
+  {n:"Ray Wilson",a:["ray wilson"],e:"C",p:"DF",c:["huddersfield","everton"]},
+  {n:"George Cohen",a:["cohen","george cohen"],e:"C",p:"DF",c:["fulham"]},
+  {n:"Jack Charlton",a:["jack charlton","j charlton"],e:"C",p:"DF",c:["leeds"]},
+  {n:"Jimmy Armfield",a:["armfield","jimmy armfield"],e:"G",p:"DF",c:["blackpool"]},
+  {n:"Billy Wright",a:["billy wright","b wright"],e:"G",p:"DF",c:["wolves"]},
+  {n:"Roger Byrne",a:["roger byrne","byrne"],e:"C",p:"DF",c:["man utd"]},
+  {n:"Ron Flowers",a:["ron flowers"],e:"G",p:"DF",c:["wolves"]},
+  {n:"Maurice Norman",a:["norman","maurice norman"],e:"G",p:"DF",c:["tottenham"]},
+  {n:"Cyril Knowles",a:["knowles","cyril knowles"],e:"G",p:"DF",c:["tottenham"]},
+  {n:"Terry Cooper",a:["terry cooper"],e:"C",p:"DF",c:["leeds"]},
+  {n:"Colin Todd",a:["todd","colin todd"],e:"C",p:"DF",c:["derby"]},
+  {n:"Roy McFarland",a:["mcfarland","roy mcfarland"],e:"C",p:"DF",c:["derby"]},
+  {n:"Dave Watson",a:["dave watson"],e:"C",p:"DF",c:["man city","sunderland"]},
+  {n:"Emlyn Hughes",a:["emlyn hughes","hughes"],e:"C",p:"DF",c:["liverpool"]},
+  {n:"Larry Lloyd",a:["lloyd","larry lloyd"],e:"C",p:"DF",c:["liverpool","nottingham forest"]},
+  {n:"Phil Thompson",a:["thompson","phil thompson"],e:"C",p:"DF",c:["liverpool"]},
+  {n:"Mick Mills",a:["mills","mick mills"],e:"C",p:"DF",c:["ipswich"]},
+  {n:"Viv Anderson",a:["anderson","viv anderson"],e:"G",p:"DF",c:["nottingham forest","arsenal"]},
+  {n:"Kenny Sansom",a:["sansom","kenny sansom"],e:"G",p:"DF",c:["arsenal","crystal palace"]},
+  {n:"Terry Butcher",a:["butcher","terry butcher"],e:"G",p:"DF",c:["ipswich","rangers"]},
+  {n:"Mark Wright",a:["mark wright"],e:"G",p:"DF",c:["liverpool","derby"]},
+  {n:"Des Walker",a:["walker","des walker"],e:"G",p:"DF",c:["nottingham forest","sheffield wednesday"]},
+  {n:"Tony Adams",a:["adams","tony adams"],e:"G",p:"DF",c:["arsenal"]},
+  {n:"Steve Bould",a:["bould","steve bould"],e:"G",p:"DF",c:["arsenal"]},
+  {n:"Lee Dixon",a:["dixon","lee dixon"],e:"G",p:"DF",c:["arsenal"]},
+  {n:"Nigel Winterburn",a:["winterburn","nigel winterburn"],e:"G",p:"DF",c:["arsenal"]},
+  {n:"Stuart Pearce",a:["pearce","stuart pearce","psycho"],e:"G",p:"DF",c:["nottingham forest","man city"]},
+  {n:"Gary Pallister",a:["pallister","gary pallister"],e:"G",p:"DF",c:["man utd","middlesbrough"]},
+  {n:"Steve Bruce",a:["bruce","steve bruce"],e:"G",p:"DF",c:["man utd"]},
+  {n:"Paul Parker",a:["paul parker"],e:"G",p:"DF",c:["man utd","qpr"]},
+  {n:"Martin Keown",a:["keown","martin keown"],e:"G",p:"DF",c:["arsenal","aston villa"]},
+  {n:"Gary Neville",a:["gary neville"],e:"G",p:"DF",c:["man utd"]},
+  {n:"Phil Neville",a:["phil neville"],e:"G",p:"DF",c:["man utd","everton"]},
+  {n:"Sol Campbell",a:["campbell","sol campbell"],e:"G",p:"DF",c:["tottenham","arsenal"]},
+  {n:"Rio Ferdinand",a:["rio ferdinand","rio"],e:"G",p:"DF",c:["man utd","west ham"]},
+  {n:"John Terry",a:["terry","john terry"],e:"G",p:"DF",c:["chelsea"]},
+  {n:"Ashley Cole",a:["ashley cole"],e:"G",p:"DF",c:["arsenal","chelsea"]},
+  {n:"Jamie Carragher",a:["carragher","jamie carragher"],e:"G",p:"DF",c:["liverpool"]},
+  {n:"Ledley King",a:["king","ledley king"],e:"G",p:"DF",c:["tottenham"]},
+  {n:"Wes Brown",a:["wes brown"],e:"G",p:"DF",c:["man utd"]},
+  {n:"Wayne Bridge",a:["bridge","wayne bridge"],e:"G",p:"DF",c:["chelsea","southampton"]},
+  {n:"Luke Young",a:["luke young"],e:"G",p:"DF",c:["middlesbrough","aston villa"]},
+  {n:"Glen Johnson",a:["glen johnson"],e:"G",p:"DF",c:["liverpool","chelsea"]},
+  {n:"Matthew Upson",a:["upson","matthew upson"],e:"G",p:"DF",c:["west ham","arsenal"]},
+  {n:"Micah Richards",a:["richards","micah richards"],e:"M",p:"DF",c:["man city","aston villa"]},
+  {n:"Joleon Lescott",a:["lescott","joleon lescott"],e:"M",p:"DF",c:["man city","everton"]},
+  {n:"Phil Jagielka",a:["jagielka","phil jagielka"],e:"M",p:"DF",c:["everton","sheffield utd"]},
+  {n:"John Stones",a:["stones","john stones"],e:"M",p:"DF",c:["man city","everton"]},
+  {n:"Kyle Walker",a:["kyle walker"],e:"M",p:"DF",c:["man city","tottenham"]},
+  {n:"Kieran Trippier",a:["trippier","kieran trippier"],e:"M",p:"DF",c:["atletico madrid","newcastle"]},
+  {n:"Nathaniel Clyne",a:["clyne","nathaniel clyne"],e:"M",p:"DF",c:["liverpool","southampton"]},
+  {n:"Danny Rose",a:["rose","danny rose"],e:"M",p:"DF",c:["tottenham"]},
+  {n:"Ben Chilwell",a:["chilwell","ben chilwell"],e:"M",p:"DF",c:["chelsea","leicester"]},
+  {n:"Reece James",a:["reece james"],e:"M",p:"DF",c:["chelsea"]},
+  {n:"Trent Alexander-Arnold",a:["alexander-arnold","trent","taa"],e:"M",p:"DF",c:["liverpool"]},
+  {n:"Harry Maguire",a:["maguire","harry maguire"],e:"M",p:"DF",c:["man utd","leicester"]},
+  {n:"Tyrone Mings",a:["mings","tyrone mings"],e:"M",p:"DF",c:["aston villa"]},
+  {n:"Conor Coady",a:["coady","conor coady"],e:"M",p:"DF",c:["wolves","everton"]},
+  {n:"Eric Dier",a:["dier","eric dier"],e:"M",p:"DF",c:["tottenham"]},
+  {n:"Fikayo Tomori",a:["tomori","fikayo tomori"],e:"M",p:"DF",c:["ac milan","chelsea"]},
+  {n:"Levi Colwill",a:["colwill","levi colwill"],e:"M",p:"DF",c:["chelsea"]},
+  {n:"Joe Gomez",a:["gomez","joe gomez"],e:"M",p:"DF",c:["liverpool"]},
+  {n:"Luke Shaw",a:["shaw","luke shaw"],e:"M",p:"DF",c:["man utd","southampton"]},
+  {n:"Kieran Gibbs",a:["gibbs","kieran gibbs"],e:"M",p:"DF",c:["arsenal"]},
+  {n:"Chris Smalling",a:["smalling","chris smalling"],e:"M",p:"DF",c:["man utd","roma"]},
+  {n:"Gary Cahill",a:["cahill","gary cahill"],e:"M",p:"DF",c:["chelsea","bolton"]},
+  {n:"Michael Dawson",a:["dawson","michael dawson"],e:"G",p:"DF",c:["tottenham","nottingham forest"]},
+  {n:"Jonathan Woodgate",a:["woodgate","jonathan woodgate"],e:"G",p:"DF",c:["leeds","newcastle"]},
+  {n:"Wes Morgan",a:["wes morgan"],e:"M",p:"DF",c:["leicester"]},
+  {n:"Ryan Bertrand",a:["bertrand","ryan bertrand"],e:"M",p:"DF",c:["southampton","chelsea"]},
+  {n:"Cyril Regis",a:["cyril regis"],e:"G",p:"DF",c:["west brom","coventry"]},
+  {n:"Brian Labone",a:["labone","brian labone"],e:"C",p:"DF",c:["everton"]},
+  {n:"Norman Hunter",a:["hunter","norman hunter","bites yer legs"],e:"C",p:"DF",c:["leeds"]},
+  {n:"Paul Reaney",a:["reaney","paul reaney"],e:"C",p:"DF",c:["leeds"]},
+  {n:"Frank McLintock",a:["mclintock","frank mclintock"],e:"C",p:"DF",c:["arsenal"]},
+  {n:"Bob McNab",a:["mcnab","bob mcnab"],e:"C",p:"DF",c:["arsenal"]},
+  {n:"Ron Harris",a:["ron harris"],e:"C",p:"DF",c:["chelsea"]},
+  {n:"Tommy Smith",a:["tommy smith"],e:"C",p:"DF",c:["liverpool"]},
+  {n:"Mike England",a:["mike england"],e:"C",p:"DF",c:["tottenham"]},
+  {n:"Paul Madeley",a:["madeley","paul madeley"],e:"C",p:"DF",c:["leeds"]},
+  {n:"Chris Waddle",a:["waddle","chris waddle"],e:"G",p:"MF",c:["tottenham","marseille"]},
+  {n:"Bobby Charlton",a:["bobby charlton","sir bobby charlton","charlton"],e:"C",p:"MF",c:["man utd"]},
+  {n:"Stanley Matthews",a:["matthews","stanley matthews","sir stanley matthews"],e:"G",p:"MF",c:["blackpool","stoke"]},
+  {n:"Johnny Haynes",a:["haynes","johnny haynes"],e:"G",p:"MF",c:["fulham"]},
+  {n:"Duncan Edwards",a:["edwards","duncan edwards"],e:"C",p:"MF",c:["man utd"]},
+  {n:"Wilf Mannion",a:["mannion","wilf mannion"],e:"G",p:"MF",c:["middlesbrough"]},
+  {n:"Raich Carter",a:["carter","raich carter"],e:"G",p:"MF",c:["sunderland","derby"]},
+  {n:"Alan Ball",a:["ball","alan ball"],e:"C",p:"MF",c:["everton","arsenal"]},
+  {n:"Nobby Stiles",a:["stiles","nobby stiles"],e:"C",p:"MF",c:["man utd"]},
+  {n:"Martin Peters",a:["peters","martin peters"],e:"C",p:"MF",c:["west ham","tottenham"]},
+  {n:"Alan Mullery",a:["mullery","alan mullery"],e:"C",p:"MF",c:["tottenham","fulham"]},
+  {n:"Terry Paine",a:["paine","terry paine"],e:"C",p:"MF",c:["southampton"]},
+  {n:"Colin Bell",a:["bell","colin bell"],e:"C",p:"MF",c:["man city"]},
+  {n:"Alan Hudson",a:["hudson","alan hudson"],e:"C",p:"MF",c:["chelsea","stoke"]},
+  {n:"Tony Currie",a:["currie","tony currie"],e:"C",p:"MF",c:["sheffield utd","leeds"]},
+  {n:"Trevor Brooking",a:["brooking","trevor brooking"],e:"C",p:"MF",c:["west ham"]},
+  {n:"Ray Wilkins",a:["wilkins","ray wilkins","butch"],e:"G",p:"MF",c:["man utd","chelsea"]},
+  {n:"Bryan Robson",a:["robson","bryan robson","captain marvel"],e:"G",p:"MF",c:["man utd","west brom"]},
+  {n:"Glenn Hoddle",a:["hoddle","glenn hoddle"],e:"G",p:"MF",c:["tottenham","monaco"]},
+  {n:"Trevor Francis",a:["francis","trevor francis"],e:"G",p:"MF",c:["birmingham","nottingham forest"]},
+  {n:"Steve Coppell",a:["coppell","steve coppell"],e:"G",p:"MF",c:["man utd"]},
+  {n:"Peter Reid",a:["reid","peter reid"],e:"G",p:"MF",c:["everton","man city"]},
+  {n:"Ricky Hill",a:["hill","ricky hill"],e:"G",p:"MF",c:["luton"]},
+  {n:"Steve McMahon",a:["mcmahon","steve mcmahon"],e:"G",p:"MF",c:["liverpool","everton"]},
+  {n:"Paul Gascoigne",a:["gascoigne","paul gascoigne","gazza"],e:"G",p:"MF",c:["tottenham","lazio"]},
+  {n:"David Platt",a:["platt","david platt"],e:"G",p:"MF",c:["aston villa","juventus"]},
+  {n:"John Barnes",a:["barnes","john barnes"],e:"G",p:"MF",c:["liverpool","watford"]},
+  {n:"Steve Stone",a:["stone","steve stone"],e:"G",p:"MF",c:["nottingham forest"]},
+  {n:"Rob Lee",a:["rob lee"],e:"G",p:"MF",c:["newcastle"]},
+  {n:"Tim Sherwood",a:["sherwood","tim sherwood"],e:"G",p:"MF",c:["tottenham","blackburn"]},
+  {n:"Andy Hinchcliffe",a:["hinchcliffe","andy hinchcliffe"],e:"G",p:"MF",c:["everton","sheffield wednesday"]},
+  {n:"Paul Ince",a:["ince","paul ince","guv"],e:"G",p:"MF",c:["man utd","inter milan"]},
+  {n:"David Beckham",a:["beckham","david beckham","becks"],e:"G",p:"MF",c:["man utd","real madrid"]},
+  {n:"Paul Scholes",a:["scholes","paul scholes"],e:"G",p:"MF",c:["man utd"]},
+  {n:"Nicky Butt",a:["butt","nicky butt"],e:"G",p:"MF",c:["man utd","newcastle"]},
+  {n:"Joe Cole",a:["joe cole"],e:"G",p:"MF",c:["west ham","chelsea"]},
+  {n:"Frank Lampard",a:["lampard","frank lampard","lamps"],e:"G",p:"MF",c:["chelsea","west ham"]},
+  {n:"Steven Gerrard",a:["gerrard","steven gerrard"],e:"G",p:"MF",c:["liverpool"]},
+  {n:"Owen Hargreaves",a:["hargreaves","owen hargreaves"],e:"G",p:"MF",c:["man utd","bayern munich"]},
+  {n:"Scott Parker",a:["scott parker"],e:"G",p:"MF",c:["chelsea","west ham"]},
+  {n:"Gareth Barry",a:["barry","gareth barry"],e:"G",p:"MF",c:["aston villa","man city"]},
+  {n:"Michael Carrick",a:["carrick","michael carrick"],e:"G",p:"MF",c:["man utd","tottenham"]},
+  {n:"Shaun Wright-Phillips",a:["shaun wright-phillips","swp"],e:"G",p:"MF",c:["man city","chelsea"]},
+  {n:"Aaron Lennon",a:["lennon","aaron lennon"],e:"M",p:"MF",c:["tottenham","everton"]},
+  {n:"James Milner",a:["milner","james milner"],e:"M",p:"MF",c:["man city","liverpool"]},
+  {n:"Adam Johnson",a:["adam johnson"],e:"M",p:"MF",c:["man city","sunderland"]},
+  {n:"Tom Cleverley",a:["cleverley","tom cleverley"],e:"M",p:"MF",c:["man utd","everton"]},
+  {n:"Jack Wilshere",a:["wilshere","jack wilshere"],e:"M",p:"MF",c:["arsenal"]},
+  {n:"Jordan Henderson",a:["henderson","jordan henderson"],e:"M",p:"MF",c:["liverpool","sunderland"]},
+  {n:"Alex Oxlade-Chamberlain",a:["oxlade-chamberlain","the ox"],e:"M",p:"MF",c:["arsenal","liverpool"]},
+  {n:"Fabian Delph",a:["delph","fabian delph"],e:"M",p:"MF",c:["man city","aston villa"]},
+  {n:"Dele Alli",a:["alli","dele alli","dele"],e:"M",p:"MF",c:["tottenham"]},
+  {n:"Ross Barkley",a:["barkley","ross barkley"],e:"M",p:"MF",c:["everton","chelsea"]},
+  {n:"Nathaniel Chalobah",a:["chalobah","nathaniel chalobah"],e:"M",p:"MF",c:["chelsea","watford"]},
+  {n:"Ruben Loftus-Cheek",a:["loftus-cheek","ruben loftus-cheek"],e:"M",p:"MF",c:["chelsea"]},
+  {n:"Jude Bellingham",a:["jude bellingham"],e:"M",p:"MF",c:["real madrid","dortmund"]},
+  {n:"Declan Rice",a:["rice","declan rice"],e:"M",p:"MF",c:["arsenal","west ham"]},
+  {n:"Kalvin Phillips",a:["phillips","kalvin phillips"],e:"M",p:"MF",c:["leeds","man city"]},
+  {n:"Conor Gallagher",a:["gallagher","conor gallagher"],e:"M",p:"MF",c:["chelsea","crystal palace"]},
+  {n:"Curtis Jones",a:["curtis jones"],e:"M",p:"MF",c:["liverpool"]},
+  {n:"Kobbie Mainoo",a:["mainoo","kobbie mainoo"],e:"M",p:"MF",c:["man utd"]},
+  {n:"Adam Lallana",a:["lallana","adam lallana"],e:"M",p:"MF",c:["liverpool","southampton"]},
+  {n:"Andros Townsend",a:["townsend","andros townsend"],e:"M",p:"MF",c:["tottenham","crystal palace"]},
+  {n:"Theo Walcott",a:["walcott","theo walcott"],e:"M",p:"MF",c:["arsenal","everton"]},
+  {n:"Stewart Downing",a:["downing","stewart downing"],e:"M",p:"MF",c:["middlesbrough","liverpool"]},
+  {n:"Steve McManaman",a:["mcmanaman","steve mcmanaman","macca"],e:"G",p:"MF",c:["liverpool","real madrid"]},
+  {n:"Kieron Dyer",a:["dyer","kieron dyer"],e:"G",p:"MF",c:["newcastle","ipswich"]},
+  {n:"Nick Barmby",a:["barmby","nick barmby"],e:"G",p:"MF",c:["everton","liverpool"]},
+  {n:"Matthew Le Tissier",a:["le tissier","matt le tissier"],e:"G",p:"MF",c:["southampton"]},
+  {n:"David Batty",a:["batty","david batty"],e:"G",p:"MF",c:["leeds","newcastle"]},
+  {n:"Lee Sharpe",a:["sharpe","lee sharpe"],e:"G",p:"MF",c:["man utd"]},
+  {n:"Jason Wilcox",a:["wilcox","jason wilcox"],e:"G",p:"MF",c:["blackburn"]},
+  {n:"Lee Clark",a:["lee clark"],e:"G",p:"MF",c:["newcastle","sunderland"]},
+  {n:"Darren Anderton",a:["anderton","darren anderton","sicknote"],e:"G",p:"MF",c:["tottenham"]},
+  {n:"Jamie Redknapp",a:["redknapp","jamie redknapp"],e:"G",p:"MF",c:["liverpool","tottenham"]},
+  {n:"Robert Pires",a:["pires","robert pires"],e:"G",p:"MF",c:["arsenal"]},
+  {n:"Bukayo Saka",a:["saka","bukayo saka"],e:"M",p:"MF",c:["arsenal"]},
+  {n:"Phil Foden",a:["foden","phil foden"],e:"M",p:"MF",c:["man city"]},
+  {n:"Cole Palmer",a:["palmer","cole palmer"],e:"M",p:"MF",c:["chelsea","man city"]},
+  {n:"James Maddison",a:["maddison","james maddison"],e:"M",p:"MF",c:["tottenham","leicester"]},
+  {n:"Harvey Elliott",a:["harvey elliott"],e:"M",p:"MF",c:["liverpool"]},
+  {n:"Morgan Gibbs-White",a:["gibbs-white","morgan gibbs-white"],e:"M",p:"MF",c:["nottingham forest","wolves"]},
+  {n:"Noni Madueke",a:["madueke","noni madueke"],e:"M",p:"MF",c:["chelsea"]},
+  {n:"Anthony Gordon",a:["anthony gordon"],e:"M",p:"MF",c:["newcastle","everton"]},
+  {n:"Jarrod Bowen",a:["bowen","jarrod bowen"],e:"M",p:"MF",c:["west ham"]},
+  {n:"Marcus Rashford",a:["rashford","marcus rashford"],e:"M",p:"MF",c:["man utd"]},
+  {n:"Raheem Sterling",a:["sterling","raheem sterling"],e:"M",p:"MF",c:["man city","liverpool"]},
+  {n:"Jadon Sancho",a:["sancho","jadon sancho"],e:"M",p:"MF",c:["man utd","dortmund"]},
+  {n:"Jack Grealish",a:["grealish","jack grealish"],e:"M",p:"MF",c:["man city","aston villa"]},
+  {n:"Mason Mount",a:["mount","mason mount"],e:"M",p:"MF",c:["chelsea","man utd"]},
+  {n:"Emile Heskey",a:["heskey","emile heskey"],e:"G",p:"MF",c:["liverpool","leicester"]},
+  {n:"Trevor Steven",a:["trevor steven"],e:"G",p:"MF",c:["everton","rangers"]},
+  {n:"Gary Stevens",a:["gary stevens"],e:"G",p:"MF",c:["everton","rangers"]},
+  {n:"Peter Beardsley",a:["beardsley","peter beardsley"],e:"G",p:"MF",c:["liverpool","newcastle"]},
+  {n:"Ray Houghton",a:["ray houghton"],e:"G",p:"MF",c:["liverpool","aston villa"]},
+  {n:"Steve Hodge",a:["hodge","steve hodge"],e:"G",p:"MF",c:["aston villa","nottingham forest"]},
+  {n:"Ricky Villa",a:["ricky villa"],e:"G",p:"MF",c:["tottenham"]},
+  {n:"Ossie Ardiles",a:["ardiles","ossie ardiles"],e:"G",p:"MF",c:["tottenham"]},
+  {n:"Ian Woan",a:["woan","ian woan"],e:"G",p:"MF",c:["nottingham forest"]},
+  {n:"Geoff Thomas",a:["geoff thomas"],e:"G",p:"MF",c:["crystal palace"]},
+  {n:"Geoff Hurst",a:["hurst","geoff hurst"],e:"C",p:"FW",c:["west ham"]},
+  {n:"Roger Hunt",a:["hunt","roger hunt"],e:"C",p:"FW",c:["liverpool"]},
+  {n:"Jimmy Greaves",a:["greaves","jimmy greaves"],e:"C",p:"FW",c:["tottenham","chelsea"]},
+  {n:"Tommy Lawton",a:["lawton","tommy lawton"],e:"G",p:"FW",c:["everton","chelsea"]},
+  {n:"Tom Finney",a:["finney","tom finney","sir tom finney"],e:"G",p:"FW",c:["preston"]},
+  {n:"Nat Lofthouse",a:["lofthouse","nat lofthouse","lion of vienna"],e:"G",p:"FW",c:["bolton"]},
+  {n:"Tommy Taylor",a:["tommy taylor","t taylor"],e:"C",p:"FW",c:["man utd"]},
+  {n:"Francis Lee",a:["francis lee"],e:"C",p:"FW",c:["man city","derby"]},
+  {n:"Mick Channon",a:["channon","mick channon"],e:"C",p:"FW",c:["southampton","man city"]},
+  {n:"Martin Chivers",a:["chivers","martin chivers"],e:"C",p:"FW",c:["tottenham"]},
+  {n:"Allan Clarke",a:["allan clarke"],e:"C",p:"FW",c:["leeds"]},
+  {n:"Peter Osgood",a:["osgood","peter osgood"],e:"C",p:"FW",c:["chelsea"]},
+  {n:"Tony Woodcock",a:["woodcock","tony woodcock"],e:"G",p:"FW",c:["nottingham forest","arsenal"]},
+  {n:"Bob Latchford",a:["latchford","bob latchford"],e:"C",p:"FW",c:["everton","birmingham"]},
+  {n:"Kevin Keegan",a:["keegan","kevin keegan","kk"],e:"C",p:"FW",c:["liverpool","hamburg"]},
+  {n:"Tony Hateley",a:["tony hateley"],e:"C",p:"FW",c:["chelsea","aston villa"]},
+  {n:"Peter Thompson",a:["peter thompson"],e:"C",p:"FW",c:["liverpool"]},
+  {n:"Ian Callaghan",a:["callaghan","ian callaghan"],e:"C",p:"MF",c:["liverpool"]},
+  {n:"Mick Jones",a:["mick jones"],e:"C",p:"FW",c:["leeds","sheffield utd"]},
+  {n:"Tony Brown",a:["tony brown"],e:"C",p:"FW",c:["west brom"]},
+  {n:"Terry Venables",a:["venables","terry venables"],e:"C",p:"MF",c:["chelsea","tottenham"]},
+  {n:"John Connelly",a:["connelly","john connelly"],e:"C",p:"FW",c:["burnley","man utd"]},
+  {n:"Barry Bridges",a:["bridges","barry bridges"],e:"C",p:"FW",c:["chelsea"]},
+  {n:"Joe Baker",a:["joe baker"],e:"C",p:"FW",c:["arsenal","torino"]},
+  {n:"Peter Dobing",a:["dobing","peter dobing"],e:"C",p:"FW",c:["blackburn","stoke"]},
+  {n:"Derek Kevan",a:["kevan","derek kevan"],e:"G",p:"FW",c:["west brom"]},
+  {n:"Johnny Byrne",a:["johnny byrne"],e:"G",p:"FW",c:["west ham","crystal palace"]},
+  {n:"Brian Clough",a:["clough","brian clough"],e:"G",p:"FW",c:["middlesbrough","sunderland"]},
+  {n:"Gerry Hitchens",a:["hitchens","gerry hitchens"],e:"G",p:"FW",c:["aston villa","inter milan"]},
+  {n:"Jeff Astle",a:["astle","jeff astle"],e:"C",p:"FW",c:["west brom"]},
+  {n:"Rodney Marsh",a:["marsh","rodney marsh"],e:"C",p:"FW",c:["qpr","man city"]},
+  {n:"Malcolm Macdonald",a:["macdonald","malcolm macdonald","supermac"],e:"C",p:"FW",c:["newcastle","arsenal"]},
+  {n:"Frank Worthington",a:["worthington","frank worthington"],e:"C",p:"FW",c:["leicester","bolton"]},
+  {n:"Stan Bowles",a:["bowles","stan bowles"],e:"C",p:"FW",c:["qpr"]},
+  {n:"Charlie George",a:["charlie george"],e:"C",p:"FW",c:["arsenal","derby"]},
+  {n:"Ray Kennedy",a:["ray kennedy"],e:"C",p:"MF",c:["liverpool","arsenal"]},
+  {n:"Mike Channon",a:["mike channon"],e:"C",p:"FW",c:["southampton","man city"]},
+  {n:"Steve Archibald",a:["archibald","steve archibald"],e:"G",p:"FW",c:["tottenham","barcelona"]},
+  {n:"Luther Blissett",a:["blissett","luther blissett"],e:"G",p:"FW",c:["watford","ac milan"]},
+  {n:"Tony Cottee",a:["cottee","tony cottee"],e:"G",p:"FW",c:["west ham","everton"]},
+  {n:"Gary Lineker",a:["lineker","gary lineker"],e:"G",p:"FW",c:["everton","tottenham"]},
+  {n:"Peter Withe",a:["withe","peter withe"],e:"G",p:"FW",c:["aston villa","wolves"]},
+  {n:"John Fashanu",a:["fashanu","john fashanu"],e:"G",p:"FW",c:["wimbledon","aston villa"]},
+  {n:"Tony Cascarino",a:["cascarino","tony cascarino"],e:"G",p:"FW",c:["aston villa","chelsea"]},
+  {n:"Clive Allen",a:["clive allen"],e:"G",p:"FW",c:["tottenham","qpr"]},
+  {n:"Kerry Dixon",a:["dixon","kerry dixon"],e:"G",p:"FW",c:["chelsea"]},
+  {n:"Mark Hughes",a:["mark hughes"],e:"G",p:"FW",c:["man utd","chelsea"]},
+  {n:"Peter Davenport",a:["davenport","peter davenport"],e:"G",p:"FW",c:["nottingham forest","man utd"]},
+  {n:"Paul Mariner",a:["mariner","paul mariner"],e:"G",p:"FW",c:["ipswich","arsenal"]},
+  {n:"Alan Shearer",a:["shearer","alan shearer"],e:"G",p:"FW",c:["newcastle","blackburn"]},
+  {n:"Robbie Fowler",a:["fowler","robbie fowler","god"],e:"G",p:"FW",c:["liverpool","man city"]},
+  {n:"Les Ferdinand",a:["les ferdinand","les","sir les"],e:"G",p:"FW",c:["newcastle","qpr"]},
+  {n:"Teddy Sheringham",a:["sheringham","teddy sheringham"],e:"G",p:"FW",c:["man utd","tottenham"]},
+  {n:"Andy Cole",a:["andy cole"],e:"G",p:"FW",c:["man utd","newcastle"]},
+  {n:"Ian Wright",a:["wright","ian wright"],e:"G",p:"FW",c:["arsenal","crystal palace"]},
+  {n:"Dion Dublin",a:["dublin","dion dublin"],e:"G",p:"FW",c:["coventry","aston villa"]},
+  {n:"Stan Collymore",a:["collymore","stan collymore"],e:"G",p:"FW",c:["liverpool","nottingham forest"]},
+  {n:"Mike Newell",a:["newell","mike newell"],e:"G",p:"FW",c:["blackburn","everton"]},
+  {n:"Chris Armstrong",a:["chris armstrong"],e:"G",p:"FW",c:["tottenham","crystal palace"]},
+  {n:"Dean Holdsworth",a:["holdsworth","dean holdsworth"],e:"G",p:"FW",c:["wimbledon","bolton"]},
+  {n:"Ugo Ehiogu",a:["ehiogu","ugo ehiogu"],e:"G",p:"DF",c:["aston villa","middlesbrough"]},
+  {n:"Chris Sutton",a:["sutton","chris sutton"],e:"G",p:"FW",c:["blackburn","chelsea"]},
+  {n:"Michael Owen",a:["owen","michael owen"],e:"G",p:"FW",c:["liverpool","newcastle"]},
+  {n:"Wayne Rooney",a:["rooney","wayne rooney","wazza"],e:"G",p:"FW",c:["man utd","everton"]},
+  {n:"Peter Crouch",a:["crouch","peter crouch"],e:"G",p:"FW",c:["liverpool","tottenham"]},
+  {n:"Jermain Defoe",a:["defoe","jermain defoe"],e:"G",p:"FW",c:["tottenham","west ham"]},
+  {n:"Andrew Johnson",a:["andrew johnson"],e:"G",p:"FW",c:["crystal palace","everton"]},
+  {n:"Darren Bent",a:["bent","darren bent"],e:"M",p:"FW",c:["sunderland","aston villa"]},
+  {n:"Carlton Cole",a:["carlton cole"],e:"M",p:"FW",c:["west ham","chelsea"]},
+  {n:"Kevin Davies",a:["kevin davies"],e:"G",p:"FW",c:["bolton","southampton"]},
+  {n:"Marcus Bent",a:["marcus bent"],e:"G",p:"FW",c:["everton","leicester"]},
+  {n:"James Beattie",a:["beattie","james beattie"],e:"G",p:"FW",c:["southampton","everton"]},
+  {n:"Alan Smith",a:["alan smith"],e:"G",p:"FW",c:["leeds","man utd"]},
+  {n:"Harry Kane",a:["kane","harry kane"],e:"M",p:"FW",c:["tottenham","bayern munich"]},
+  {n:"Jamie Vardy",a:["vardy","jamie vardy"],e:"M",p:"FW",c:["leicester"]},
+  {n:"Dominic Calvert-Lewin",a:["calvert-lewin","dcl","dominic calvert-lewin"],e:"M",p:"FW",c:["everton"]},
+  {n:"Tammy Abraham",a:["abraham","tammy abraham"],e:"M",p:"FW",c:["chelsea","roma"]},
+  {n:"Ollie Watkins",a:["watkins","ollie watkins"],e:"M",p:"FW",c:["aston villa","brentford"]},
+  {n:"Ivan Toney",a:["toney","ivan toney"],e:"M",p:"FW",c:["brentford"]},
+  {n:"Callum Wilson",a:["callum wilson"],e:"M",p:"FW",c:["newcastle","bournemouth"]},
+  {n:"Danny Welbeck",a:["welbeck","danny welbeck"],e:"M",p:"FW",c:["arsenal","man utd"]},
+  {n:"Daniel Sturridge",a:["sturridge","daniel sturridge"],e:"M",p:"FW",c:["liverpool","chelsea"]},
+  {n:"Andy Carroll",a:["andy carroll"],e:"M",p:"FW",c:["newcastle","liverpool"]},
+  {n:"Anthony Martial",a:["martial","anthony martial"],e:"M",p:"FW",c:["man utd"]},
+  {n:"Demarai Gray",a:["gray","demarai gray"],e:"M",p:"FW",c:["everton","leicester"]},
+  {n:"Reiss Nelson",a:["nelson","reiss nelson"],e:"M",p:"FW",c:["arsenal"]},
+  {n:"Eddie Nketiah",a:["nketiah","eddie nketiah"],e:"M",p:"FW",c:["arsenal"]},
+  {n:"Lyle Foster",a:["foster","lyle foster"],e:"M",p:"FW",c:["burnley"]},
+  {n:"Cauley Woodrow",a:["woodrow","cauley woodrow"],e:"M",p:"FW",c:["barnsley","luton"]},
+  {n:"Troy Deeney",a:["deeney","troy deeney"],e:"M",p:"FW",c:["watford"]},
+  {n:"Glenn Murray",a:["murray","glenn murray"],e:"M",p:"FW",c:["crystal palace","brighton"]},
+  {n:"Sam Vokes",a:["vokes","sam vokes"],e:"M",p:"FW",c:["burnley","stoke"]},
+  {n:"Charlie Austin",a:["austin","charlie austin"],e:"M",p:"FW",c:["qpr","southampton"]},
+  {n:"Benik Afobe",a:["afobe","benik afobe"],e:"M",p:"FW",c:["wolves","bournemouth"]},
+  {n:"Lys Mousset",a:["mousset","lys mousset"],e:"M",p:"FW",c:["sheffield utd","bournemouth"]},
+  {n:"Troy Parrott",a:["parrott","troy parrott"],e:"M",p:"FW",c:["tottenham"]},
+  {n:"Freddie Ladapo",a:["ladapo","freddie ladapo"],e:"M",p:"FW",c:["rotherham","ipswich"]},
+  {n:"Neal Maupay",a:["maupay","neal maupay"],e:"M",p:"FW",c:["brighton","everton"]},
+  {n:"Rhian Brewster",a:["brewster","rhian brewster"],e:"M",p:"FW",c:["sheffield utd","liverpool"]},
+  {n:"Sandro Tonali",a:["tonali"],e:"M",p:"MF",c:["newcastle","ac milan"]},
+  {n:"James Ward-Prowse",a:["ward-prowse","james ward-prowse","jwp"],e:"M",p:"MF",c:["southampton","west ham"]},
+  {n:"Nick Powell",a:["powell","nick powell"],e:"M",p:"MF",c:["stoke","man utd"]},
+  {n:"Michael Keane",a:["michael keane"],e:"M",p:"DF",c:["everton","burnley"]},
+  {n:"Marc Guehi",a:["guehi","marc guehi"],e:"M",p:"DF",c:["crystal palace","chelsea"]},
+  {n:"Tyrick Mitchell",a:["tyrick mitchell"],e:"M",p:"DF",c:["crystal palace"]},
+  {n:"Tom Carroll",a:["tom carroll"],e:"M",p:"MF",c:["tottenham","swansea"]},
+  {n:"Ryan Mason",a:["ryan mason"],e:"M",p:"MF",c:["tottenham","hull"]},
+  {n:"Harry Winks",a:["winks","harry winks"],e:"M",p:"MF",c:["tottenham","leicester"]},
+  {n:"Will Hughes",a:["will hughes"],e:"M",p:"MF",c:["watford","derby"]},
+  {n:"Tom Ince",a:["tom ince"],e:"M",p:"MF",c:["blackpool","hull"]},
+  {n:"Marcus Tavernier",a:["tavernier","marcus tavernier"],e:"M",p:"MF",c:["middlesbrough","bournemouth"]},
+  {n:"Matthew Lowton",a:["lowton","matthew lowton"],e:"M",p:"DF",c:["burnley","sheffield utd"]},
+  {n:"Sean Longstaff",a:["sean longstaff"],e:"M",p:"MF",c:["newcastle"]},
+  {n:"Matty Longstaff",a:["matty longstaff"],e:"M",p:"MF",c:["newcastle"]},
+  {n:"Elliot Anderson",a:["elliot anderson"],e:"M",p:"MF",c:["newcastle","nottingham forest"]},
+  {n:"Lewis Hall",a:["lewis hall"],e:"M",p:"DF",c:["newcastle","chelsea"]},
+  {n:"Taylor Harwood-Bellis",a:["harwood-bellis","taylor harwood-bellis"],e:"M",p:"DF",c:["southampton","man city"]},
+  {n:"James McAtee",a:["mcatee","james mcatee"],e:"M",p:"MF",c:["man city","sheffield utd"]},
+  {n:"Tommy Doyle",a:["tommy doyle"],e:"M",p:"MF",c:["man city","wolves"]},
+  {n:"Dane Scarlett",a:["scarlett","dane scarlett"],e:"M",p:"FW",c:["tottenham"]},
+  {n:"Jay Stansfield",a:["stansfield","jay stansfield"],e:"M",p:"FW",c:["birmingham","fulham"]},
+  {n:"Ryan Yates",a:["yates","ryan yates"],e:"M",p:"MF",c:["nottingham forest"]},
+  {n:"Kieran Dowell",a:["dowell","kieran dowell"],e:"M",p:"MF",c:["norwich","everton"]},
+  {n:"Will Smallbone",a:["smallbone","will smallbone"],e:"M",p:"MF",c:["southampton"]},
+  {n:"George Baldock",a:["baldock","george baldock"],e:"M",p:"DF",c:["sheffield utd"]},
+  {n:"Ethan Pinnock",a:["pinnock","ethan pinnock"],e:"M",p:"DF",c:["brentford"]},
+  {n:"Gary Gardner",a:["gary gardner"],e:"M",p:"MF",c:["aston villa","birmingham"]},
+  {n:"Bradley Wright-Phillips",a:["bradley wright-phillips"],e:"M",p:"FW",c:["man city","southampton"]},
+  {n:"Paul Allen",a:["paul allen"],e:"G",p:"MF",c:["west ham","tottenham"]},
+  {n:"Bradley Allen",a:["bradley allen"],e:"G",p:"FW",c:["qpr","charlton"]},
+  {n:"Justin Hoyte",a:["hoyte","justin hoyte"],e:"M",p:"DF",c:["arsenal","middlesbrough"]},
+  {n:"Gavin Hoyte",a:["gavin hoyte"],e:"M",p:"DF",c:["arsenal","brighton"]},
+  {n:"David Linighan",a:["linighan","david linighan"],e:"G",p:"DF",c:["arsenal","ipswich"]},
+  {n:"Frank Lampard Sr",a:["frank lampard sr","frank lampard senior"],e:"G",p:"DF",c:["west ham"]},
+  {n:"Brooke Norton-Cuffy",a:["norton-cuffy","brooke norton-cuffy"],e:"M",p:"DF",c:["rangers","arsenal"]},
+  {n:"Shola Shoretire",a:["shoretire","shola shoretire"],e:"M",p:"FW",c:["man utd"]},
+  {n:"Teden Mengi",a:["mengi","teden mengi"],e:"M",p:"DF",c:["man utd","luton"]},
+  {n:"Omari Forson",a:["omari forson"],e:"M",p:"MF",c:["man utd"]},
+  {n:"Les Anton Ferdinand",a:["anton ferdinand"],e:"G",p:"DF",c:["west ham","sunderland"]},
+  {n:"Cyrille Regis",a:["cyrille regis"],e:"G",p:"FW",c:["west brom","coventry"]},
+  {n:"Justin Fashanu",a:["justin fashanu"],e:"G",p:"FW",c:["norwich","nottingham forest"]},
+  {n:"Tony Daley",a:["daley","tony daley"],e:"G",p:"MF",c:["aston villa","wolves"]},
+  {n:"Brian Deane",a:["deane","brian deane"],e:"G",p:"FW",c:["sheffield utd","leeds"]},
+  {n:"Rod Wallace",a:["rod wallace"],e:"G",p:"FW",c:["leeds","southampton"]},
+  {n:"Ian Rush",a:["rush","ian rush"],e:"G",p:"FW",c:["liverpool","juventus"]},
+  {n:"Jamie Gittens",a:["gittens","jamie gittens"],e:"M",p:"MF",c:["dortmund"]},
+  {n:"Angel Gomes",a:["angel gomes"],e:"M",p:"MF",c:["lille","man utd"]},
+  {n:"Charlie Cresswell",a:["cresswell","charlie cresswell"],e:"M",p:"DF",c:["leeds","millwall"]},
+  {n:"Jonjoe Kenny",a:["kenny","jonjoe kenny"],e:"M",p:"DF",c:["everton","celtic"]},
+  {n:"Lloyd Kelly",a:["lloyd kelly"],e:"M",p:"DF",c:["bournemouth","newcastle"]},
+  {n:"Josh Brownhill",a:["brownhill","josh brownhill"],e:"M",p:"MF",c:["burnley","bristol city"]},
+  {n:"Jon Rowe",a:["jon rowe"],e:"M",p:"MF",c:["norwich"]},
+  {n:"Sam Greenwood",a:["sam greenwood"],e:"M",p:"MF",c:["leeds","middlesbrough"]},
+  {n:"Sam Surridge",a:["surridge","sam surridge"],e:"M",p:"FW",c:["nottingham forest","stoke"]},
+  {n:"Keinan Davis",a:["keinan davis"],e:"M",p:"FW",c:["aston villa","watford"]},
+  {n:"Jack Harrison",a:["jack harrison"],e:"M",p:"MF",c:["leeds","everton"]},
+  {n:"Nathan Tella",a:["tella","nathan tella"],e:"M",p:"MF",c:["southampton","burnley"]},
+  {n:"Ben Mee",a:["ben mee"],e:"M",p:"DF",c:["burnley","brentford"]},
+  {n:"James Tarkowski",a:["tarkowski","james tarkowski"],e:"M",p:"DF",c:["everton","burnley"]},
+  {n:"Tony Godden",a:["tony godden"],e:"G",p:"GK",c:["west brom","coventry"]},
+  {n:"Bruce Dyer",a:["bruce dyer"],e:"G",p:"FW",c:["crystal palace","watford"]},
+  {n:"Daryl Sutch",a:["daryl sutch"],e:"G",p:"MF",c:["norwich"]},
+  {n:"Stan Mortensen",a:["mortensen","stan mortensen"],e:"G",p:"FW",c:["blackpool"]},
+  {n:"Neil Franklin",a:["neil franklin"],e:"G",p:"DF",c:["stoke"]},
+  {n:"Keith Newton",a:["keith newton"],e:"C",p:"DF",c:["blackburn","everton"]},
+  {n:"Peter Storey",a:["storey","peter storey"],e:"C",p:"MF",c:["arsenal"]},
+  {n:"Phil Neal",a:["phil neal"],e:"C",p:"DF",c:["liverpool"]},
+  {n:"Trevor Cherry",a:["cherry","trevor cherry"],e:"C",p:"DF",c:["leeds"]},
+  {n:"Brian Greenhoff",a:["brian greenhoff"],e:"C",p:"DF",c:["man utd"]},
+  {n:"Steve Foster",a:["steve foster"],e:"G",p:"DF",c:["brighton","luton"]},
+  {n:"Tony Dorigo",a:["dorigo","tony dorigo"],e:"G",p:"DF",c:["chelsea","leeds"]},
+  {n:"Rob Jones",a:["rob jones"],e:"G",p:"DF",c:["liverpool"]},
+  {n:"Gareth Southgate",a:["southgate","gareth southgate"],e:"G",p:"DF",c:["aston villa","crystal palace"]},
+  {n:"Leighton Baines",a:["baines","leighton baines"],e:"M",p:"DF",c:["everton"]},
+  {n:"Phil Jones",a:["phil jones"],e:"M",p:"DF",c:["man utd"]},
+  {n:"Marc Guéhi",a:["guehi","marc guehi"],e:"M",p:"DF",c:["crystal palace","chelsea"]},
+  {n:"Ezri Konsa",a:["konsa","ezri konsa"],e:"M",p:"DF",c:["aston villa"]},
+  {n:"Lewis Dunk",a:["dunk","lewis dunk"],e:"M",p:"DF",c:["brighton"]},
+  {n:"Ben White",a:["ben white"],e:"M",p:"DF",c:["arsenal","brighton"]},
+  {n:"Rico Lewis",a:["rico lewis"],e:"M",p:"DF",c:["man city"]},
+  {n:"Steven Taylor",a:["steven taylor"],e:"M",p:"DF",c:["newcastle"]},
+  {n:"Paul Konchesky",a:["konchesky","paul konchesky"],e:"G",p:"DF",c:["west ham","charlton"]},
+  {n:"Danny Simpson",a:["danny simpson"],e:"M",p:"DF",c:["leicester","newcastle"]},
+  {n:"Nicky Shorey",a:["shorey","nicky shorey"],e:"G",p:"DF",c:["reading","aston villa"]},
+  {n:"Stephen Warnock",a:["warnock","stephen warnock"],e:"M",p:"DF",c:["blackburn","aston villa"]},
+  {n:"Chris Lawler",a:["chris lawler"],e:"C",p:"DF",c:["liverpool"]},
+  {n:"Alec Lindsay",a:["alec lindsay"],e:"C",p:"DF",c:["liverpool"]},
+  {n:"Mick Pejic",a:["pejic","mick pejic"],e:"C",p:"DF",c:["stoke","everton"]},
+  {n:"Carlton Palmer",a:["carlton palmer"],e:"G",p:"MF",c:["sheffield wednesday","leeds"]},
+  {n:"Gary Charles",a:["gary charles"],e:"G",p:"DF",c:["nottingham forest","aston villa"]},
+  {n:"Steve Howey",a:["howey","steve howey"],e:"G",p:"DF",c:["newcastle","man city"]},
+  {n:"Warren Barton",a:["barton","warren barton"],e:"G",p:"DF",c:["newcastle","wimbledon"]},
+  {n:"Earl Barrett",a:["barrett","earl barrett"],e:"G",p:"DF",c:["aston villa","oldham"]},
+  {n:"Titus Bramble",a:["bramble","titus bramble"],e:"G",p:"DF",c:["newcastle","wigan"]},
+  {n:"Danny Mills",a:["danny mills"],e:"G",p:"DF",c:["leeds","man city"]},
+  {n:"Chris Powell",a:["chris powell"],e:"G",p:"DF",c:["charlton","derby"]},
+  {n:"Graeme Le Saux",a:["le saux","graeme le saux"],e:"G",p:"DF",c:["chelsea","blackburn"]},
+  {n:"Dean Austin",a:["dean austin"],e:"G",p:"DF",c:["tottenham","southend"]},
+  {n:"Justin Edinburgh",a:["edinburgh","justin edinburgh"],e:"G",p:"DF",c:["tottenham"]},
+  {n:"Robbie Elliott",a:["robbie elliott"],e:"G",p:"DF",c:["newcastle"]},
+  {n:"Carl Tiler",a:["carl tiler"],e:"G",p:"DF",c:["nottingham forest","aston villa"]},
+  {n:"Ian Pearce",a:["ian pearce"],e:"G",p:"DF",c:["blackburn","west ham"]},
+  {n:"Chris Fairclough",a:["fairclough","chris fairclough"],e:"G",p:"DF",c:["leeds","nottingham forest"]},
+  {n:"Neil Cox",a:["neil cox"],e:"G",p:"DF",c:["middlesbrough","aston villa"]},
+  {n:"Francis Benali",a:["benali","francis benali"],e:"G",p:"DF",c:["southampton"]},
+  {n:"Keith Curle",a:["curle","keith curle"],e:"G",p:"DF",c:["man city","wimbledon"]},
+  {n:"Ben Thatcher",a:["thatcher","ben thatcher"],e:"G",p:"DF",c:["wimbledon","man city"]},
+  {n:"Chris Perry",a:["chris perry"],e:"G",p:"DF",c:["wimbledon","tottenham"]},
+  {n:"Andy Roberts",a:["andy roberts"],e:"G",p:"DF",c:["crystal palace","wimbledon"]},
+  {n:"Glen Roeder",a:["roeder","glen roeder"],e:"G",p:"DF",c:["newcastle","qpr"]},
+  {n:"Darren Peacock",a:["darren peacock"],e:"G",p:"DF",c:["newcastle","qpr"]},
+  {n:"Zat Knight",a:["knight","zat knight"],e:"G",p:"DF",c:["fulham","aston villa"]},
+  {n:"Nicky Hunt",a:["nicky hunt"],e:"G",p:"DF",c:["bolton"]},
+  {n:"Michael Duberry",a:["duberry","michael duberry"],e:"G",p:"DF",c:["chelsea","leeds"]},
+  {n:"Marcus Hall",a:["marcus hall"],e:"G",p:"DF",c:["coventry"]},
+  {n:"Andy Griffin",a:["andy griffin"],e:"G",p:"DF",c:["newcastle","stoke"]},
+  {n:"Dean Richards",a:["dean richards"],e:"G",p:"DF",c:["wolves","tottenham"]},
+  {n:"Carl Jenkinson",a:["jenkinson","carl jenkinson"],e:"M",p:"DF",c:["arsenal"]},
+  {n:"Calum Chambers",a:["calum chambers"],e:"M",p:"DF",c:["arsenal","aston villa"]},
+  {n:"Rob Holding",a:["holding","rob holding"],e:"M",p:"DF",c:["arsenal"]},
+  {n:"Ainsley Maitland-Niles",a:["maitland-niles","ainsley maitland-niles","amn"],e:"M",p:"DF",c:["arsenal"]},
+  {n:"Kieran Richardson",a:["kieran richardson"],e:"M",p:"MF",c:["man utd","sunderland"]},
+  {n:"Phil Bardsley",a:["bardsley","phil bardsley"],e:"M",p:"DF",c:["sunderland","man utd"]},
+  {n:"Danny Higginbotham",a:["higginbotham","danny higginbotham"],e:"G",p:"DF",c:["derby","stoke"]},
+  {n:"Trevoh Chalobah",a:["trevoh chalobah"],e:"M",p:"DF",c:["chelsea"]},
+  {n:"Oliver Skipp",a:["skipp","oliver skipp"],e:"M",p:"MF",c:["tottenham"]},
+  {n:"Japhet Tanganga",a:["tanganga","japhet tanganga"],e:"M",p:"DF",c:["tottenham"]},
+  {n:"Aaron Wan-Bissaka",a:["wan-bissaka","aaron wan-bissaka"],e:"M",p:"DF",c:["man utd","crystal palace"]},
+  {n:"Ben Godfrey",a:["godfrey","ben godfrey"],e:"M",p:"DF",c:["everton","norwich"]},
+  {n:"Max Aarons",a:["max aarons"],e:"M",p:"DF",c:["norwich","bournemouth"]},
+  {n:"Mike Summerbee",a:["mike summerbee"],e:"C",p:"MF",c:["man city"]},
+  {n:"Jimmy Case",a:["jimmy case"],e:"C",p:"MF",c:["liverpool","brighton"]},
+  {n:"Gerry Francis",a:["gerry francis"],e:"C",p:"MF",c:["qpr","tottenham"]},
+  {n:"Terry McDermott",a:["mcdermott","terry mcdermott"],e:"C",p:"MF",c:["liverpool","newcastle"]},
+  {n:"Sammy Lee",a:["sammy lee"],e:"G",p:"MF",c:["liverpool"]},
+  {n:"Terry Fenwick",a:["fenwick","terry fenwick"],e:"G",p:"DF",c:["qpr","tottenham"]},
+  {n:"Neil Webb",a:["neil webb"],e:"G",p:"MF",c:["man utd","nottingham forest"]},
+  {n:"David Rocastle",a:["rocastle","david rocastle","rocky"],e:"G",p:"MF",c:["arsenal","man city"]},
+  {n:"Graham Rix",a:["rix","graham rix"],e:"G",p:"MF",c:["arsenal"]},
+  {n:"Mike Duxbury",a:["duxbury","mike duxbury"],e:"G",p:"DF",c:["man utd"]},
+  {n:"Alvin Martin",a:["alvin martin"],e:"G",p:"MF",c:["west ham"]},
+  {n:"Mark Chamberlain",a:["mark chamberlain"],e:"G",p:"MF",c:["stoke","portsmouth"]},
+  {n:"Paul Merson",a:["merson","paul merson"],e:"G",p:"MF",c:["arsenal","aston villa"]},
+  {n:"Dennis Wise",a:["wise","dennis wise"],e:"G",p:"MF",c:["chelsea","wimbledon"]},
+  {n:"Jesse Lingard",a:["lingard","jesse lingard"],e:"M",p:"MF",c:["man utd"]},
+  {n:"Jake Livermore",a:["livermore","jake livermore"],e:"M",p:"MF",c:["west brom","hull"]},
+  {n:"Emile Smith Rowe",a:["smith rowe","emile smith rowe","esr"],e:"M",p:"MF",c:["arsenal"]},
+  {n:"Eberechi Eze",a:["eze","eberechi eze"],e:"M",p:"MF",c:["crystal palace"]},
+  {n:"Ashley Young",a:["ashley young"],e:"M",p:"MF",c:["man utd","aston villa"]},
+  {n:"Paul Bracewell",a:["bracewell","paul bracewell"],e:"G",p:"MF",c:["everton","sunderland"]},
+  {n:"Kevin Richardson",a:["kevin richardson"],e:"G",p:"MF",c:["everton","arsenal"]},
+  {n:"John Hollins",a:["hollins","john hollins"],e:"C",p:"MF",c:["chelsea","arsenal"]},
+  {n:"Martin Dobson",a:["dobson","martin dobson"],e:"C",p:"MF",c:["everton","burnley"]},
+  {n:"Alan Devonshire",a:["devonshire","alan devonshire"],e:"G",p:"MF",c:["west ham"]},
+  {n:"Remi Moses",a:["remi moses"],e:"G",p:"MF",c:["man utd","west brom"]},
+  {n:"Brian Talbot",a:["talbot","brian talbot"],e:"G",p:"MF",c:["arsenal","ipswich"]},
+  {n:"Laurie Cunningham",a:["cunningham","laurie cunningham"],e:"G",p:"MF",c:["west brom","real madrid"]},
+  {n:"Peter Barnes",a:["peter barnes"],e:"G",p:"MF",c:["man city","west brom"]},
+  {n:"Dave Thomas",a:["dave thomas"],e:"C",p:"MF",c:["qpr","everton"]},
+  {n:"Steve Perryman",a:["perryman","steve perryman"],e:"C",p:"MF",c:["tottenham"]},
+  {n:"Ralph Coates",a:["coates","ralph coates"],e:"C",p:"MF",c:["tottenham","burnley"]},
+  {n:"George Eastham",a:["eastham","george eastham"],e:"G",p:"MF",c:["arsenal","newcastle"]},
+  {n:"Fabrice Muamba",a:["muamba","fabrice muamba"],e:"M",p:"MF",c:["bolton","birmingham"]},
+  {n:"Stuart Pearson",a:["stuart pearson"],e:"C",p:"FW",c:["man utd","hull"]},
+  {n:"Dennis Tueart",a:["tueart","dennis tueart"],e:"C",p:"FW",c:["man city","sunderland"]},
+  {n:"Mark Hateley",a:["mark hateley"],e:"G",p:"FW",c:["rangers","ac milan"]},
+  {n:"Ray Parlour",a:["parlour","ray parlour","romford pele"],e:"G",p:"MF",c:["arsenal"]},
+  {n:"Paul Stewart",a:["paul stewart"],e:"G",p:"MF",c:["tottenham","man city"]},
+  {n:"David White",a:["david white"],e:"G",p:"MF",c:["man city","leeds"]},
+  {n:"Steve Guppy",a:["guppy","steve guppy"],e:"G",p:"MF",c:["leicester","port vale"]},
+  {n:"Stuart Ripley",a:["ripley","stuart ripley"],e:"G",p:"MF",c:["blackburn","middlesbrough"]},
+  {n:"Darren Huckerby",a:["huckerby","darren huckerby"],e:"G",p:"FW",c:["man city","coventry"]},
+  {n:"Peter Beagrie",a:["beagrie","peter beagrie"],e:"G",p:"MF",c:["everton","bradford"]},
+  {n:"Nicky Summerbee",a:["nicky summerbee"],e:"G",p:"MF",c:["sunderland","man city"]},
+  {n:"Neil Ruddock",a:["ruddock","neil ruddock","razor"],e:"G",p:"DF",c:["liverpool","tottenham"]},
+  {n:"Lee Bowyer",a:["bowyer","lee bowyer"],e:"G",p:"MF",c:["leeds","west ham"]},
+  {n:"Danny Murphy",a:["danny murphy"],e:"G",p:"MF",c:["liverpool","charlton"]},
+  {n:"Michael Gray",a:["michael gray"],e:"G",p:"DF",c:["sunderland"]},
+  {n:"Lee Chapman",a:["lee chapman"],e:"G",p:"FW",c:["leeds","aston villa"]},
+  {n:"Ian Bishop",a:["ian bishop"],e:"G",p:"MF",c:["west ham","man city"]},
+  {n:"Andy Impey",a:["impey","andy impey"],e:"G",p:"MF",c:["qpr","west ham"]},
+  {n:"Jason Dodd",a:["jason dodd"],e:"G",p:"DF",c:["southampton"]},
+  {n:"Steve Watson",a:["steve watson"],e:"G",p:"MF",c:["newcastle","aston villa"]},
+  {n:"Wayne Routledge",a:["routledge","wayne routledge"],e:"M",p:"MF",c:["swansea","newcastle"]},
+  {n:"Garry Flitcroft",a:["flitcroft","garry flitcroft"],e:"G",p:"MF",c:["blackburn","man city"]},
+  {n:"Alan Wright",a:["alan wright"],e:"G",p:"DF",c:["aston villa","blackburn"]},
+  {n:"Matt Taylor",a:["matt taylor"],e:"G",p:"MF",c:["portsmouth","bolton"]},
+  {n:"Chris Marsden",a:["marsden","chris marsden"],e:"G",p:"MF",c:["southampton","birmingham"]},
+  {n:"Paul Warhurst",a:["warhurst","paul warhurst"],e:"G",p:"DF",c:["blackburn","sheffield wednesday"]},
+  {n:"Guy Whittingham",a:["whittingham","guy whittingham"],e:"G",p:"FW",c:["portsmouth","sheffield wednesday"]},
+  {n:"Dean Gordon",a:["dean gordon"],e:"G",p:"DF",c:["middlesbrough","crystal palace"]},
+  {n:"John Moncur",a:["moncur","john moncur"],e:"G",p:"MF",c:["west ham","swindon"]},
+  {n:"Nigel Clough",a:["nigel clough"],e:"G",p:"FW",c:["nottingham forest","liverpool"]},
+  {n:"Paul Davis",a:["paul davis"],e:"G",p:"MF",c:["arsenal"]},
+  {n:"Perry Groves",a:["perry groves"],e:"G",p:"MF",c:["arsenal"]},
+  {n:"Gordon Cowans",a:["cowans","gordon cowans"],e:"G",p:"MF",c:["aston villa","bari"]},
+  {n:"Ian Taylor",a:["ian taylor"],e:"G",p:"MF",c:["aston villa","sheffield wednesday"]},
+  {n:"Lee Hendrie",a:["hendrie","lee hendrie"],e:"G",p:"MF",c:["aston villa"]},
+  {n:"Tommy Johnson",a:["tommy johnson"],e:"G",p:"FW",c:["aston villa","derby"]},
+  {n:"Alan Cork",a:["alan cork"],e:"G",p:"FW",c:["wimbledon","sheffield utd"]},
+  {n:"Tom Huddlestone",a:["huddlestone","tom huddlestone"],e:"M",p:"MF",c:["tottenham","hull"]},
+  {n:"Fraizer Campbell",a:["fraizer campbell"],e:"M",p:"FW",c:["sunderland","man utd"]},
+  {n:"Jon Newsome",a:["jon newsome"],e:"G",p:"DF",c:["leeds","sheffield wednesday"]},
+  {n:"Andy Linighan",a:["andy linighan"],e:"G",p:"DF",c:["arsenal","norwich"]},
+  {n:"David Wetherall",a:["wetherall","david wetherall"],e:"G",p:"DF",c:["leeds","bradford"]},
+  {n:"Seth Johnson",a:["seth johnson"],e:"G",p:"MF",c:["leeds","derby"]},
+  {n:"John Gidman",a:["gidman","john gidman"],e:"G",p:"DF",c:["man utd","aston villa"]},
+  {n:"Roger Osborne",a:["roger osborne"],e:"C",p:"MF",c:["ipswich"]},
+  {n:"Kevin Beattie",a:["kevin beattie"],e:"C",p:"DF",c:["ipswich"]},
+  {n:"Trevor Whymark",a:["whymark","trevor whymark"],e:"C",p:"FW",c:["ipswich"]},
+  {n:"Eric Gates",a:["eric gates"],e:"G",p:"FW",c:["ipswich","sunderland"]},
+  {n:"Russell Osman",a:["osman","russell osman"],e:"G",p:"DF",c:["ipswich","leicester"]},
+  {n:"Steve McCall",a:["steve mccall"],e:"G",p:"MF",c:["ipswich","sheffield wednesday"]},
+  {n:"Chris Kiwomya",a:["kiwomya","chris kiwomya"],e:"G",p:"FW",c:["ipswich","arsenal"]},
+  {n:"Derek Statham",a:["statham","derek statham"],e:"G",p:"DF",c:["west brom"]},
+  {n:"Gary Owen",a:["gary owen"],e:"G",p:"MF",c:["man city","west brom"]},
+  {n:"Len Cantello",a:["cantello","len cantello"],e:"G",p:"MF",c:["west brom"]},
+  {n:"Clive Whitehead",a:["clive whitehead"],e:"G",p:"DF",c:["west brom","bristol city"]},
+  {n:"Gary Shaw",a:["gary shaw"],e:"G",p:"FW",c:["aston villa"]},
+  {n:"Tony Morley",a:["tony morley"],e:"G",p:"MF",c:["aston villa","west brom"]},
+  {n:"Colin Gibson",a:["colin gibson"],e:"G",p:"DF",c:["aston villa","man utd"]},
+  {n:"Mark Walters",a:["mark walters"],e:"G",p:"MF",c:["rangers","aston villa"]},
+  {n:"Paul Birch",a:["paul birch"],e:"G",p:"MF",c:["aston villa","wolves"]},
+  {n:"Gabriel Agbonlahor",a:["agbonlahor","gabriel agbonlahor","gabby"],e:"M",p:"FW",c:["aston villa"]},
+  {n:"Marc Albrighton",a:["albrighton","marc albrighton"],e:"M",p:"MF",c:["leicester","aston villa"]},
+  {n:"Luke Moore",a:["luke moore"],e:"M",p:"FW",c:["aston villa","west brom"]},
+  {n:"Peter Whittingham",a:["peter whittingham"],e:"M",p:"MF",c:["cardiff","aston villa"]},
+  {n:"Brendon Batson",a:["batson","brendon batson"],e:"G",p:"DF",c:["west brom","arsenal"]},
+  {n:"Kevin Hird",a:["kevin hird"],e:"G",p:"MF",c:["blackburn","leeds"]},
+  {n:"Terry Connor",a:["terry connor"],e:"G",p:"FW",c:["brighton","wolves"]},
+  {n:"Mark Ford",a:["mark ford"],e:"G",p:"MF",c:["leeds","burnley"]},
+  {n:"David Johnson",a:["david johnson"],e:"C",p:"FW",c:["liverpool","ipswich"]},
+  {n:"Howard Gayle",a:["gayle","howard gayle"],e:"G",p:"FW",c:["liverpool"]},
+  {n:"Barry Venison",a:["venison","barry venison"],e:"G",p:"DF",c:["liverpool","newcastle"]},
+  {n:"Dominic Matteo",a:["matteo","dominic matteo"],e:"G",p:"DF",c:["liverpool","leeds"]},
+  {n:"Nick Tanner",a:["nick tanner"],e:"G",p:"DF",c:["liverpool","norwich"]},
+  {n:"Mike Marsh",a:["mike marsh"],e:"G",p:"MF",c:["liverpool","coventry"]},
+  {n:"Liam Ridgewell",a:["ridgewell","liam ridgewell"],e:"M",p:"DF",c:["birmingham","aston villa"]},
+  {n:"Bryan Hughes",a:["bryan hughes"],e:"G",p:"MF",c:["birmingham","wrexham"]},
+  {n:"Lee Croft",a:["lee croft"],e:"M",p:"MF",c:["man city","norwich"]},
+  {n:"Leroy Lita",a:["lita","leroy lita"],e:"M",p:"FW",c:["reading","middlesbrough"]},
+  {n:"Michael Brown",a:["michael brown"],e:"G",p:"MF",c:["sheffield utd","tottenham"]},
+  {n:"Jermaine Jenas",a:["jenas","jermaine jenas"],e:"G",p:"MF",c:["newcastle","tottenham"]},
+  {n:"Dwight Gayle",a:["dwight gayle"],e:"M",p:"FW",c:["newcastle","crystal palace"]},
+  {n:"Joe Willock",a:["willock","joe willock"],e:"M",p:"MF",c:["newcastle","arsenal"]},
+  {n:"Andrew Carroll",a:["andrew carroll"],e:"M",p:"FW",c:["newcastle","liverpool"]},
+  {n:"Jermaine Pennant",a:["pennant","jermaine pennant"],e:"G",p:"MF",c:["arsenal","liverpool"]},
+  {n:"Darren Carter",a:["darren carter"],e:"M",p:"MF",c:["birmingham","west brom"]},
+  {n:"Julian Gray",a:["julian gray"],e:"M",p:"MF",c:["birmingham","crystal palace"]},
+  {n:"Stephen Clemence",a:["stephen clemence"],e:"G",p:"MF",c:["tottenham","birmingham"]},
+  {n:"Ian Storey-Moore",a:["storey-moore","ian storey-moore"],e:"C",p:"FW",c:["nottingham forest","man utd"]},
+  {n:"Garry Birtles",a:["garry birtles"],e:"G",p:"FW",c:["nottingham forest","man utd"]},
+  {n:"Brian Laws",a:["brian laws"],e:"G",p:"DF",c:["nottingham forest","middlesbrough"]},
+  {n:"Steve Chettle",a:["chettle","steve chettle"],e:"G",p:"DF",c:["nottingham forest"]},
+  {n:"Des Lyttle",a:["lyttle","des lyttle"],e:"G",p:"DF",c:["nottingham forest","watford"]},
+  {n:"Jason Lee",a:["jason lee"],e:"G",p:"FW",c:["nottingham forest","watford"]},
+  {n:"Chris Bart-Williams",a:["bart-williams","chris bart-williams"],e:"G",p:"MF",c:["nottingham forest","sheffield wednesday"]},
+  {n:"Colin Cooper",a:["colin cooper"],e:"G",p:"DF",c:["nottingham forest","middlesbrough"]},
+  {n:"Craig Hignett",a:["hignett","craig hignett"],e:"G",p:"MF",c:["middlesbrough","blackburn"]},
+  {n:"Robbie Mustoe",a:["mustoe","robbie mustoe"],e:"G",p:"MF",c:["middlesbrough","oxford"]},
+  {n:"Noel Whelan",a:["noel whelan"],e:"G",p:"FW",c:["coventry","leeds"]},
+  {n:"Brett Ormerod",a:["ormerod","brett ormerod"],e:"G",p:"FW",c:["southampton","blackpool"]},
+  {n:"Kevin Pressman",a:["pressman","kevin pressman"],e:"G",p:"GK",c:["sheffield wednesday"]},
+  {n:"Dalian Atkinson",a:["atkinson","dalian atkinson"],e:"G",p:"FW",c:["aston villa","sheffield wednesday"]},
+  {n:"Graham Hyde",a:["graham hyde"],e:"G",p:"MF",c:["sheffield wednesday","birmingham"]},
+  {n:"Andy Booth",a:["andy booth"],e:"G",p:"FW",c:["sheffield wednesday","huddersfield"]},
+  {n:"Gordon Watson",a:["gordon watson"],e:"G",p:"FW",c:["sheffield wednesday","southampton"]},
+  {n:"Marcus Stewart",a:["marcus stewart"],e:"G",p:"FW",c:["ipswich","huddersfield"]},
+  {n:"Paul Williams",a:["paul williams"],e:"G",p:"DF",c:["coventry","derby"]},
+  {n:"John Salako",a:["salako","john salako"],e:"G",p:"MF",c:["crystal palace","coventry"]},
+  {n:"Mick Quinn",a:["mick quinn"],e:"G",p:"FW",c:["coventry","newcastle"]},
+  {n:"Brian Kilcline",a:["kilcline","brian kilcline"],e:"G",p:"DF",c:["coventry","newcastle"]},
+  {n:"Dave Bennett",a:["dave bennett"],e:"G",p:"MF",c:["coventry","man city"]},
+  {n:"Trevor Peake",a:["trevor peake"],e:"G",p:"DF",c:["coventry","nottingham forest"]},
+  {n:"Nick Pickering",a:["nick pickering"],e:"G",p:"DF",c:["coventry","sunderland"]},
+  {n:"Steve Sedgley",a:["sedgley","steve sedgley"],e:"G",p:"MF",c:["coventry","tottenham"]},
+  {n:"Robert Rosario",a:["rosario","robert rosario"],e:"G",p:"FW",c:["coventry","norwich"]},
+  {n:"Ian Bowyer",a:["ian bowyer"],e:"C",p:"MF",c:["nottingham forest","man city"]},
+  {n:"Phil Starbuck",a:["starbuck","phil starbuck"],e:"G",p:"FW",c:["nottingham forest","huddersfield"]},
+  {n:"David Currie",a:["david currie"],e:"G",p:"FW",c:["nottingham forest","barnsley"]},
+  {n:"Gary Crosby",a:["gary crosby"],e:"G",p:"MF",c:["nottingham forest"]},
+  {n:"Lee Glover",a:["lee glover"],e:"G",p:"FW",c:["nottingham forest","leicester"]},
+  {n:"Darren Wassall",a:["wassall","darren wassall"],e:"G",p:"DF",c:["nottingham forest","derby"]},
+  {n:"Wayne Biggins",a:["biggins","wayne biggins"],e:"G",p:"FW",c:["stoke","barnsley"]},
+  {n:"Don Goodman",a:["don goodman"],e:"G",p:"FW",c:["west brom","sunderland"]},
+  {n:"Kevin Sharp",a:["kevin sharp"],e:"G",p:"MF",c:["leeds","wrexham"]},
+  {n:"Mark Robins",a:["mark robins"],e:"G",p:"FW",c:["man utd","norwich"]},
+  {n:"Neil Pointon",a:["pointon","neil pointon"],e:"G",p:"DF",c:["everton","man city"]},
+  {n:"Richard Cresswell",a:["richard cresswell"],e:"G",p:"FW",c:["sheffield wednesday","leeds"]},
+  {n:"Efan Ekoku",a:["ekoku","efan ekoku"],e:"G",p:"FW",c:["norwich","wimbledon"]},
+  {n:"Ian Marshall",a:["ian marshall"],e:"G",p:"FW",c:["ipswich","leicester"]},
+  {n:"Dean Yates",a:["dean yates"],e:"G",p:"DF",c:["nottingham forest","derby"]},
+  {n:"Dave Beasant",a:["beasant","dave beasant"],e:"G",p:"GK",c:["wimbledon","chelsea"]},
+  {n:"Wally Downes",a:["wally downes"],e:"G",p:"MF",c:["wimbledon"]},
+  {n:"Andy Clarke",a:["andy clarke"],e:"G",p:"FW",c:["wimbledon","portsmouth"]},
+  {n:"Jason Euell",a:["euell","jason euell"],e:"G",p:"FW",c:["wimbledon","charlton"]},
+  {n:"Julian Dicks",a:["dicks","julian dicks"],e:"G",p:"DF",c:["west ham","liverpool"]},
+  {n:"Martin Allen",a:["martin allen"],e:"G",p:"MF",c:["west ham","qpr"]},
+  {n:"Les Sealey",a:["les sealey"],e:"G",p:"GK",c:["man utd","luton"]},
+  {n:"Mark Ward",a:["mark ward"],e:"G",p:"MF",c:["west ham","man city"]},
+  {n:"Kevin Keen",a:["kevin keen"],e:"G",p:"MF",c:["west ham","wolves"]},
+  {n:"Tim Breacker",a:["breacker","tim breacker"],e:"G",p:"DF",c:["west ham","luton"]},
+  {n:"Steve Potts",a:["steve potts"],e:"G",p:"DF",c:["west ham"]},
+  {n:"Gavin Peacock",a:["gavin peacock"],e:"G",p:"MF",c:["chelsea","newcastle"]},
+  {n:"Danny Granville",a:["granville","danny granville"],e:"G",p:"DF",c:["chelsea","leeds"]},
+  {n:"Jody Morris",a:["jody morris"],e:"G",p:"MF",c:["chelsea","leeds"]},
+  {n:"Andy Sinton",a:["sinton","andy sinton"],e:"G",p:"MF",c:["qpr","sheffield wednesday"]},
+  {n:"Clive Wilson",a:["clive wilson"],e:"G",p:"DF",c:["qpr","man city"]},
+  {n:"Gary Bannister",a:["bannister","gary bannister"],e:"G",p:"FW",c:["qpr","sheffield wednesday"]},
+  {n:"Simon Barker",a:["simon barker"],e:"G",p:"MF",c:["qpr","blackburn"]},
+  {n:"Ian Holloway",a:["ian holloway"],e:"G",p:"MF",c:["qpr","bristol rovers"]},
+  {n:"Gareth Ainsworth",a:["gareth ainsworth"],e:"G",p:"MF",c:["qpr","wycombe"]},
+  {n:"Kevin Gallen",a:["gallen","kevin gallen"],e:"G",p:"FW",c:["qpr"]},
+  {n:"Mike Sheron",a:["sheron","mike sheron"],e:"G",p:"FW",c:["man city","stoke"]},
+  {n:"Paul Furlong",a:["paul furlong"],e:"G",p:"FW",c:["chelsea","watford"]},
+  {n:"Dougie Freedman",a:["freedman","dougie freedman"],e:"G",p:"FW",c:["crystal palace","nottingham forest"]},
+  {n:"Neil Shipperley",a:["shipperley","neil shipperley"],e:"G",p:"FW",c:["crystal palace","chelsea"]},
+  {n:"Ben Watson",a:["ben watson"],e:"M",p:"MF",c:["wigan","crystal palace"]},
+  {n:"Gavin McCann",a:["gavin mccann"],e:"G",p:"MF",c:["sunderland","aston villa"]},
+  {n:"Kenny Hibbitt",a:["hibbitt","kenny hibbitt"],e:"C",p:"MF",c:["wolves"]},
+  {n:"John Richards",a:["john richards"],e:"C",p:"FW",c:["wolves"]},
+  {n:"Steve Kindon",a:["kindon","steve kindon"],e:"C",p:"FW",c:["wolves","burnley"]},
+  {n:"Mel Eves",a:["mel eves"],e:"G",p:"FW",c:["wolves"]},
+  {n:"Mike Stowell",a:["mike stowell"],e:"G",p:"GK",c:["wolves","everton"]},
+  {n:"Shaun Newton",a:["shaun newton"],e:"G",p:"MF",c:["wolves","charlton"]},
+  {n:"Karl Henry",a:["karl henry"],e:"G",p:"MF",c:["wolves","stoke"]},
+  {n:"Lee Naylor",a:["lee naylor"],e:"G",p:"DF",c:["wolves","celtic"]},
+  {n:"Matt Murray",a:["matt murray"],e:"G",p:"GK",c:["wolves"]},
+  {n:"Kevin Cooper",a:["kevin cooper"],e:"G",p:"MF",c:["wolves","wimbledon"]},
+  {n:"Adam Proudlock",a:["proudlock","adam proudlock"],e:"G",p:"FW",c:["wolves","sheffield wednesday"]},
+  {n:"Jlloyd Samuel",a:["jlloyd samuel"],e:"M",p:"DF",c:["bolton","aston villa"]},
+  {n:"Stuart Slater",a:["stuart slater"],e:"G",p:"MF",c:["west ham","celtic"]},
+  {n:"Kevin Campbell",a:["kevin campbell"],e:"G",p:"FW",c:["arsenal","everton"]},
+  {n:"Darius Vassell",a:["vassell","darius vassell"],e:"G",p:"FW",c:["aston villa","man city"]},
+  {n:"Mick Harford",a:["harford","mick harford"],e:"G",p:"FW",c:["luton","birmingham"]},
+  {n:"Gary Birtles",a:["gary birtles"],e:"G",p:"FW",c:["nottingham forest","man utd"]},
+  {n:"Paul Walsh",a:["paul walsh"],e:"G",p:"FW",c:["liverpool","luton"]},
+  {n:"Brian Kidd",a:["brian kidd"],e:"C",p:"FW",c:["man utd","arsenal"]},
+  {n:"Paul Goddard",a:["paul goddard"],e:"G",p:"FW",c:["west ham","ipswich"]},
+  {n:"Joe Royle",a:["joe royle"],e:"C",p:"FW",c:["everton","man city"]},
+  {n:"Mark Bright",a:["mark bright"],e:"G",p:"FW",c:["crystal palace","sheffield wednesday"]},
+  {n:"David Cross",a:["david cross"],e:"G",p:"FW",c:["west ham","man city"]},
+  {n:"Brian Little",a:["brian little"],e:"C",p:"FW",c:["aston villa"]},
+  {n:"Rickie Lambert",a:["lambert","rickie lambert"],e:"M",p:"FW",c:["southampton","liverpool"]},
+  {n:"Steve Bull",a:["bull","steve bull"],e:"G",p:"FW",c:["wolves","west brom"]},
+  {n:"Julian Joachim",a:["joachim","julian joachim"],e:"G",p:"FW",c:["aston villa","coventry"]},
+  {n:"Ian Olney",a:["ian olney"],e:"G",p:"FW",c:["aston villa","oldham"]},
+  {n:"Michael Ricketts",a:["ricketts","michael ricketts"],e:"G",p:"FW",c:["bolton","middlesbrough"]},
+  {n:"Bobby Smith",a:["bobby smith"],e:"G",p:"FW",c:["tottenham","chelsea"]},
+  {n:"Dean Sturridge",a:["dean sturridge"],e:"G",p:"FW",c:["derby","leicester"]},
+  {n:"Marlon Harewood",a:["harewood","marlon harewood"],e:"G",p:"FW",c:["west ham","nottingham forest"]},
+  {n:"David Dunn",a:["david dunn"],e:"G",p:"MF",c:["blackburn","birmingham"]},
+  {n:"Martin Taylor",a:["martin taylor"],e:"G",p:"DF",c:["blackburn","birmingham"]},
+  {n:"Ruel Fox",a:["ruel fox"],e:"G",p:"MF",c:["norwich","newcastle"]},
+  {n:"Ian Crook",a:["ian crook"],e:"G",p:"MF",c:["norwich"]},
+  {n:"Gary Megson",a:["gary megson"],e:"G",p:"MF",c:["sheffield wednesday","man city"]},
+  {n:"John Polston",a:["john polston"],e:"G",p:"DF",c:["norwich","tottenham"]},
+  {n:"Ian Culverhouse",a:["culverhouse","ian culverhouse"],e:"G",p:"DF",c:["norwich"]},
+  {n:"Darel Russell",a:["darel russell"],e:"G",p:"MF",c:["norwich","stoke"]},
+  {n:"Leon McKenzie",a:["leon mckenzie"],e:"G",p:"FW",c:["norwich","crystal palace"]},
+  {n:"Simon Charlton",a:["simon charlton"],e:"G",p:"DF",c:["southampton","bolton"]},
+  {n:"Damien Francis",a:["damien francis"],e:"G",p:"MF",c:["norwich","wigan"]},
+  {n:"Dean Ashton",a:["dean ashton"],e:"G",p:"FW",c:["west ham","norwich"]},
+  {n:"Jason Shackell",a:["shackell","jason shackell"],e:"M",p:"DF",c:["norwich","derby"]},
+  {n:"Grant Holt",a:["holt","grant holt"],e:"M",p:"FW",c:["norwich","shrewsbury"]},
+  {n:"Nathan Redmond",a:["redmond","nathan redmond"],e:"M",p:"MF",c:["southampton","norwich"]},
+  {n:"Jonathan Howson",a:["howson","jonathan howson"],e:"M",p:"MF",c:["norwich","leeds"]},
+  {n:"Gary O'Neil",a:["gary o'neil"],e:"G",p:"MF",c:["portsmouth","west ham"]},
+  {n:"Paul Kitson",a:["paul kitson"],e:"G",p:"FW",c:["newcastle","west ham"]},
+  {n:"Shola Ameobi",a:["ameobi","shola ameobi"],e:"G",p:"FW",c:["newcastle"]},
+  {n:"Michael Chopra",a:["chopra","michael chopra"],e:"G",p:"FW",c:["newcastle","sunderland"]},
+  {n:"Charles N'Zogbia",a:["n'zogbia","charles n'zogbia"],e:"G",p:"MF",c:["newcastle","wigan"]},
+  {n:"Graham Fenton",a:["graham fenton"],e:"G",p:"FW",c:["blackburn","aston villa"]},
+  {n:"Nicky Marker",a:["nicky marker"],e:"G",p:"MF",c:["blackburn","ipswich"]},
+  {n:"Craig Short",a:["craig short"],e:"G",p:"DF",c:["blackburn","derby"]},
+  {n:"Matt Jansen",a:["jansen","matt jansen"],e:"G",p:"FW",c:["blackburn","crystal palace"]},
+  {n:"David Thompson",a:["david thompson"],e:"G",p:"MF",c:["blackburn","liverpool"]},
+  {n:"Jason Roberts",a:["jason roberts"],e:"G",p:"FW",c:["blackburn","west brom"]},
+  {n:"Paul Gallagher",a:["paul gallagher"],e:"G",p:"MF",c:["blackburn","stoke"]},
+  {n:"Matthew Taylor",a:["matthew taylor"],e:"G",p:"MF",c:["portsmouth","bolton"]},
+  {n:"Jordan Rhodes",a:["jordan rhodes"],e:"M",p:"FW",c:["middlesbrough","huddersfield"]},
+  {n:"Tom Cairney",a:["cairney","tom cairney"],e:"M",p:"MF",c:["fulham","hull"]},
+  {n:"Mark Noble",a:["mark noble"],e:"M",p:"MF",c:["west ham"]},
+  {n:"Kevin Nolan",a:["kevin nolan"],e:"G",p:"MF",c:["bolton","newcastle"]},
+  {n:"Stuart Campbell",a:["stuart campbell"],e:"G",p:"MF",c:["leicester","birmingham"]},
+  {n:"Trevor Benjamin",a:["trevor benjamin"],e:"G",p:"FW",c:["leicester","cambridge"]},
+  {n:"Ade Akinbiyi",a:["akinbiyi","ade akinbiyi"],e:"G",p:"FW",c:["leicester","stoke"]},
+  {n:"Riccardo Scimeca",a:["scimeca","riccardo scimeca"],e:"G",p:"DF",c:["aston villa","nottingham forest"]},
+  {n:"Paul Dickov",a:["dickov","paul dickov"],e:"G",p:"FW",c:["man city","leicester"]},
+  {n:"Frank Sinclair",a:["frank sinclair"],e:"G",p:"DF",c:["chelsea","leicester"]},
+  {n:"Sean Davis",a:["sean davis"],e:"G",p:"MF",c:["fulham","tottenham"]},
+  {n:"Barry Hayles",a:["barry hayles"],e:"G",p:"FW",c:["fulham","bristol rovers"]},
+  {n:"Jon Harley",a:["jon harley"],e:"G",p:"DF",c:["fulham","chelsea"]},
+  {n:"Bobby Zamora",a:["zamora","bobby zamora"],e:"G",p:"FW",c:["fulham","west ham"]},
+  {n:"Liam Rosenior",a:["liam rosenior"],e:"G",p:"DF",c:["fulham","brighton"]},
+  {n:"Mark Hudson",a:["mark hudson"],e:"G",p:"DF",c:["fulham","cardiff"]},
+  {n:"Duncan Jupp",a:["duncan jupp"],e:"G",p:"DF",c:["fulham","wimbledon"]},
+  {n:"Alan Reeves",a:["alan reeves"],e:"G",p:"DF",c:["wimbledon","rochdale"]},
+  {n:"Ian Selley",a:["ian selley"],e:"G",p:"MF",c:["arsenal","fulham"]},
+  {n:"David Hillier",a:["david hillier"],e:"G",p:"MF",c:["arsenal","portsmouth"]},
+  {n:"Eddie McGoldrick",a:["mcgoldrick","eddie mcgoldrick"],e:"G",p:"DF",c:["arsenal","crystal palace"]},
+  {n:"Matthew Rush",a:["matthew rush"],e:"G",p:"MF",c:["norwich","west ham"]},
+  {n:"Clinton Morrison",a:["clinton morrison"],e:"G",p:"FW",c:["crystal palace","birmingham"]},
+  {n:"Shaun Derry",a:["shaun derry"],e:"G",p:"MF",c:["crystal palace","leeds"]},
+  {n:"Tom Soares",a:["tom soares"],e:"G",p:"MF",c:["crystal palace","stoke"]},
+  {n:"Leon Cort",a:["leon cort"],e:"G",p:"DF",c:["crystal palace","hull"]},
+  {n:"Kevin Phillips",a:["kevin phillips"],e:"G",p:"FW",c:["sunderland","aston villa"]},
+  {n:"Jody Craddock",a:["jody craddock"],e:"G",p:"DF",c:["sunderland","wolves"]},
+  {n:"Kevin Ball",a:["kevin ball"],e:"G",p:"MF",c:["sunderland"]},
+  {n:"Darren Williams",a:["darren williams"],e:"G",p:"DF",c:["sunderland","cardiff"]},
+  {n:"Lee Cattermole",a:["cattermole","lee cattermole"],e:"M",p:"MF",c:["sunderland","middlesbrough"]},
+  {n:"Connor Wickham",a:["wickham","connor wickham"],e:"M",p:"FW",c:["sunderland","crystal palace"]},
+  {n:"Jack Colback",a:["colback","jack colback"],e:"M",p:"MF",c:["sunderland","newcastle"]},
+  {n:"Billy Jones",a:["billy jones"],e:"M",p:"DF",c:["sunderland","west brom"]},
+  {n:"Dean Whitehead",a:["dean whitehead"],e:"G",p:"MF",c:["sunderland","stoke"]},
+  {n:"Grant Leadbitter",a:["leadbitter","grant leadbitter"],e:"M",p:"MF",c:["sunderland","middlesbrough"]},
+  {n:"Michael Turner",a:["michael turner"],e:"M",p:"DF",c:["sunderland","norwich"]},
+  {n:"Craig Gardner",a:["craig gardner"],e:"M",p:"MF",c:["sunderland","birmingham"]},
+  {n:"Anton Ferdinand",a:["anton ferdinand"],e:"G",p:"DF",c:["west ham","sunderland"]},
+  {n:"Graham Stuart",a:["graham stuart"],e:"G",p:"MF",c:["everton","chelsea"]},
+  {n:"Kevin Lisbie",a:["kevin lisbie"],e:"G",p:"FW",c:["charlton","colchester"]},
+  {n:"Nicky Forster",a:["nicky forster"],e:"G",p:"FW",c:["brentford","reading"]},
+  {n:"Richard Rufus",a:["richard rufus"],e:"G",p:"DF",c:["charlton"]},
+  {n:"Carl Leaburn",a:["carl leaburn"],e:"G",p:"FW",c:["charlton"]},
+  {n:"Alan Pardew",a:["alan pardew"],e:"G",p:"MF",c:["charlton","crystal palace"]},
+  {n:"Steve Walsh",a:["steve walsh"],e:"G",p:"DF",c:["leicester","everton"]},
+  {n:"Garry Parker",a:["garry parker"],e:"G",p:"MF",c:["leicester","aston villa"]},
+  {n:"Spencer Prior",a:["spencer prior"],e:"G",p:"DF",c:["leicester","derby"]},
+  {n:"Robert Ullathorne",a:["ullathorne","robert ullathorne"],e:"G",p:"DF",c:["leicester","norwich"]},
+  {n:"Morgan Rogers",a:["morgan rogers"],e:"M",p:"MF",c:["aston villa","middlesbrough"]},
+  {n:"Adam Wharton",a:["wharton","adam wharton"],e:"M",p:"MF",c:["crystal palace","blackburn"]},
+  {n:"Archie Gray",a:["archie gray"],e:"M",p:"MF",c:["tottenham","leeds"]},
+  {n:"Lewis Miley",a:["lewis miley"],e:"M",p:"MF",c:["newcastle"]},
+  {n:"Myles Lewis-Skelly",a:["lewis-skelly","myles lewis-skelly"],e:"M",p:"DF",c:["arsenal"]},
+  {n:"Ethan Nwaneri",a:["nwaneri","ethan nwaneri"],e:"M",p:"MF",c:["arsenal"]},
+  {n:"Liam Delap",a:["delap","liam delap"],e:"M",p:"FW",c:["ipswich","man city"]},
+  {n:"Max Dowman",a:["max dowman"],e:"M",p:"FW",c:["aston villa"]},
+  {n:"Josh King",a:["josh king"],e:"M",p:"FW",c:["bournemouth","everton"]},
+  {n:"Ashley Phillips",a:["ashley phillips"],e:"M",p:"DF",c:["blackburn","tottenham"]},
+  {n:"Jayden Danns",a:["jayden danns"],e:"M",p:"FW",c:["liverpool"]},
+  {n:"Carney Chukwuemeka",a:["chukwuemeka","carney chukwuemeka"],e:"M",p:"MF",c:["chelsea","aston villa"]},
+  {n:"Omari Hutchinson",a:["omari hutchinson"],e:"M",p:"MF",c:["ipswich","chelsea"]},
+  {n:"Chris Eagles",a:["chris eagles"],e:"M",p:"MF",c:["man utd","blackburn"]},
+  {n:"Andy King",a:["andy king"],e:"M",p:"MF",c:["leicester","swansea"]},
+  {n:"Harvey Barnes",a:["harvey barnes"],e:"M",p:"MF",c:["leicester","newcastle"]},
+  {n:"James Justin",a:["james justin"],e:"M",p:"DF",c:["leicester"]},
+  {n:"Hamza Choudhury",a:["hamza choudhury"],e:"M",p:"MF",c:["leicester","watford"]},
+  {n:"Luke Thomas",a:["luke thomas"],e:"M",p:"DF",c:["leicester"]},
+  {n:"Danny Drinkwater",a:["drinkwater","danny drinkwater"],e:"M",p:"MF",c:["leicester","chelsea"]},
+  {n:"Scott Sinclair",a:["scott sinclair"],e:"M",p:"MF",c:["swansea","celtic"]},
+  {n:"Mason Greenwood",a:["mason greenwood"],e:"M",p:"FW",c:["man utd","getafe"]},
+  {n:"Jonjo Shelvey",a:["shelvey","jonjo shelvey"],e:"M",p:"MF",c:["newcastle","liverpool"]},
+  {n:"Danny Ings",a:["ings","danny ings"],e:"M",p:"FW",c:["southampton","liverpool"]},
+  {n:"Gary Walsh",a:["gary walsh"],e:"G",p:"GK",c:["man utd","middlesbrough"]},
+  {n:"Lee Grant",a:["lee grant"],e:"M",p:"GK",c:["man utd","stoke"]},
+  {n:"John Lukic",a:["john lukic"],e:"G",p:"GK",c:["arsenal","leeds"]},
+  {n:"Alan Miller",a:["alan miller"],e:"G",p:"GK",c:["arsenal","middlesbrough"]},
+  {n:"Ross Turnbull",a:["ross turnbull"],e:"M",p:"GK",c:["chelsea","middlesbrough"]},
+  {n:"Steve Sidwell",a:["sidwell","steve sidwell"],e:"G",p:"MF",c:["chelsea","reading"]},
+  {n:"Callum Hudson-Odoi",a:["hudson-odoi","callum hudson-odoi"],e:"M",p:"MF",c:["chelsea","bayer leverkusen"]},
+  {n:"Marcus Bettinelli",a:["bettinelli","marcus bettinelli"],e:"M",p:"GK",c:["chelsea","fulham"]},
+  {n:"Dennis Viollet",a:["dennis viollet"],e:"C",p:"FW",c:["man utd"]},
+  {n:"Bill Foulkes",a:["bill foulkes"],e:"C",p:"DF",c:["man utd"]},
+  {n:"Wilf McGuinness",a:["mcguinness","wilf mcguinness"],e:"C",p:"MF",c:["man utd"]},
+  {n:"David Sadler",a:["david sadler"],e:"C",p:"DF",c:["man utd"]},
+  {n:"Sammy McIlroy",a:["mcilroy","sammy mcilroy"],e:"C",p:"MF",c:["man utd"]},
+  {n:"Gordon Hill",a:["gordon hill"],e:"C",p:"MF",c:["man utd","derby"]},
+  {n:"Jimmy Greenhoff",a:["jimmy greenhoff"],e:"C",p:"FW",c:["man utd","stoke"]},
+  {n:"Kevin Moran",a:["kevin moran"],e:"G",p:"DF",c:["man utd"]},
+  {n:"Jobe Bellingham",a:["jobe bellingham"],e:"M",p:"MF",c:["sunderland","dortmund"]},
+  {n:"Patrick Bamford",a:["bamford","patrick bamford"],e:"M",p:"FW",c:["leeds","middlesbrough"]},
+  {n:"Oli McBurnie",a:["mcburnie","oli mcburnie"],e:"M",p:"FW",c:["sheffield utd","swansea"]},
+  {n:"Todd Cantwell",a:["cantwell","todd cantwell"],e:"M",p:"MF",c:["norwich","rangers"]},
+  {n:"Tyler Morton",a:["tyler morton"],e:"M",p:"MF",c:["liverpool","hull"]},
+  {n:"Jarell Quansah",a:["quansah","jarell quansah"],e:"M",p:"DF",c:["liverpool"]},
+  {n:"Marcus Edwards",a:["marcus edwards"],e:"M",p:"MF",c:["sporting","tottenham"]},
+  {n:"Mike Hooper",a:["mike hooper"],e:"G",p:"GK",c:["liverpool","newcastle"]},
+  {n:"Jon Otsemobor",a:["otsemobor","jon otsemobor"],e:"G",p:"DF",c:["liverpool","rotherham"]},
+  {n:"Peter Simpson",a:["peter simpson"],e:"C",p:"DF",c:["arsenal"]},
+  {n:"Steve Williams",a:["steve williams"],e:"G",p:"MF",c:["arsenal","southampton"]},
+  {n:"Michael Thomas",a:["michael thomas"],e:"G",p:"MF",c:["arsenal","liverpool"]},
+  {n:"Kevin Hitchcock",a:["kevin hitchcock"],e:"G",p:"GK",c:["chelsea","northampton"]},
+  {n:"Geoff Twentyman",a:["geoff twentyman"],e:"G",p:"DF",c:["liverpool"]},
+  {n:"Alan Smith (Leicester)",a:["alan smith leicester"],e:"C",p:"FW",c:["leicester"]},
+];
+
+
+// ══════════════════════════════════════════
+// NORMALISER + SEARCH
+// ══════════════════════════════════════════
+function norm(s){
+  const m={á:"a",à:"a",â:"a",ä:"a",é:"e",è:"e",ê:"e",ë:"e",
+    í:"i",î:"i",ï:"i",ó:"o",ô:"o",ö:"o",ú:"u",û:"u",ü:"u",ñ:"n",ç:"c"};
+  return s.toLowerCase().split("").map(c=>m[c]||c).join("")
+    .replace(/[^a-z0-9 ]/g,"").trim().replace(/\s+/g," ");
+}
+function findPlayer(input){
+  const v=norm(input); if(!v||v.length<2)return null;
+
+  // 1. exact alias match
+  for(const p of DB){ for(const a of p.a){ if(norm(a)===v)return p; }}
+
+  const words=v.split(" ");
+
+  // 2. single word — match surname
+  if(words.length===1){
+    const m=DB.filter(p=>norm(p.n.split(" ").pop())===v);
+    if(m.length===1)return m[0];
+    // also match first word (first name)
+    const m2=DB.filter(p=>norm(p.n.split(" ")[0])===v);
+    if(m2.length===1)return m2[0];
+  }
+
+  // 3. two+ words — try reversed order (NEVILLE GARY → GARY NEVILLE)
+  if(words.length>=2){
+    const reversed=norm([...words].reverse().join(" "));
+    for(const p of DB){ if(norm(p.n)===reversed)return p; }
+    // also try reversed against aliases
+    for(const p of DB){ for(const a of p.a){ if(norm(a)===reversed)return p; }}
+  }
+
+  return null;
+}
+
+// Returns all DB matches for a surname (for WHICH ONE logic)
+function findAllBySurname(surname){
+  const v=norm(surname);
+  return DB.filter(p=>norm(p.n.split(" ").pop())===v || p.a.some(a=>norm(a)===v));
+}
+function getSuggestions(input){
+  const v=norm(input); if(v.length<2)return [];
+  const res=[], seen=new Set();
+  for(const p of DB){
+    if(!seen.has(p.n) && (p.a.some(a=>norm(a).startsWith(v))||norm(p.n).includes(v))){
+      res.push(p.n); seen.add(p.n); if(res.length>=6)break;
+    }
+  }
+  return res;
+}
+
+// ══════════════════════════════════════════
+// PITCH DRAWING
+// ══════════════════════════════════════════
+const W_M=68,H_M=52.5;
+function drawPitch(canvas){
+  const CW=canvas.offsetWidth, CH=Math.round(CW*H_M/W_M);
+  canvas.width=CW; canvas.height=CH;
+  const ctx=canvas.getContext("2d");
+  const px=m=>m/W_M*CW, py=m=>m/H_M*CH;
+  const bands=[0,10,20,30,40,50,52.5];
+  for(let i=0;i<bands.length-1;i++){
+    ctx.fillStyle=i%2===0?"#1a5c0a":"#196009";
+    ctx.fillRect(0,py(bands[i]),CW,py(bands[i+1])-py(bands[i])+1);
+  }
+  ctx.strokeStyle="rgba(255,255,255,0.88)";
+  ctx.lineWidth=Math.max(1.2,CW/180); ctx.lineCap="round";
+  const L=(x1,y1,x2,y2)=>{ctx.beginPath();ctx.moveTo(px(x1),py(y1));ctx.lineTo(px(x2),py(y2));ctx.stroke()};
+  const D=(x,y,r)=>{ctx.fillStyle="rgba(255,255,255,0.88)";ctx.beginPath();ctx.arc(px(x),py(y),r,0,Math.PI*2);ctx.fill()};
+  L(0,0,W_M,0);L(0,0,0,H_M);L(W_M,0,W_M,H_M);L(0,H_M,W_M,H_M);
+  ctx.beginPath();ctx.arc(px(34),py(0),px(9.15),0,Math.PI);ctx.stroke();
+  D(34,0,Math.max(2,CW/130));
+  const paX=(W_M-40.32)/2;
+  ctx.beginPath();ctx.rect(px(paX),py(H_M-16.5),px(40.32),py(H_M)-py(H_M-16.5));ctx.stroke();
+  const sbX=(W_M-18.32)/2;
+  ctx.beginPath();ctx.rect(px(sbX),py(H_M-5.5),px(18.32),py(H_M)-py(H_M-5.5));ctx.stroke();
+  D(34,H_M-11,Math.max(1.5,CW/160));
+  const sY=py(H_M-11),pY=py(H_M-16.5),aR=px(9.15),dY=sY-pY,ag=Math.acos(dY/aR);
+  ctx.beginPath();ctx.arc(px(34),sY,aR,-(Math.PI/2+ag),-(Math.PI/2-ag),false);ctx.stroke();
+  const cr=px(1);
+  ctx.beginPath();ctx.arc(px(0),py(H_M),cr,-Math.PI/2,0);ctx.stroke();
+  ctx.beginPath();ctx.arc(px(W_M),py(H_M),cr,Math.PI,-Math.PI/2);ctx.stroke();
+}
+
+// ══════════════════════════════════════════
+// POSITION DEFINITIONS
+// ══════════════════════════════════════════
+const POS_GROUP = {
+  GK:"gk",
+  RB:"df",CB:"df",LB:"df",RWB:"df",LWB:"df",SW:"df",
+  CM:"mf",DM:"mf",AM:"mf",RM:"mf",LM:"mf",RW:"mf",LW:"mf",
+  ST:"fw",SS:"fw"
+};
+
+// X position on pitch (0=left, 1=right) for each pos
+const POS_X = {
+  GK:.50,
+  RWB:.88, RB:.88, CB:.50, LB:.12, LWB:.12, SW:.50,
+  RM:.78,  CM:.50, DM:.50, AM:.50, LM:.22,
+  RW:.78,  ST:.50, SS:.50, LW:.22,
+};
+
+// Y bands per group (fraction 0=top/halfway, 1=bottom/goalline)
+const GRP_Y = {gk:.90, df:.68, mf:.46, fw:.20};
+const GRP_Y2 = {gk:.90, df:.79, mf:.57, fw:.31}; // second row when >5
+
+// ══════════════════════════════════════════
+// SLOTS STATE — 11 players
+// ══════════════════════════════════════════
+function makeDefault(){
+  return [
+    {pos:"GK", num:1,  name:"", dbName:"", x:.50, y:.90},
+    {pos:"RB", num:2,  name:"", dbName:"", x:.88, y:.68},
+    {pos:"CB", num:5,  name:"", dbName:"", x:.62, y:.68},
+    {pos:"CB", num:6,  name:"", dbName:"", x:.38, y:.68},
+    {pos:"LB", num:3,  name:"", dbName:"", x:.12, y:.68},
+    {pos:"RM", num:7,  name:"", dbName:"", x:.88, y:.46},
+    {pos:"CM", num:4,  name:"", dbName:"", x:.62, y:.46},
+    {pos:"CM", num:8,  name:"", dbName:"", x:.38, y:.46},
+    {pos:"LM", num:11, name:"", dbName:"", x:.12, y:.46},
+    {pos:"ST", num:9,  name:"", dbName:"", x:.62, y:.20},
+    {pos:"ST", num:10, name:"", dbName:"", x:.38, y:.20},
+  ];
+}
+
+// ── AUTO-LAYOUT ──
+// Groups slots by category, places them in rows of max 5
+// Preserves relative X preference from POS_X
+function autoLayout(slots){
+  const groups = {gk:[],df:[],mf:[],fw:[]};
+  slots.forEach((s,i)=>{ const g=POS_GROUP[s.pos]||"mf"; groups[g].push({s,i}); });
+
+  Object.entries(groups).forEach(([g, items])=>{
+    if(!items.length)return;
+    const n=items.length;
+    if(n<=5){
+      // single row — space evenly, honour POS_X hints for left/right
+      layoutRow(items, GRP_Y[g]);
+    } else {
+      // split into chunks of max 5
+      // try to split evenly: ceil(n/2) + floor(n/2)
+      const split = Math.ceil(n/2);
+      const row1=items.slice(0,split>5?5:split);
+      const row2=items.slice(row1.length);
+      // more players = closer to goal → row1 deeper, row2 higher
+      layoutRow(row1, GRP_Y[g]);
+      layoutRow(row2, GRP_Y2[g]);
+      // if still >5 in one row (shouldn't happen with 11 players)
+      if(row2.length>5){
+        const row3=row2.splice(5);
+        layoutRow(row2, GRP_Y2[g]);
+        layoutRow(row3, (GRP_Y[g]+GRP_Y2[g])/2);
+      }
+    }
+  });
+  return slots;
+}
+
+// Layout only ONE slot (active) — leave others untouched
+function layoutSlot(i){
+  // Relayout entire group of the changed slot
+  const grp = POS_GROUP[slots[i].pos]||"mf";
+  layoutGroup(grp);
+  // Also relayout previous group if pos changed
+  slots.forEach((s,j)=>{
+    const g = POS_GROUP[s.pos]||"mf";
+    if(g !== grp) layoutGroup(g);
+  });
+}
+
+function layoutGroup(grp){
+  // Get all slots in this group, sorted by POS_X preference
+  const items = slots
+    .map((s,i)=>({s,i}))
+    .filter(({s})=>(POS_GROUP[s.pos]||"mf")===grp);
+
+  if(!items.length) return;
+
+  // Separate into: left-side, centre, right-side by POS_X
+  const L = items.filter(({s})=>(POS_X[s.pos]||.5) <  .35);
+  const C = items.filter(({s})=>{const p=POS_X[s.pos]||.5; return p>=.35&&p<=.65;});
+  const R = items.filter(({s})=>(POS_X[s.pos]||.5) >  .65);
+
+  // Place left column — stack vertically from base Y
+  L.forEach(({s},j)=>{
+    s.x = POS_X[s.pos]||.12;
+    s.y = (GRP_Y[grp]||.5) + (POS_Y_OFFSET[s.pos]||0) + j*.07;
+  });
+
+  // Place right column — stack vertically from base Y
+  R.forEach(({s},j)=>{
+    s.x = POS_X[s.pos]||.88;
+    s.y = (GRP_Y[grp]||.5) + (POS_Y_OFFSET[s.pos]||0) + j*.07;
+  });
+
+  // Place centre — spread horizontally
+  const cn = C.length;
+  const spread = cn<=1?0 : cn===2?.32 : cn===3?.52 : cn===4?.66 : .76;
+  C.forEach(({s},j)=>{
+    s.x = cn===1 ? .50 : (.5-spread/2) + j*spread/(cn-1);
+    s.y = (GRP_Y[grp]||.5) + (POS_Y_OFFSET[s.pos]||0);
+  });
+}
+
+// Fine Y offset per position (relative to group base Y)
+// positive = lower on pitch (closer to goal), negative = higher (closer to opponent)
+const POS_Y_OFFSET = {
+  // Defenders
+  RWB:-.05, LWB:-.05,  // wing backs push higher than regular backs
+  SW: .06,             // sweeper sits deepest
+  // Midfielders
+  DM: .06,             // defensive mid sits deeper
+  CM: .00,             // central mid = base line
+  AM:-.06,             // attacking mid pushes higher
+  RM: .00, LM: .00,    // wide mids = base line
+  RW:-.05, LW:-.05,    // wingers push higher
+  // Forwards
+  ST:-.04,             // striker pushes highest
+  SS: .03,             // second striker slightly deeper
+};
+
+function layoutRow(items, y){
+  const n=items.length;
+  // Sort by POS_X preference
+  items.sort((a,b)=>(POS_X[a.s.pos]||.5)-(POS_X[b.s.pos]||.5));
+  const spread = n===1 ? 0 : n===2 ? .36 : n===3 ? .56 : n===4 ? .70 : .78;
+  const left = .5 - spread/2;
+
+  // Count side-pinned vs centre items
+  const leftPinned  = items.filter(({s})=>(POS_X[s.pos]||.5)<.40);
+  const rightPinned = items.filter(({s})=>(POS_X[s.pos]||.5)>.60);
+  const centre      = items.filter(({s})=>{const px=POS_X[s.pos]||.5; return px>=.40&&px<=.60;});
+
+  // Distribute centre items evenly
+  const cn = centre.length;
+  centre.forEach(({s},j)=>{
+    const cspread = cn<=2 ? .32 : cn<=3 ? .50 : .60;
+    const cleft = .5 - cspread/2;
+    s.x = cn===1 ? .50 : cleft + j*cspread/(cn-1);
+    s.y = y + (POS_Y_OFFSET[s.pos]||0);
+  });
+
+  // Left/Right pinned — use exact POS_X for each position
+  leftPinned.forEach(({s})=>{
+    s.x = POS_X[s.pos]||.15;
+    s.y = y + (POS_Y_OFFSET[s.pos]||0);
+  });
+  rightPinned.forEach(({s})=>{
+    s.x = POS_X[s.pos]||.85;
+    s.y = y + (POS_Y_OFFSET[s.pos]||0);
+  });
+
+  // Anti-overlap: push apart any dots closer than min distance
+  const allItems = [...leftPinned, ...centre, ...rightPinned];
+  const minDist = 0.14;
+  for(let pass=0; pass<3; pass++){
+    for(let a=0; a<allItems.length; a++){
+      for(let b=a+1; b<allItems.length; b++){
+        const sa=allItems[a].s, sb=allItems[b].s;
+        const dx=sa.x-sb.x, dy=(sa.y-sb.y)*1.5;
+        const dist=Math.sqrt(dx*dx+dy*dy);
+        if(dist<minDist && dist>0){
+          const push=(minDist-dist)/2;
+          const nx=dx/dist*push, ny=dy/dist*push/1.5;
+          sa.x+=nx; sa.y+=ny;
+          sb.x-=nx; sb.y-=ny;
+          // clamp
+          sa.x=Math.max(.05,Math.min(.95,sa.x));
+          sb.x=Math.max(.05,Math.min(.95,sb.x));
+        }
+      }
+    }
+  }
+}
+
+// Always start fresh - uniform grid, NO autoLayout on init
+let slots = makeDefault();
+let active=null;
+
+function save(){} // disabled
+
+// ══════════════════════════════════════════
+// RENDER
+// ══════════════════════════════════════════
+function render(){
+  const canvas=document.getElementById("pitch");
+  drawPitch(canvas);
+  const wrap=document.getElementById("wrap");
+  const existing=wrap.querySelectorAll(".pdot");
+
+  // Only recreate if count changed
+  if(existing.length !== slots.length){
+    existing.forEach(e=>e.remove());
+    slots.forEach((_,i)=>{ wrap.appendChild(makeDot(i)); });
+  }
+
+  // Update positions — CSS transition animates the move
+  slots.forEach((s,i)=>{
+    if(!s) return;
+    const el=wrap.querySelector('[data-idx="'+i+'"]');
+    if(!el) return;
+    updateDot(el,s,i);
+  });
+}
+
+function makeDot(i){
+  const el=document.createElement("div");
+  el.className="pdot";
+  el.dataset.idx=i;
+  el.innerHTML='<div class="pcircle"></div><div class="pname"></div>';
+
+  let pressTimer=null, isDragging=false, startX=0, startY=0;
+
+  el.addEventListener("pointerdown", e=>{
+    isDragging=false;
+    startX=e.clientX; startY=e.clientY;
+
+    // Long press timer — start drag mode after 300ms
+    pressTimer=setTimeout(()=>{
+      isDragging=true;
+      el.setPointerCapture(e.pointerId);
+      el.style.zIndex=50;
+      el.style.transition="none"; // disable animation while dragging
+      el.style.transform="translate(-50%,-50%) scale(1.15)";
+    }, 300);
+  });
+
+  el.addEventListener("pointermove", e=>{
+    if(!isDragging) return;
+    const wrap=document.getElementById("wrap");
+    const rect=wrap.getBoundingClientRect();
+    const x=Math.max(0.04, Math.min(0.96, (e.clientX-rect.left)/rect.width));
+    const y=Math.max(0.04, Math.min(0.96, (e.clientY-rect.top)/rect.height));
+    el.style.left=(x*100)+"%";
+    el.style.top=(y*100)+"%";
+    // Update slot data
+    slots[i].x=x;
+    slots[i].y=y;
+  });
+
+  el.addEventListener("pointerup", e=>{
+    clearTimeout(pressTimer);
+    el.style.zIndex=10;
+    el.style.transition="left .35s ease, top .35s ease";
+    el.style.transform="translate(-50%,-50%)";
+    if(!isDragging){
+      // Short tap — open modal
+      openModal(i);
+    } else {
+      // End of drag — save position
+      save();
+    }
+    isDragging=false;
+  });
+
+  el.addEventListener("pointercancel", ()=>{
+    clearTimeout(pressTimer);
+    isDragging=false;
+    el.style.zIndex=10;
+    el.style.transition="left .35s ease, top .35s ease";
+    el.style.transform="translate(-50%,-50%)";
+  });
+
+  return el;
+}
+
+function updateDot(el,s,i){
+  if(!el||!s)return;
+  const grp=POS_GROUP[s.pos]||"mf";
+  const filled=!!(s.name&&s.name.trim());
+  el.className=`pdot grp-${grp} ${filled?"filled":"empty"}`;
+  el.style.left=s.x*100+"%";
+  el.style.top =s.y*100+"%";
+  const c=el.querySelector(".pcircle");
+  const n=el.querySelector(".pname");
+  if(!c||!n)return;
+  c.textContent = filled ? s.num : s.pos;
+  // Show only surname for readability
+  if(filled){
+    const parts = s.name.split(" ");
+    n.textContent = parts[parts.length-1]; // last word = surname
+  } else {
+    n.textContent = "";
+  }
+}
+
+// ══════════════════════════════════════════
+// MODAL
+// ══════════════════════════════════════════
+function openModal(i){
+  // Clear chemistry lines when editing
+  document.querySelectorAll(".pdot").forEach(el=>el.classList.remove("chem-era","chem-club","chem-both","chem-1966"));
+  const cr=document.getElementById('chem-results'); if(cr) cr.style.display='none';
+  active=i;
+  const s=slots[i];
+  document.getElementById("mpos").value=s.pos;
+  document.getElementById("mname").value=s.name;
+  document.getElementById("mnum").value=s.num;
+  document.getElementById("mconfirm").textContent="";
+  document.getElementById("modal").classList.add("on");
+  setTimeout(()=>{
+    const inp = document.getElementById("mname");
+    inp.focus();
+    // Scroll input into view when keyboard appears on mobile
+    inp.scrollIntoView({behavior:"smooth", block:"center"});
+    // Additional scroll for iOS
+    setTimeout(()=>{
+      const mbox = document.getElementById("mbox");
+      if(mbox) mbox.scrollIntoView({behavior:"smooth", block:"end"});
+    }, 400);
+  }, 200);
+}
+function closeModal(){ document.getElementById("modal").classList.remove("on"); active=null; }
+
+function onPosChange(){
+  if(active===null)return;
+  const newPos=document.getElementById("mpos").value;
+
+  // number rule
+  const numEl=document.getElementById("mnum");
+  if(newPos==="GK" && parseInt(numEl.value)>1) numEl.value=1;
+  else if(newPos!=="GK" && parseInt(numEl.value)===1) numEl.value=2;
+
+  slots[active].pos=newPos;
+
+  // Only update color/label of this dot — no repositioning
+  const wrap2=document.getElementById("wrap");
+  const el=wrap2.querySelector('[data-idx="'+active+'"]');
+  if(el) updateDot(el,slots[active],active);
+}
+
+function onNameInput(){
+  const val = document.getElementById("mname").value.trim();
+  const el  = document.getElementById("mconfirm");
+  if(val.length < 2){ el.textContent=""; return; }
+
+  const found = findPlayer(val);
+  if(found){
+    el.textContent = "✓ " + found.n;
+    el.style.color = "var(--green)";
+    return;
+  }
+
+  // Check if multiple share this surname — prompt for first name
+  const words = norm(val).split(" ");
+  if(words.length === 1){
+    const all = findAllBySurname(val);
+    if(all.length > 1){
+      el.textContent = "⚠ ADD FIRST NAME";
+      el.style.color = "var(--gold)";
+      return;
+    }
+  }
+
+  el.textContent = val.length >= 3 ? "✗ NOT IN DATABASE" : "";
+  el.style.color = "var(--red)";
+}
+
+function saveSlot(){
+  if(active===null)return;
+  const raw=document.getElementById("mname").value.trim();
+  const newPos=document.getElementById("mpos").value;
+  let num=parseInt(document.getElementById("mnum").value)||slots[active].num;
+
+  // number 1 only for GK
+  if(newPos!=="GK" && num===1){
+    toast("⚠ #1 IS FOR GK ONLY","warn"); return;
+  }
+  // check duplicate numbers
+  const dupNum=slots.some((s,i)=>i!==active && s.num===num && s.name);
+  if(dupNum){ toast("⚠ NUMBER "+num+" ALREADY USED","warn"); return; }
+
+  // check duplicate players
+  const found2=findPlayer(raw);
+  if(found2){
+    const dupPlayer=slots.some((s,i)=>i!==active && s.dbName===found2.n);
+    if(dupPlayer){ toast("⚠ "+found2.n.toUpperCase()+" ALREADY IN YOUR XI","warn"); return; }
+  }
+
+  if(!raw){ clearSlot(); return; }
+  const found=findPlayer(raw);
+  if(!found){
+    // Check if it's an ambiguous surname
+    const words2 = norm(raw).split(" ");
+    if(words2.length===1 && findAllBySurname(raw).length>1){
+      toast("⚠ ADD FIRST NAME","warn");
+      return;
+    }
+    toast("✗ NOT IN DATABASE","err");
+    return;
+  }
+  slots[active].pos=newPos;
+  slots[active].num=num;
+  slots[active].name=found.n.toUpperCase();
+  slots[active].dbName=found.n;
+
+  save(); updateCounter();
+  const savedName = slots[active].name;
+  closeModal(); render();
+  if(raw) toast("✓ "+savedName,"");
+}
+
+function clearSlot(){
+  if(active===null)return;
+  slots[active].name=""; slots[active].dbName="";
+  save(); closeModal(); render(); updateCounter();
+}
+
+// TOAST
+let tT=null;
+function toast(msg,type){
+  const el=document.getElementById("toast");
+  el.textContent=msg; el.className="toast on"+(type?" "+type:"");
+  clearTimeout(tT); tT=setTimeout(()=>el.className="toast"+(type?" "+type:""),2400);
+}
+
+// INIT
+
+// ══════════════════════════════════════════
+// FORMATIONS
+// ══════════════════════════════════════════
+const FORMATIONS = {
+  '442': [
+    {pos:"GK", x:.50,y:.90},{pos:"RB",x:.88,y:.68},{pos:"CB",x:.62,y:.68},
+    {pos:"CB",x:.38,y:.68},{pos:"LB",x:.12,y:.68},
+    {pos:"RM",x:.88,y:.46},{pos:"CM",x:.62,y:.46},{pos:"CM",x:.38,y:.46},{pos:"LM",x:.12,y:.46},
+    {pos:"ST",x:.62,y:.20},{pos:"ST",x:.38,y:.20}
+  ],
+  '433': [
+    {pos:"GK",x:.50,y:.90},{pos:"RB",x:.88,y:.68},{pos:"CB",x:.62,y:.68},
+    {pos:"CB",x:.38,y:.68},{pos:"LB",x:.12,y:.68},
+    {pos:"RM",x:.78,y:.46},{pos:"CM",x:.50,y:.46},{pos:"LM",x:.22,y:.46},
+    {pos:"RW",x:.78,y:.20},{pos:"ST",x:.50,y:.18},{pos:"LW",x:.22,y:.20}
+  ],
+  '352': [
+    {pos:"GK",x:.50,y:.90},{pos:"CB",x:.75,y:.68},{pos:"CB",x:.50,y:.68},{pos:"CB",x:.25,y:.68},
+    {pos:"RM",x:.88,y:.46},{pos:"CM",x:.68,y:.46},{pos:"DM",x:.50,y:.52},{pos:"CM",x:.32,y:.46},{pos:"LM",x:.12,y:.46},
+    {pos:"ST",x:.62,y:.20},{pos:"ST",x:.38,y:.20}
+  ],
+  '532': [
+    {pos:"GK",x:.50,y:.90},
+    {pos:"RWB",x:.93,y:.64},{pos:"CB",x:.72,y:.70},{pos:"CB",x:.50,y:.72},{pos:"CB",x:.28,y:.70},{pos:"LWB",x:.07,y:.64},
+    {pos:"RM",x:.75,y:.46},{pos:"CM",x:.50,y:.46},{pos:"LM",x:.25,y:.46},
+    {pos:"ST",x:.62,y:.20},{pos:"ST",x:.38,y:.20}
+  ],
+  '4231': [
+    {pos:"GK",x:.50,y:.90},{pos:"RB",x:.88,y:.70},{pos:"CB",x:.62,y:.72},
+    {pos:"CB",x:.38,y:.72},{pos:"LB",x:.12,y:.70},
+    {pos:"DM",x:.62,y:.54},{pos:"DM",x:.38,y:.54},
+    {pos:"RW",x:.80,y:.36},{pos:"AM",x:.50,y:.32},{pos:"LW",x:.20,y:.36},
+    {pos:"ST",x:.50,y:.18}
+  ],
+  '343': [
+    {pos:"GK",x:.50,y:.90},{pos:"CB",x:.75,y:.70},{pos:"CB",x:.50,y:.72},{pos:"CB",x:.25,y:.70},
+    {pos:"RM",x:.88,y:.48},{pos:"CM",x:.62,y:.48},{pos:"CM",x:.38,y:.48},{pos:"LM",x:.12,y:.48},
+    {pos:"RW",x:.78,y:.20},{pos:"ST",x:.50,y:.18},{pos:"LW",x:.22,y:.20}
+  ]
+};
+
+function setFormation(key){
+  const f = FORMATIONS[key];
+  if(!f) return;
+  // Apply formation positions and positions, keep names
+  f.forEach((fp,i)=>{
+    if(slots[i]){
+      slots[i].pos = fp.pos;
+      slots[i].x   = fp.x;
+      slots[i].y   = fp.y;
+    }
+  });
+  // Highlight active button
+  document.querySelectorAll('#formation-btns button').forEach(b=>{
+    const active = b.textContent.replace(/-/g,'') === key ||
+                   b.textContent === key.replace(/(\d)(\d)(\d)/,'$1-$2-$3') ||
+                   b.textContent === key.replace(/(\d)(\d)(\d)(\d)/,'$1-$2-$3-$4') ||
+                   b.textContent === key.replace('442','4-4-2').replace('433','4-3-3')
+                     .replace('352','3-5-2').replace('532','5-3-2')
+                     .replace('4231','4-2-3-1').replace('343','3-4-3');
+    b.style.borderColor = active ? 'var(--green)' : '#333';
+    b.style.color       = active ? 'var(--green)' : '#888';
+  });
+  render();
+}
+
+
+// ══════════════════════════════════════════
+// CHEMISTRY SYSTEM
+// ══════════════════════════════════════════
+
+const SQUAD_1966 = [
+  "gordon banks","gordon west","ron springett",
+  "george cohen","ray wilson","bobby moore","jack charlton","nobby stiles",
+  "roger hunt","bobby charlton","geoff hurst","martin peters",
+  "alan ball","jimmy greaves","terry paine","ian callaghan",
+  "john connelly","peter bonetti","ron flowers","norman hunter",
+  "gerry byrne","keith newton"
+];
+
+function chemNorm(s){ return s.toLowerCase().trim(); }
+
+function calculateChemistry(){
+  const filled = slots.filter(s=>s.name && s.dbName);
+  if(filled.length < 11){ toast("COMPLETE YOUR XI FIRST","warn"); return; }
+
+  // ── BUILD PLAYER DATA ──
+  const players = filled.map(s=>{
+    const p = DB.find(d=>d.n===s.dbName);
+    return {
+      name: s.dbName,
+      normName: chemNorm(s.dbName),
+      pos: s.pos,
+      grp: POS_GROUP[s.pos]||"mf",
+      era: p ? p.e : "G",
+      clubs: p ? (p.c||[]) : [],
+      primary: p && p.c && p.c[0] ? p.c[0] : "",
+      is1966: SQUAD_1966.includes(chemNorm(s.dbName)),
+      slotIdx: slots.findIndex(sl=>sl.dbName===s.dbName)
+    };
+  });
+
+  // Club size tiers for rarity multiplier
+  const TOP6 = ["man utd","arsenal","chelsea","liverpool","man city","tottenham"];
+  const MID  = ["everton","newcastle","leeds","aston villa","west ham","blackburn",
+                "nottingham forest","leicester","sunderland","middlesbrough","wolves"];
+  function clubMult(club){
+    if(!club) return 1;
+    if(TOP6.includes(club)) return 1.0;
+    if(MID.includes(club))  return 1.4;
+    return 2.0; // small club
+  }
+
+  // Era rarity multipliers (based on DB proportions)
+  const ERA_MULT = {C:1.5, G:1.0, M:1.4};
+
+  let score = 0;
+  const breakdown = [];
+
+  // ── 1. ERA COHESION (max 30) ──
+  const eraCounts = {C:0,G:0,M:0};
+  players.forEach(p=> eraCounts[p.era]=(eraCounts[p.era]||0)+1);
+  const dominantEra = Object.entries(eraCounts).sort((a,b)=>b[1]-a[1])[0];
+  const dominantCount = dominantEra[1];
+  const eraName = {C:"CLASSIC",G:"GOLDEN",M:"MODERN"}[dominantEra[0]];
+  const eraMult = ERA_MULT[dominantEra[0]]||1;
+  const eraPts = Math.min(30, Math.round((dominantCount/11)*30*eraMult));
+  score += eraPts;
+  breakdown.push("ERA COHESION (" + dominantCount + "/11 " + eraName + " x" + eraMult + "): +" + eraPts);
+
+  // ── 2. CLUB CONNECTIONS (max 30) ──
+  const clubGroups = {};
+  players.forEach(p=>{
+    if(p.primary){
+      if(!clubGroups[p.primary]) clubGroups[p.primary]=[];
+      clubGroups[p.primary].push(p.name);
+    }
+  });
+  let clubPts = 0;
+  const clubBonuses = [];
+  Object.entries(clubGroups).forEach(([club,names])=>{
+    if(names.length>=2){
+      const pairs = names.length*(names.length-1)/2; // combinatorial pairs
+      const mult = clubMult(club);
+      const pts = Math.round(pairs * 4 * mult);
+      clubPts += pts;
+      clubBonuses.push(names.length + "x " + club.toUpperCase() + "(x" + mult + ")");
+    }
+  });
+  const finalClubPts = Math.min(30, clubPts);
+  score += finalClubPts;
+  if(clubBonuses.length) breakdown.push("CLUB LINKS — " + clubBonuses.join(", ") + ": +" + finalClubPts);
+  else breakdown.push("CLUB LINKS (no connections): +0");
+
+  // ── 3. 1966 BONUS (max 25) ──
+  const count1966 = players.filter(p=>p.is1966).length;
+  // Check correct positions for 1966 players
+  const POS_1966 = {
+    "gordon banks":"GK","gordon west":"GK","ron springett":"GK",
+    "george cohen":"RB","ray wilson":"LB","bobby moore":"CB","jack charlton":"CB",
+    "nobby stiles":"CM","roger hunt":"ST","bobby charlton":"CM","geoff hurst":"ST",
+    "martin peters":"MF","alan ball":"MF","jimmy greaves":"ST","terry paine":"MF",
+    "ian callaghan":"MF","john connelly":"MF","peter bonetti":"GK","ron flowers":"DF",
+    "norman hunter":"DF","gerry byrne":"DF","keith newton":"DF"
+  };
+  let correctPos1966 = 0;
+  players.filter(p=>p.is1966).forEach(p=>{
+    const histPos = POS_1966[p.normName];
+    const grp = POS_GROUP[p.pos]||"mf";
+    if(histPos){
+      if(histPos===p.pos || (histPos==="DF"&&grp==="df") || (histPos==="MF"&&grp==="mf")) correctPos1966++;
+    }
+  });
+  let pts1966 = 0;
+  if(count1966>=1) pts1966 = count1966*2; // 2pts each
+  if(count1966>=3) pts1966 += 2;   // bonus for 3+
+  if(count1966>=6) pts1966 += 3;   // bonus for 6+
+  if(count1966>=8) pts1966 += 4;   // bonus for 8+
+  if(count1966===11) pts1966 += 6; // full squad bonus
+  pts1966 += correctPos1966;       // +1 per correct position
+  pts1966 = Math.min(25, pts1966);
+  score += pts1966;
+  if(count1966>0) breakdown.push("1966 LEGENDS (" + count1966 + " players, " + correctPos1966 + " correct pos): +" + pts1966);
+
+  // ── 4. CAPTAIN BONUS (max 20) ──
+  // Captain is handled separately after XI — skip for now, placeholder
+  const captainPts = 0; // will be added when captain is selected
+  // breakdown.push("CAPTAIN: +" + captainPts);
+
+  // ── 5. BALANCE BONUS (max 10) ──
+  const grpCounts = {gk:0,df:0,mf:0,fw:0};
+  players.forEach(p=> grpCounts[p.grp]=(grpCounts[p.grp]||0)+1);
+  let balancePts = 0;
+  if(grpCounts.gk>=1) balancePts+=2;
+  if(grpCounts.df>=3) balancePts+=2;
+  if(grpCounts.mf>=2) balancePts+=2;
+  if(grpCounts.fw>=1) balancePts+=2;
+  if(grpCounts.gk>=1 && grpCounts.df>=3 && grpCounts.mf>=2 && grpCounts.fw>=1) balancePts+=2; // all groups present
+  score += balancePts;
+  breakdown.push("TEAM BALANCE: +" + balancePts);
+
+  // ── 6. UNDERDOG BONUS (max 15) ──
+  // Mutual exclusion: only if no club connections
+  let underdogPts = 0;
+  if(finalClubPts === 0){
+    const top6Count = players.filter(p=>TOP6.includes(p.primary)).length;
+    const uniqueClubs = new Set(players.map(p=>p.primary).filter(Boolean)).size;
+    if(top6Count===0 && uniqueClubs>=7) underdogPts=15;
+    else if(top6Count===0 && uniqueClubs>=5) underdogPts=10;
+    else if(top6Count===0) underdogPts=6;
+    else if(top6Count<=2) underdogPts=3;
+    if(underdogPts>0) breakdown.push("UNDERDOG SPIRIT (" + top6Count + " TOP6, " + uniqueClubs + " clubs): +" + underdogPts);
+  }
+  score += underdogPts;
+
+  // ── 7. SPECIAL COMBO (max 20) ──
+  const nm = players.map(p=>p.normName);
+  const has = (...names) => names.every(n=>nm.includes(chemNorm(n)));
+  const hasN = (n,...names) => names.filter(name=>nm.includes(chemNorm(name))).length>=n;
+
+  let specialTitle = null;
+  let comboPts = 0;
+
+  // TIER 1 — 20pts
+  if(count1966===11){
+    specialTitle="RAMSEY'S WINGLESS WONDERS"; comboPts=20;
+  } else if(count1966>=8){
+    specialTitle="RAMSEY'S WINGLESS WONDERS"; comboPts=18;
+  } else if(hasN(3,"Paul Scholes","Nicky Butt","David Beckham","Gary Neville","Phil Neville")){
+    specialTitle="CLASS OF 92"; comboPts=20;
+  } else if(hasN(3,"Tony Adams","Lee Dixon","Nigel Winterburn","Steve Bould","Martin Keown")){
+    specialTitle="ADAMS' BACK FOUR"; comboPts=18;
+  } else if(has("Bobby Moore","Geoff Hurst","Martin Peters")){
+    specialTitle="ACADEMY OF FOOTBALL"; comboPts=18;
+  }
+  // TIER 2 — 12pts
+  else if(hasN(3,"John Terry","Frank Lampard","Ashley Cole","Wayne Bridge","Gary Cahill")){
+    specialTitle="TERRY & LAMPARD ERA"; comboPts=12;
+  } else if(hasN(3,"Steven Gerrard","Jamie Carragher","Michael Owen","Emile Heskey","Robbie Fowler")){
+    specialTitle="GERRARD'S LIVERPOOL"; comboPts=12;
+  } else if(has("Alan Shearer","Peter Beardsley","Les Ferdinand")){
+    specialTitle="SHEARER'S TOON ARMY"; comboPts=12;
+  } else if(has("Steven Gerrard","Frank Lampard","Paul Scholes")){
+    specialTitle="THREE LIONS MIDFIELD"; comboPts=12;
+  } else if(hasN(3,"Paul Gascoigne","Alan Shearer","David Seaman","Tony Adams","Stuart Pearce")){
+    specialTitle="NEARLY MEN – EURO 96"; comboPts=12;
+  } else if(has("Bryan Robson","Ray Wilkins","Mark Hughes")){
+    specialTitle="CAPTAIN MARVEL'S UNITED"; comboPts=12;
+  } else if(hasN(3,"Peter Shilton","Stuart Pearce","Des Walker","Neil Webb","Garry Birtles")){
+    specialTitle="CLOUGH'S FOREST"; comboPts=12;
+  } else if(count1966>=3){
+    specialTitle="WORLD CHAMPIONS BACKBONE"; comboPts=8;
+  }
+  // TIER 3 — era/style based (5pts)
+  else {
+    const eras = Object.entries(eraCounts).filter(([,v])=>v>0).length;
+    const top6Count2 = players.filter(p=>TOP6.includes(p.primary)).length;
+    const uniqueClubs2 = new Set(players.map(p=>p.primary).filter(Boolean)).size;
+    if(underdogPts>=15){
+      specialTitle="THE UNDERDOGS"; comboPts=5;
+    } else if(underdogPts>=10){
+      specialTitle="TRUE FOOTBALL SCHOLAR"; comboPts=5;
+    } else if(eras===3 && eraCounts.C>=2 && eraCounts.G>=2 && eraCounts.M>=2){
+      specialTitle="MIXED ERAS – ENGLISH CHAOS"; comboPts=3;
+    } else if(dominantCount>=9 && dominantEra[0]==="M"){
+      specialTitle="MODERN ENGLAND RISING"; comboPts=5;
+    } else if(dominantCount>=9 && dominantEra[0]==="G"){
+      specialTitle="GOLDEN GENERATION"; comboPts=5;
+    } else if(dominantCount>=9 && dominantEra[0]==="C"){
+      specialTitle="CLASSIC BACKBONE"; comboPts=5;
+    } else if(dominantEra[0]==="C"){
+      specialTitle="CLASSIC ENGLAND LEGENDS"; comboPts=3;
+    } else if(dominantEra[0]==="M"){
+      specialTitle="NEXT GENERATION"; comboPts=3;
+    } else {
+      specialTitle="ENGLAND'S FINEST"; comboPts=2;
+    }
+  }
+  score += comboPts;
+  breakdown.push("COMBO — " + specialTitle + ": +" + comboPts);
+
+  // ── STAR RATING ──
+  let stars = "";
+  let starLabel = "";
+  if(score>=116){     stars="🏆"; starLabel="WORLD CLASS"; }
+  else if(score>=96){ stars="⭐⭐⭐⭐⭐"; starLabel="FOOTY LEGEND"; }
+  else if(score>=76){ stars="⭐⭐⭐⭐"; starLabel="FOOTBALL EXPERT"; }
+  else if(score>=56){ stars="⭐⭐⭐"; starLabel="TRUE SUPPORTER"; }
+  else if(score>=36){ stars="⭐⭐"; starLabel="FOOTBALL FAN"; }
+  else {              stars="⭐"; starLabel="PUB REGULAR"; }
+
+  // ── SHOW RESULTS ──
+  const col = score>=96?"var(--green)":score>=76?"var(--gold)":"var(--red)";
+  document.getElementById("chem-score").textContent = score + " pts";
+  document.getElementById("chem-score").style.color = col;
+  document.getElementById("chem-bar").style.background = col;
+  document.getElementById("chem-bar").style.width = Math.min(100,score/1.5)+"%";
+  document.getElementById("chem-title").innerHTML =
+    "<div style='font-size:16px;margin-bottom:6px'>" + stars + "</div>" +
+    "<div>" + specialTitle + "</div>" +
+    "<div style='font-size:7px;color:#888;margin-top:4px;letter-spacing:2px'>" + starLabel + "</div>";
+  document.getElementById("chem-title").style.color = col;
+  document.getElementById("chem-breakdown").innerHTML = breakdown.map(b=>"• "+b).join("<br>");
+
+  const results = document.getElementById("chem-results");
+  results.style.borderColor = col;
+  results.style.display = "block";
+  setTimeout(()=>{ document.getElementById("chem-bar").style.width = Math.min(100,score/1.5)+"%"; },100);
+
+  highlightChemDots(players);
+  results.scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+
+
+function highlightChemDots(players){
+  const wrap = document.getElementById("wrap");
+
+  // Clear previous chemistry classes
+  wrap.querySelectorAll(".pdot").forEach(el=>{
+    el.classList.remove("chem-era","chem-club","chem-both","chem-1966");
+  });
+
+  // Count 1966 players
+  const count1966 = players.filter(p=>p.is1966).length;
+
+  // Find club groups (2+ players same primary club)
+  const clubGroups = {};
+  players.forEach(p=>{
+    if(p.primary){
+      if(!clubGroups[p.primary]) clubGroups[p.primary]=[];
+      clubGroups[p.primary].push(p.name);
+    }
+  });
+  const clubConnected = new Set();
+  Object.values(clubGroups).forEach(names=>{
+    if(names.length>=2) names.forEach(n=>clubConnected.add(n));
+  });
+
+  // Find era groups (2+ players same era)
+  const eraCounts = {};
+  players.forEach(p=>{ eraCounts[p.era]=(eraCounts[p.era]||0)+1; });
+  const eraConnected = new Set();
+  players.forEach(p=>{
+    if((eraCounts[p.era]||0)>=2) eraConnected.add(p.name);
+  });
+
+  // Apply classes — priority: 1966 > both > club > era
+  players.forEach(p=>{
+    const idx = slots.findIndex(s=>s.dbName===p.name);
+    const el = wrap.querySelector('[data-idx="'+idx+'"]');
+    if(!el) return;
+
+    if(p.is1966 && count1966>=2)
+      el.classList.add("chem-1966");
+    else if(clubConnected.has(p.name) && eraConnected.has(p.name))
+      el.classList.add("chem-both");
+    else if(clubConnected.has(p.name))
+      el.classList.add("chem-club");
+    else if(eraConnected.has(p.name))
+      el.classList.add("chem-era");
+  });
+}
+
+
+function updateCounter(){
+  const filled = slots.filter(s=>s.name&&s.name.trim()).length;
+  const counter = document.getElementById("xi-counter");
+  const btn = document.getElementById("chem-btn");
+  if(!counter||!btn) return;
+
+  counter.textContent = filled+"/11";
+  if(filled===11){
+    counter.style.color="var(--green)";
+    btn.disabled=false;
+    btn.style.borderColor="var(--gold)";
+    btn.style.color="var(--gold)";
+    btn.style.cursor="pointer";
+  } else {
+    counter.style.color = filled>=6 ? "var(--gold)" : "#444";
+    btn.disabled=true;
+    btn.style.borderColor="#222";
+    btn.style.color="#333";
+    btn.style.cursor="not-allowed";
+    // Hide chemistry results if XI is incomplete
+    const cr=document.getElementById("chem-results");
+    if(cr) cr.style.display="none";
+    document.querySelectorAll(".pdot").forEach(el=>el.classList.remove("chem-era","chem-club","chem-both","chem-1966"));
+  }
+}
+window.addEventListener("load",()=>{ render(); updateCounter(); });
+
+// Mobile keyboard handling — scroll modal up when keyboard appears
+if(window.visualViewport){
+  window.visualViewport.addEventListener("resize", ()=>{
+    const modal = document.getElementById("modal");
+    if(!modal.classList.contains("on")) return;
+    const mbox = document.getElementById("mbox");
+    if(!mbox) return;
+    // When keyboard opens, viewport shrinks — scroll mbox into view
+    setTimeout(()=>{
+      mbox.scrollIntoView({behavior:"smooth", block:"end"});
+    }, 100);
+  });
+}
+window.addEventListener("resize",()=>{ render(); updateCounter(); });
+</script>
+
+  <div id="chem-score" style="font-size:28px;color:var(--gold);text-align:center;margin-bottom:8px;letter-spacing:4px"></div>
+  <div id="chem-bar-wrap" style="background:#111;height:12px;border:1px solid #333;margin-bottom:16px;border-radius:2px">
+    <div id="chem-bar" style="height:100%;background:var(--gold);width:0%;transition:width .8s ease;border-radius:2px"></div>
+  </div>
+  <div id="chem-title" style="font-size:9px;color:#fff;text-align:center;letter-spacing:2px;margin-bottom:16px;line-height:1.6"></div>
+  <div id="chem-breakdown" style="font-size:6px;color:#555;letter-spacing:1px;line-height:2;border-top:1px solid #111;padding-top:12px"></div>
+  <button onclick="document.getElementById('chem-modal').style.display='none'" style="width:100%;margin-top:16px;background:#000;border:2px solid #333;color:#444;font-family:var(--px);font-size:7px;padding:10px;cursor:pointer;letter-spacing:1px">← CLOSE</button>
+</div>
+</div>
+</body>
+</html>
