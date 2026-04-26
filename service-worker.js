@@ -14,7 +14,7 @@
 // clients that a new version is ready.
 // ════════════════════════════════════════════════════════════════════════════
 
-const CACHE_VERSION = 'v2';
+const CACHE_VERSION = 'v4';
 const CORE_CACHE = 'footy-core-' + CACHE_VERSION;
 const FONT_CACHE = 'footy-fonts-' + CACHE_VERSION;
 
@@ -24,17 +24,19 @@ const CORE_ASSETS = [
   '/index.html',
   '/manifest.json',
   '/icon-192.png',
-  '/icon-512.png'
+  '/icon-512.png',
+  '/icon-192-maskable.png',
+  '/icon-512-maskable.png'
 ];
 
 // ─── INSTALL ────────────────────────────────────────────────────────────────
-// Pre-cache the app shell. Skip waiting so a new SW activates immediately
-// instead of waiting for all tabs to close.
+// Pre-cache the app shell. New SWs WAIT until the user explicitly
+// activates them via the update banner (or all tabs close).
+// This protects users from being interrupted mid-game.
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CORE_CACHE)
       .then(cache => cache.addAll(CORE_ASSETS))
-      .then(() => self.skipWaiting())
   );
 });
 
