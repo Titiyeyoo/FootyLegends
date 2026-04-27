@@ -14,7 +14,7 @@
 // clients that a new version is ready.
 // ════════════════════════════════════════════════════════════════════════════
 
-const CACHE_VERSION = 'v9';
+const CACHE_VERSION = 'v14';
 const CORE_CACHE = 'footy-core-' + CACHE_VERSION;
 const FONT_CACHE = 'footy-fonts-' + CACHE_VERSION;
 
@@ -24,6 +24,8 @@ const CORE_ASSETS = [
   '/index.html',
   '/styles.css',
   '/db.js',
+  '/storage.js',
+  '/core.js',
   '/manifest.json',
   '/icon-192.png',
   '/icon-512.png',

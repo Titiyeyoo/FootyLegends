@@ -6,7 +6,7 @@
    Schema: { n: name, a: [aliases], e: era (C|G|M), p: pos (GK|DF|MF|FW), c: [clubs] }
    ════════════════════════════════════════════════════════════════════ */
 
-const DB = [
+var DB = [
   {n:"Gordon West",a:["gordon west","west"],e:"C",p:"GK",c:["everton"]},
   {n:"Gerry Byrne",a:["gerry byrne"],e:"C",p:"DF",c:["liverpool"]},
   {n:"Gordon Banks",a:["banks","gordon banks"],e:"C",p:"GK",c:["leicester","stoke"]},

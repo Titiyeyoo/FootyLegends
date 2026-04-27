@@ -8,7 +8,68 @@
    - lev(a, b), isAlmost(input, found): typo detection
    - refreshTitleScreen(): unlock states + progress widget
    - flashRed(), flashGreen(): visual feedback
+   - safeParse(raw, fallback): localStorage corruption-proof JSON parse
+   - withLock(fn, ms): debounce/spam protection wrapper
    ════════════════════════════════════════════════════════════════════ */
+
+// ─── safeParse() — decode JSON from localStorage with fallback on corruption ──
+// Use everywhere localStorage data is read.
+// If user manually breaks a key (DevTools, extension, browser bug), game survives.
+function safeParse(raw, fallback){
+  if(raw === null || raw === undefined) return fallback;
+  try {
+    const v = JSON.parse(raw);
+    return v;
+  } catch(e){
+    console.warn('safeParse: corrupt JSON, falling back to default. Raw:', raw);
+    return fallback;
+  }
+}
+
+// ─── withLock() — wraps a function so it can't be called again within `ms` ms ──
+// Used on critical buttons (start game, lock in XI, draw blind) to prevent
+// double-clicks from spam-tapping users on slow phones.
+function withLock(fn, ms){
+  let locked = false;
+  ms = ms || 600;
+  return function(){
+    if(locked) return;
+    locked = true;
+    try { return fn.apply(this, arguments); }
+    finally {
+      setTimeout(()=>{ locked = false; }, ms);
+    }
+  };
+}
+
+// ─── APP VERSION + migration check ─────────────────────────────────────────
+// Bump APP_VERSION when localStorage shape changes (new keys, renamed keys, etc).
+// Migration runs once at app load; old version → run migration steps in order.
+const APP_VERSION = '1.0.0';
+
+function checkVersion(){
+  let saved;
+  try { saved = localStorage.getItem('fl_app_version'); }
+  catch(e){ return; } // private mode — skip
+
+  if(saved === APP_VERSION) return; // already current
+
+  if(saved === null){
+    // First-time user (or pre-versioning install)
+    try { localStorage.setItem('fl_app_version', APP_VERSION); }
+    catch(e){}
+    return;
+  }
+
+  // Future-proof: when we change schemas, add migration steps here.
+  // Example:
+  //   if(saved === '1.0.0') migrateV1ToV2();
+  //   if(saved === '1.0.1') migrateV1_1ToV2();
+  console.log('[VERSION] Migrating from', saved, 'to', APP_VERSION);
+
+  try { localStorage.setItem('fl_app_version', APP_VERSION); }
+  catch(e){}
+}
 
 // ─── norm() ────────────────────────────────────────────────────────
 function norm(s){
