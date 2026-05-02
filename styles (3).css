@@ -1,0 +1,489 @@
+/* ════════════════════════════════════════════════════════════════════
+   Footy Legends Quiz — Stylesheet
+   ════════════════════════════════════════════════════════════════════
+   Extracted from index.html as part of Phase 4 file split.
+   ════════════════════════════════════════════════════════════════════ */
+
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --g1:#1a5c0a;--g2:#196009;
+  --px:'Press Start 2P',monospace;
+  --green:#00ff41;--yellow:#ffdd00;--red:#ff3300;--grey:#aaaaaa;
+}
+html,body{width:100%;min-height:100vh;background:var(--g1);font-family:var(--px);overflow-x:hidden}
+body.xi-mode{background:#050f05}
+/* Mobile: prevent zoom on input focus */
+input[type="text"]{font-size:16px!important}
+@supports(height:100dvh){
+  .screen{min-height:100dvh}
+}
+
+/* PITCH */
+.pitch{position:fixed;inset:0;z-index:0;
+  background:repeating-linear-gradient(180deg,var(--g1) 0,var(--g1) 55px,var(--g2) 55px,var(--g2) 110px)}
+.pitch svg{position:absolute;inset:0;width:100%;height:100%;opacity:.4;pointer-events:none}
+
+/* SCREENS */
+.screen{display:none;position:relative;z-index:10;min-height:100vh;
+  flex-direction:column;align-items:center;padding:14px 12px 40px}
+.screen.on{display:flex}
+.screen.mid{justify-content:center}
+
+/* PANELS */
+.box{background:#000;border:3px solid var(--green);padding:16px 14px;width:100%;max-width:580px;
+  box-shadow:0 0 0 1px #000,0 0 0 5px var(--green)}
+
+/* TYPE */
+.logo{font-size:clamp(24px,7vw,46px);color:var(--green);text-align:center;
+  text-shadow:3px 3px 0 #003300,0 0 20px rgba(0,255,65,.25);letter-spacing:3px;line-height:1.25}
+.sub{font-size:8px;color:var(--grey);text-align:center;letter-spacing:3px;margin-top:4px}
+.hdr{font-size:clamp(9px,2.5vw,13px);color:var(--green);text-align:center;letter-spacing:2px;margin-bottom:14px}
+.lbl{font-size:7px;color:var(--grey);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
+
+/* BUTTONS */
+.btn{display:block;width:100%;background:#000;border:3px solid var(--green);
+  color:var(--green);font-family:var(--px);font-size:clamp(9px,2.5vw,12px);
+  padding:14px 10px;text-align:center;cursor:pointer;letter-spacing:2px;
+  transition:.1s;line-height:1.7;margin-bottom:10px}
+.btn:hover,.btn:active{background:var(--green);color:#000}
+.btn-dim{border-color:#333;color:#444}
+.btn-dim:hover,.btn-dim:active{background:#333;color:#000}
+.btn-red{border-color:var(--red);color:var(--red)}
+.btn-red:hover,.btn-red:active{background:var(--red);color:#000}
+.btn-y{border-color:var(--yellow);color:var(--yellow)}
+.btn-y:hover,.btn-y:active{background:var(--yellow);color:#000}
+/* Disabled buttons must not respond to hover/active (mobile sticky-tap fix) */
+.btn:disabled,.btn[disabled],
+.btn:disabled:hover,.btn:disabled:active,
+.btn[disabled]:hover,.btn[disabled]:active{
+  background:transparent!important;cursor:not-allowed}
+
+/* Global tap feedback — every button shrinks a hair on press for instant response */
+button:active:not(:disabled){
+  transform:scale(.96);
+  transition:transform .05s ease;
+}
+
+/* INPUT */
+.inp{width:100%;background:#000;border:3px solid #333;color:#ddd;
+  font-family:var(--px);font-size:clamp(13px,4vw,19px);text-align:center;
+  padding:15px 10px;outline:none;letter-spacing:2px;caret-color:var(--green);
+  transition:border-color .2s}
+.inp:focus{border-color:var(--yellow)}
+.inp::placeholder{color:#2a2a2a;font-size:clamp(9px,2.5vw,12px)}
+
+/* HUD */
+.hud{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;
+  width:100%;max-width:580px;margin-bottom:8px}
+.hc{background:#000;border:2px solid #1a1a1a;padding:8px 4px;text-align:center}
+.hv{font-size:clamp(18px,5vw,26px);line-height:1.1}
+.t-g{color:var(--green)} .t-y{color:var(--yellow)} .t-r{color:var(--red)} .t-w{color:#fff}
+
+/* TIMER BAR */
+.tbar-wrap{width:100%;max-width:580px;margin-bottom:8px}
+.tbar{height:8px;background:#111;border:1px solid #222;overflow:hidden}
+.tbar-fill{height:100%;background:var(--green);transition:width .9s linear,background .3s}
+
+/* LIVES */
+.lives-row{display:flex;align-items:center;gap:6px;
+  width:100%;max-width:580px;margin-bottom:8px}
+.life{font-size:18px;transition:.3s}
+.life.lost{filter:grayscale(1);opacity:.2;transform:scale(.75)}
+
+/* ANSWER TAGS */
+.ans-wrap{width:100%;max-width:580px;display:flex;flex-wrap:wrap;gap:5px;
+  margin-bottom:8px;max-height:120px;overflow-y:auto}
+.tag{background:#001800;border:1px solid #004400;color:var(--green);
+  font-size:7px;padding:4px 8px;letter-spacing:1px;
+  animation:tagpop .2s ease}
+@keyframes tagpop{from{transform:scale(0)}to{transform:scale(1)}}
+
+/* PROGRESS */
+.prog-wrap{width:100%;max-width:580px;margin-bottom:6px}
+.prog-bar{height:5px;background:#111;border:1px solid #222;overflow:hidden}
+.prog-fill{height:100%;background:var(--green);transition:width .3s}
+
+/* STREAK FLASH */
+.streak-flash{position:fixed;top:50%;left:50%;
+  transform:translate(-50%,-50%) scale(0);
+  font-family:var(--px);font-size:clamp(16px,5vw,26px);
+  color:var(--yellow);text-shadow:3px 3px 0 #553300;
+  text-align:center;z-index:600;pointer-events:none;
+  max-width:90vw;padding:0 12px;line-height:1.3;
+  transition:transform .15s,opacity .3s}
+.streak-flash.on{transform:translate(-50%,-50%) scale(1)}
+.streak-flash.fade{opacity:0}
+
+/* TOAST */
+.toast{position:fixed;top:10px;left:50%;
+  transform:translateX(-50%) translateY(-70px);
+  background:#000;border:2px solid var(--green);
+  color:var(--green);font-family:var(--px);font-size:9px;
+  padding:8px 16px;letter-spacing:2px;transition:.2s;
+  z-index:999;max-width:90vw;text-align:center;
+  white-space:normal;word-wrap:break-word;pointer-events:none}
+.toast.on{transform:translateX(-50%) translateY(0)}
+.toast.err{border-color:var(--red);color:var(--red)}
+.toast.warn{border-color:var(--yellow);color:var(--yellow)}
+
+/* RESULTS */
+.score-reveal{font-size:clamp(70px,22vw,110px);color:var(--yellow);
+  text-shadow:4px 4px 0 #553300;text-align:center;line-height:1;margin-bottom:8px;
+  animation:bigpop .5s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes bigpop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+
+/* SHARE BUTTONS */
+.share-row{display:flex;gap:8px;width:100%;max-width:400px;justify-content:center}
+.share-btn{flex:1;background:#000;border:2px solid #333;
+  font-family:var(--px);font-size:8px;color:#fff;
+  padding:10px 6px;cursor:pointer;text-align:center;letter-spacing:1px;
+  transition:.1s}
+.share-btn:hover,.share-btn:active{background:#222}
+.share-icon{font-size:18px;display:block;margin-bottom:4px}
+
+/* HOF */
+.hof-row{display:flex;align-items:center;gap:8px;
+  padding:10px 6px;border-bottom:1px solid #1a1a1a}
+.hof-row:last-child{border-bottom:none}
+.hof-rank{font-size:10px;color:var(--gold);min-width:34px;letter-spacing:1px}
+.hof-name{font-size:8px;color:#fff;flex:1;letter-spacing:1px}
+.hof-pts{font-size:12px;color:var(--green);font-weight:bold;letter-spacing:1px}
+.hof-date{font-size:7px;color:#666;margin-top:3px;font-family:var(--px);letter-spacing:1px}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:900;
+  display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.on{display:flex}
+.modal-box{background:#050f05;border:3px solid var(--green);padding:16px;
+  width:100%;max-width:480px;max-height:80vh;display:flex;flex-direction:column}
+.modal-title{font-size:10px;color:var(--green);letter-spacing:2px;margin-bottom:12px;text-align:center}
+.modal-list{overflow-y:auto;flex:1;display:flex;flex-wrap:wrap;gap:5px;padding:4px}
+.modal-close{margin-top:12px}
+
+/* Dark background screens - HOF, Results, Game Over */
+#s-hof.on, #s-results.on, #s-gameover.on{
+  background:#050f05;
+  background-image:none;
+}
+
+/* Dark pitch - same lines but dark green stripes */
+.pitch-dark{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:repeating-linear-gradient(180deg,#080808 0,#080808 55px,#0d0d0d 55px,#0d0d0d 110px);
+  display:none}
+.pitch-dark svg{position:absolute;inset:0;width:100%;height:100%;opacity:.5}
+
+/* Green flash overlay */
+#green-flash{position:fixed;inset:0;background:var(--green);opacity:0;
+  pointer-events:none;z-index:800;transition:opacity .25s ease}
+
+/* Score pulse */
+@keyframes scorepulse{
+  0%{transform:scale(1)}
+  40%{transform:scale(1.4)}
+  100%{transform:scale(1)}
+}
+
+/* DIVIDER */
+.div{width:100%;max-width:580px;height:1px;
+  background:linear-gradient(90deg,transparent,var(--green),transparent);
+  margin:12px 0;opacity:.35}
+
+@media(max-width:360px){.logo{font-size:22px}.hud{gap:3px}}
+@keyframes logopulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+
+/* ═══ XI BUILDER STYLES ═══ */
+
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --gold:#c8960c;--green:#00ff41;--orange:#ff6600;--red:#ff3300;
+  --px:'Press Start 2P',monospace;
+}
+#s-xi .xi-inner{font-family:var(--px);
+  display:flex;flex-direction:column;align-items:center;
+  min-height:100vh;padding:10px 6px 40px}
+#s-xi h1{font-size:8px;color:var(--gold);letter-spacing:3px;margin-bottom:10px;text-align:center}
+#wrap{position:relative;width:min(340px,94vw);aspect-ratio:68/52.5;touch-action:none}
+canvas#pitch{display:block;width:100%;height:100%}
+
+/* PLAYER DOTS */
+.pdot{
+  position:absolute;
+  display:flex;flex-direction:column;align-items:center;
+  cursor:pointer;z-index:10;user-select:none;touch-action:none;
+  transition:left .35s ease, top .35s ease;
+  transform:translate(-50%,-50%);
+}
+.pdot:active{cursor:grabbing}
+.pcircle{
+  width:34px;height:34px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--px);font-size:7px;
+  transition:background .2s;
+}
+.pdot:active .pcircle{transform:scale(1.12)}
+.pname{
+  font-size:6px;letter-spacing:.5px;margin-top:3px;
+  text-align:center;white-space:nowrap;
+  text-shadow:1px 1px 0 #000,0 0 6px #000,0 0 10px #000;
+  max-width:62px;overflow:hidden;text-overflow:ellipsis;
+  pointer-events:none}
+.empty .pcircle{border:2px dashed #2a2a2a;background:rgba(0,0,0,.45);color:#2a2a2a}
+.filled .pcircle{border:2.5px solid;background:rgba(0,0,0,.75);font-size:10px;font-weight:bold}
+
+/* colours by group */
+.grp-gk .pcircle{border-color:#ffdd00!important;color:#ffdd00}
+.grp-gk .pname{color:#ffdd00}
+.grp-df .pcircle{border-color:#88ff44!important;color:#88ff44}
+.grp-df .pname{color:#88ff44}
+.grp-mf .pcircle{border-color:#ff6600!important;color:#ff6600}
+.grp-mf .pname{color:#ff6600}
+.grp-fw .pcircle{border-color:#ff2200!important;color:#ff2200}
+.grp-fw .pname{color:#ff2200}
+
+/* Chemistry highlight classes — written with higher specificity
+   (double class selector) so they always win over the .grp-* colours
+   that are also applied to the same dot */
+.pdot.chem-era .pcircle{
+  border-color:#bbbbbb!important;color:#bbbbbb!important;
+  box-shadow:0 0 0 2px #bbbbbb!important}
+.pdot.chem-era .pname{color:#bbbbbb!important}
+
+.pdot.chem-club .pcircle{
+  border-color:#00ddff!important;color:#00ddff!important;
+  box-shadow:0 0 0 2px #00ddff!important}
+.pdot.chem-club .pname{color:#00ddff!important}
+
+/* Double border: era + club */
+.pdot.chem-both .pcircle{
+  border-color:#00ddff!important;color:#00ddff!important;
+  outline:2px solid #888888;outline-offset:3px;
+  box-shadow:0 0 0 2px #00ddff!important}
+.pdot.chem-both .pname{color:#00ddff!important}
+
+/* 1966 — golden glow, overrides all */
+.pdot.chem-1966 .pcircle{
+  border-color:#ffd700!important;color:#ffd700!important;
+  box-shadow:0 0 0 3px #ffd700,0 0 12px #ffd700!important;
+  outline:none!important}
+.pdot.chem-1966 .pname{color:#ffd700!important}
+
+/* ── LAYER 1: SLOT ADD CELEBRATION ── */
+/* Flash on the dot that was just added */
+@keyframes slotFlash{
+  0%  {box-shadow:0 0 0 0 #00ff88, 0 0 0 0 #00ff88}
+  40% {box-shadow:0 0 0 4px #00ff88, 0 0 20px 8px #00ff88}
+  100%{box-shadow:0 0 0 0 rgba(0,255,136,0), 0 0 0 0 rgba(0,255,136,0)}
+}
+.pdot.just-added .pcircle{animation:slotFlash .25s ease-out}
+
+/* Pulse glow on dots that share chemistry with the new one */
+@keyframes linkPulse{
+  0%  {transform:scale(1)}
+  40% {transform:scale(1.15)}
+  100%{transform:scale(1)}
+}
+.pdot.chem-linked-pulse .pcircle{animation:linkPulse .4s ease-out}
+
+/* Screen shake on big combo (XI builder) */
+@keyframes screenShake{
+  0%,100%{transform:translate(0,0)}
+  20%{transform:translate(-3px,1px)}
+  40%{transform:translate(3px,-1px)}
+  60%{transform:translate(-2px,-2px)}
+  80%{transform:translate(2px,2px)}
+}
+#wrap.shake{animation:screenShake .35s ease-in-out}
+
+/* ── QUIZ LIVE FEEDBACK ── */
+/* Popup floats above the quiz input when player scores */
+#quiz-popup{overflow:visible}
+.quiz-pop-line{
+  position:absolute;left:50%;bottom:8px;transform:translateX(-50%);
+  background:rgba(0,0,0,.92);border:1px solid currentColor;
+  padding:6px 14px;font-family:var(--px);font-size:12px;letter-spacing:2px;
+  max-width:90vw;text-align:center;word-wrap:break-word;
+  animation:popFloat 1.8s ease-out forwards}
+.quiz-pop-line.special{
+  box-shadow:0 0 20px currentColor;font-size:14px;padding:8px 18px;letter-spacing:2px}
+
+/* Screen shake for big streak milestones (quiz) */
+@keyframes gameShake{
+  0%,100%{transform:translate(0,0)}
+  20%{transform:translate(-4px,2px)}
+  40%{transform:translate(4px,-2px)}
+  60%{transform:translate(-3px,-3px)}
+  80%{transform:translate(3px,3px)}
+}
+#s-game.shake{animation:gameShake .4s ease-in-out}
+
+/* ── LAYER 2: CHEMISTRY POPUP ── */
+#chem-popup{
+  position:absolute;top:12px;left:50%;transform:translateX(-50%);
+  z-index:25;pointer-events:none;
+  display:flex;flex-direction:column;gap:4px;align-items:center;
+  max-width:min(280px,90vw);
+  opacity:0;transition:opacity .2s ease}
+#chem-popup.on{opacity:1}
+.chem-pop-line{
+  background:rgba(0,0,0,.85);border:1px solid currentColor;
+  padding:5px 12px;font-family:var(--px);font-size:13px;letter-spacing:2px;
+  max-width:100%;text-align:center;line-height:1.3;
+  word-break:break-word;
+  animation:popFloat 2.5s ease-out forwards}
+.chem-pop-line.big-combo{
+  box-shadow:0 0 20px currentColor}
+@keyframes popFloat{
+  0%   {transform:translateY(10px);opacity:0}
+  8%   {transform:translateY(0);opacity:1}
+  85%  {transform:translateY(-4px);opacity:1}
+  100% {transform:translateY(-14px);opacity:0}
+}
+
+/* ── CAPTAIN ARMBAND ── */
+/* Small "C" badge on top-right of captain's circle */
+.pdot.captain .pcircle::after{
+  content:"C";
+  position:absolute;
+  top:-6px;right:-6px;
+  width:14px;height:14px;
+  background:#ffd700;
+  color:#000;
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--px);font-size:8px;font-weight:bold;
+  border:1.5px solid #000;
+  box-shadow:0 0 6px #ffd700;
+  z-index:2;
+}
+.pdot.captain .pcircle{position:relative}
+
+/* Captain selection mode — subtle hover grow on eligible dots, dim empty dots */
+.pdot.cap-select-eligible{
+  cursor:pointer!important;
+  transition:transform .2s ease, left .35s ease, top .35s ease;
+}
+.pdot.cap-select-eligible:hover{
+  transform:translate(-50%,-50%) scale(1.15);
+  z-index:20;
+}
+.pdot.cap-select-eligible:hover .pcircle{
+  box-shadow:0 0 12px var(--gold);
+}
+.pdot.cap-select-dim{opacity:.25;pointer-events:none}
+
+/* LEGEND */
+
+/* TOAST */
+.toast{position:fixed;top:10px;left:50%;
+  transform:translateX(-50%) translateY(-80px);
+  background:#000;border:2px solid var(--green);color:var(--green);
+  font-family:var(--px);font-size:8px;padding:8px 14px;letter-spacing:2px;
+  z-index:999;max-width:90vw;text-align:center;
+  white-space:normal;word-wrap:break-word;transition:.2s;pointer-events:none}
+.toast.on{transform:translateX(-50%) translateY(0)}
+.toast.err{border-color:var(--red);color:var(--red)}
+.toast.warn{border-color:var(--gold);color:var(--gold)}
+
+/* MODAL */
+#modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);
+  z-index:100;align-items:flex-start;justify-content:center;
+  padding:20px 10px 20px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+#modal.on{display:flex}
+#mbox{background:#050f05;border:2px solid var(--green);
+  width:100%;max-width:420px;padding:16px 14px 28px;
+  /* Extra breathing room at the bottom so keyboard can't hide the confirm button */
+  margin-bottom:env(keyboard-inset-height, 60px)}
+#mtitle{font-size:7px;color:var(--green);letter-spacing:2px;margin-bottom:14px}
+
+/* DROPDOWN */
+.mrow{margin-bottom:12px}
+.mrow label{font-size:6px;color:#777;letter-spacing:1px;display:block;margin-bottom:6px}
+.msel{width:100%;background:#000;border:2px solid var(--green);color:#fff;
+  font-family:var(--px);font-size:9px;padding:10px 8px;outline:none;
+  letter-spacing:1px;cursor:pointer;appearance:none;-webkit-appearance:none}
+.msel option{background:#000;color:#fff;font-family:monospace;font-size:12px;padding:4px}
+.msel optgroup{font-family:monospace;font-size:11px}
+
+/* name + number row */
+#mname-row{display:flex;gap:8px;align-items:flex-end;margin-bottom:10px}
+.minp{background:#000;border:2px solid var(--green);color:#fff;
+  font-family:var(--px);font-size:13px;padding:8px;outline:none;letter-spacing:1px}
+#mname{flex:1;text-transform:uppercase}
+#mnum{width:62px;text-align:center}
+
+/* suggestions */
+
+/* buttons */
+#mbtns{display:flex;gap:6px;margin-top:12px}
+#msave{flex:2;background:var(--green);color:#000;border:none;
+  font-family:var(--px);font-size:8px;padding:11px;cursor:pointer}
+#mclear{flex:1;background:#000;color:#444;border:2px solid #222;
+  font-family:var(--px);font-size:6px;padding:11px;cursor:pointer}
+#mcancel{width:100%;margin-top:6px;background:#000;color:#333;
+  border:2px solid #111;font-family:var(--px);font-size:6px;padding:8px;cursor:pointer}
+
+/* ─── Animations & late additions ─── */
+
+@keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+
+/* Milestone reward pulse — used for LOCK IN button when XI hits 11/11 */
+@keyframes readyPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(200,150,12,.6)}
+  50%    {box-shadow:0 0 0 10px rgba(200,150,12,0)}
+}
+.milestone-ready{animation:readyPulse 1.4s ease-in-out infinite}
+
+/* Unlock overlay — giant icon glows while overlay is up */
+@keyframes unlockGlow{
+  0%,100%{transform:scale(1);filter:drop-shadow(0 0 20px rgba(170,136,255,.7))}
+  50%    {transform:scale(1.08);filter:drop-shadow(0 0 40px rgba(170,136,255,1))}
+}
+
+/* Elimination drama overlay — quick fade-out */
+@keyframes elimFlash{
+  0%   {opacity:0;background:rgba(120,0,0,0)}
+  10%  {opacity:1;background:rgba(120,0,0,.85)}
+  85%  {opacity:1;background:rgba(120,0,0,.85)}
+  100% {opacity:0;background:rgba(120,0,0,0)}
+}
+@keyframes elimSkull{
+  0%   {transform:scale(0) rotate(-45deg);opacity:0}
+  20%  {transform:scale(1.4) rotate(0deg);opacity:1}
+  35%  {transform:scale(1) rotate(0deg)}
+  85%  {transform:scale(1)}
+  100% {transform:scale(.9);opacity:.7}
+}
+
+/* Tier upgrade icon bounce */
+@keyframes tierBounce{
+  0%,100%{transform:scale(1) translateY(0)}
+  50%    {transform:scale(1.1) translateY(-6px)}
+}
+
+/* Newly-unlocked Title button pulses purple for first visit */
+@keyframes newUnlockPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(170,136,255,.7)}
+  50%    {box-shadow:0 0 0 12px rgba(170,136,255,0)}
+}
+.new-unlock-pulse{animation:newUnlockPulse 1.4s ease-in-out infinite}
+
+/* PUB MODE animations */
+@keyframes pubTeamPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(255,153,51,0.6)}
+  50%    {box-shadow:0 0 0 8px rgba(255,153,51,0)}
+}
+.pub-team-active{animation:pubTeamPulse 1.2s ease-in-out infinite}
+
+@keyframes pubShake{
+  0%,100%{transform:translate(0,0)}
+  25%{transform:translate(-6px,2px)}
+  50%{transform:translate(6px,-2px)}
+  75%{transform:translate(-4px,-2px)}
+}
+.pub-error{animation:pubShake .4s ease-in-out}
+
+@keyframes pubFadeOut{
+  0%{opacity:1;transform:scale(1)}
+  100%{opacity:.3;transform:scale(.95)}
+}
+.pub-eliminated{animation:pubFadeOut .6s ease-out forwards;text-decoration:line-through}
