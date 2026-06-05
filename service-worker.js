@@ -14,7 +14,7 @@
 // clients that a new version is ready.
 // ════════════════════════════════════════════════════════════════════════════
 
-const CACHE_VERSION = 'v170';
+const CACHE_VERSION = 'v171';
 const CORE_CACHE = 'footy-core-' + CACHE_VERSION;
 const FONT_CACHE = 'footy-fonts-' + CACHE_VERSION;
 
