@@ -1,0 +1,1311 @@
+/* ════════════════════════════════════════════════════════════════════
+   Footy Legends Quiz — Stylesheet
+   ════════════════════════════════════════════════════════════════════
+   Extracted from index.html as part of Phase 4 file split.
+   ════════════════════════════════════════════════════════════════════ */
+
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --g1:#1a5c0a;--g2:#196009;
+  --px:'Press Start 2P',monospace;
+  --green:#00ff41;--yellow:#ffdd00;--red:#ff3300;--grey:#aaaaaa;
+
+  /* ── Styleguide v3 variants ── */
+  /* Color intensity variants — preserve game DNA, add depth */
+  --green-soft: rgba(0,255,65,.12);
+  --green-dim:  #1d7a3d;
+  --gold-soft:  rgba(200,150,12,.12);
+  --gold-dim:   #7a5d08;
+  --red-soft:   rgba(255,51,0,.12);
+  --red-dim:    #8a1f00;
+
+  /* Surface elevation (depth without borders) */
+  --surface-1: #04110a;
+  --surface-2: #0a1f12;
+  --surface-3: #122918;
+
+  /* Text hierarchy */
+  --text:      #ffffff;
+  --text-dim:  #aaaaaa;
+  --text-mute: #555555;
+
+  /* Spacing scale (8px) */
+  --gap-1: 4px;
+  --gap-2: 8px;
+  --gap-3: 16px;
+  --gap-4: 24px;
+  --gap-5: 32px;
+  --gap-6: 48px;
+
+  /* Glow — subtle by default, strong only for celebrations */
+  --glow-green: 0 0 8px rgba(0,255,65,.35);
+  --glow-gold:  0 0 10px rgba(200,150,12,.35);
+  --glow-red:   0 0 8px rgba(255,51,0,.35);
+
+  /* Transitions */
+  --t-fast: 100ms ease-out;
+  --t-norm: 200ms ease-out;
+  --t-slow: 400ms ease-out;
+}
+html,body{width:100%;min-height:100vh;background:var(--g1);font-family:var(--px);overflow-x:hidden}
+body.xi-mode{background:#050f05}
+/* Mobile: prevent zoom on input focus */
+input[type="text"]{font-size:16px!important}
+@supports(height:100dvh){
+  .screen{min-height:100dvh}
+}
+
+/* PITCH */
+.pitch{position:fixed;inset:0;z-index:0;
+  background:repeating-linear-gradient(90deg,var(--g1) 0,var(--g1) 55px,var(--g2) 55px,var(--g2) 110px)}
+.pitch svg{position:absolute;inset:0;width:100%;height:100%;opacity:.4;pointer-events:none}
+
+/* PITCH PORTRAIT — mobile portrait only, title screen context (auto-hides when keyboard shrinks viewport) */
+.pitch-portrait{display:none}
+@media (orientation:portrait) and (max-width:600px) and (min-height:600px){
+  .pitch{display:none}
+  .pitch-portrait{display:block;position:fixed;inset:0;z-index:0;
+    background:repeating-linear-gradient(0deg,var(--g1) 0,var(--g1) 55px,var(--g2) 55px,var(--g2) 110px)}
+  .pitch-portrait svg{position:absolute;inset:0;width:100%;height:100%;opacity:.4;pointer-events:none}
+  /* XI builder: solid background covers pitch-portrait on mobile portrait (XI has own canvas pitch) */
+  #s-xi{background:#050f05}
+}
+
+/* SCREENS */
+.screen{display:none;position:relative;z-index:10;min-height:100vh;box-sizing:border-box;
+  flex-direction:column;align-items:center;padding:14px 12px 40px}
+.screen.on{display:flex}
+.screen.mid{justify-content:center}
+
+/* PANELS */
+.box{background:#000;border:3px solid var(--green);padding:16px 14px;width:100%;max-width:580px;
+  box-shadow:0 0 0 1px #000,0 0 0 5px var(--green)}
+
+/* TYPE */
+.logo{font-size:clamp(24px,7vw,46px);color:var(--green);text-align:center;
+  text-shadow:3px 3px 0 #003300,0 0 20px rgba(0,255,65,.25);letter-spacing:3px;line-height:1.25}
+.sub{font-size:8px;color:var(--grey);text-align:center;letter-spacing:3px;margin-top:4px;text-shadow:1px 1px 0 #000,0 0 4px #000}
+/* Visually hidden but accessible to screen readers and SEO — used for h1 we don't want to show */
+.visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.hdr{font-size:clamp(9px,2.5vw,13px);color:var(--green);text-align:center;letter-spacing:2px;margin-bottom:14px}
+.lbl{font-size:7px;color:var(--grey);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
+
+/* BUTTONS */
+.btn{display:block;width:100%;background:#000;border:3px solid var(--green);
+  color:var(--green);font-family:var(--px);font-size:clamp(9px,2.5vw,12px);
+  padding:14px 10px;text-align:center;cursor:pointer;letter-spacing:2px;
+  transition:.1s;line-height:1.7;margin-bottom:10px}
+.btn:hover,.btn:active{background:var(--green);color:#000}
+.btn-dim{border-color:#333;color:#444}
+.btn-dim:hover,.btn-dim:active{background:#333;color:#000}
+.btn-red{border-color:var(--red);color:var(--red)}
+.btn-red:hover,.btn-red:active{background:var(--red);color:#000}
+.btn-y{border-color:var(--yellow);color:var(--yellow)}
+.btn-y:hover,.btn-y:active{background:var(--yellow);color:#000}
+/* hierarchia: .btn-primary = akcja główna (wypełniony); .btn = drugorzędny (obrys); .btn-dim = trzeciorzędny */
+.btn-primary{background:var(--green);color:#000;border-color:var(--green)}
+/* jeden spójny przycisk wstecz — czytelny, wszędzie taki sam */
+.btn-back{display:inline-block;background:#000;border:2px solid #2f4a2a;color:#9fb89a;
+  font-family:var(--px);font-size:9px;letter-spacing:2px;padding:10px 18px;cursor:pointer;
+  line-height:1.5;transition:.1s;text-align:center;margin:6px 0}
+.btn-back:hover,.btn-back:active{background:#13290f;color:#dfffea}
+/* Disabled buttons must not respond to hover/active (mobile sticky-tap fix) */
+.btn:disabled,.btn[disabled],
+.btn:disabled:hover,.btn:disabled:active,
+.btn[disabled]:hover,.btn[disabled]:active{
+  background:transparent!important;cursor:not-allowed}
+
+/* Global tap feedback — every button shrinks a hair on press for instant response */
+button:active:not(:disabled){
+  transform:scale(.96);
+  transition:transform .05s ease;
+}
+
+/* INPUT */
+.inp{width:100%;background:#000;border:3px solid #333;color:#ddd;
+  font-family:var(--px);font-size:clamp(13px,4vw,19px);text-align:center;
+  padding:15px 10px;outline:none;letter-spacing:2px;caret-color:var(--green);
+  transition:border-color .2s}
+.inp:focus{border-color:var(--yellow)}
+.inp::placeholder{color:#2a2a2a;font-size:clamp(9px,2.5vw,12px)}
+
+/* HUD */
+.hud{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;
+  width:100%;max-width:580px;margin-bottom:8px}
+.hc{background:#000;border:2px solid #1a1a1a;padding:8px 4px;text-align:center}
+.hv{font-size:clamp(18px,5vw,26px);line-height:1.1}
+.t-g{color:var(--green)} .t-y{color:var(--yellow)} .t-r{color:var(--red)} .t-w{color:#fff}
+
+/* TIMER BAR */
+.tbar-wrap{width:100%;max-width:580px;margin-bottom:8px}
+.tbar{height:8px;background:#111;border:1px solid #222;overflow:hidden}
+.tbar-fill{height:100%;background:var(--green);transition:width .9s linear,background .3s}
+
+/* LIVES */
+.lives-row{display:flex;align-items:center;gap:6px;
+  width:100%;max-width:580px;margin-bottom:8px}
+.life{font-size:18px;transition:.3s}
+.life.lost{filter:grayscale(1);opacity:.2;transform:scale(.75)}
+
+/* ANSWER TAGS */
+.ans-wrap{width:100%;max-width:580px;display:flex;flex-wrap:wrap;gap:5px;
+  margin-bottom:8px;max-height:120px;overflow-y:auto}
+.tag{background:#001800;border:1px solid #004400;color:var(--green);
+  font-size:7px;padding:4px 8px;letter-spacing:1px;
+  text-shadow:1px 1px 0 #000,0 0 4px #000;
+  animation:tagpop .2s ease}
+@keyframes tagpop{from{transform:scale(0)}to{transform:scale(1)}}
+
+/* PROGRESS */
+.prog-wrap{width:100%;max-width:580px;margin-bottom:6px}
+.prog-bar{height:5px;background:#111;border:1px solid #222;overflow:hidden}
+.prog-fill{height:100%;background:var(--green);transition:width .3s}
+
+/* STREAK FLASH */
+.streak-flash{position:fixed;top:50%;left:50%;
+  transform:translate(-50%,-50%) scale(0);
+  font-family:var(--px);font-size:clamp(16px,5vw,26px);
+  color:var(--yellow);text-shadow:3px 3px 0 #553300;
+  text-align:center;z-index:600;pointer-events:none;
+  max-width:90vw;padding:0 12px;line-height:1.3;
+  transition:transform .15s,opacity .3s}
+.streak-flash.on{transform:translate(-50%,-50%) scale(1)}
+.streak-flash.fade{opacity:0}
+
+/* TOAST */
+.toast{position:fixed;top:10px;left:50%;
+  transform:translateX(-50%) translateY(-70px);
+  background:#000;border:2px solid var(--green);
+  color:var(--green);font-family:var(--px);font-size:9px;
+  padding:8px 16px;letter-spacing:2px;transition:.2s;
+  z-index:999;max-width:90vw;text-align:center;
+  white-space:normal;word-wrap:break-word;pointer-events:none}
+.toast.on{transform:translateX(-50%) translateY(0)}
+.toast.err{border-color:var(--red);color:var(--red)}
+.toast.warn{border-color:var(--yellow);color:var(--yellow)}
+
+/* RESULTS */
+.score-reveal{font-size:clamp(70px,22vw,110px);color:var(--yellow);
+  text-shadow:4px 4px 0 #553300;text-align:center;line-height:1;margin-bottom:8px;
+  animation:bigpop .5s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes bigpop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+
+/* SHARE BUTTONS */
+.share-row{display:flex;gap:8px;width:100%;max-width:400px;justify-content:center}
+.share-btn{flex:1;background:#000;border:2px solid #333;
+  font-family:var(--px);font-size:8px;color:#fff;
+  padding:10px 6px;cursor:pointer;text-align:center;letter-spacing:1px;
+  transition:.1s}
+.share-btn:hover,.share-btn:active{background:#222}
+.share-icon{font-size:18px;display:block;margin-bottom:4px}
+
+/* HOF */
+.hof-row{display:flex;align-items:center;gap:8px;
+  padding:10px 6px;border-bottom:1px solid #1a1a1a}
+.hof-row:last-child{border-bottom:none}
+.hof-rank{font-size:10px;color:var(--gold);min-width:34px;letter-spacing:1px}
+.hof-name{font-size:8px;color:#fff;flex:1;letter-spacing:1px}
+.hof-pts{font-size:12px;color:var(--green);font-weight:bold;letter-spacing:1px}
+.hof-date{font-size:7px;color:#666;margin-top:3px;font-family:var(--px);letter-spacing:1px}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:900;
+  display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.on{display:flex}
+.modal-box{background:#050f05;border:3px solid var(--green);padding:16px;
+  width:100%;max-width:480px;max-height:80vh;display:flex;flex-direction:column}
+.modal-title{font-size:10px;color:var(--green);letter-spacing:2px;margin-bottom:12px;text-align:center}
+.modal-list{overflow-y:auto;flex:1;display:flex;flex-wrap:wrap;gap:5px;padding:4px}
+.modal-close{margin-top:12px}
+
+/* Top bar with MAIN MENU + screen title — grid keeps title centered regardless
+   of button or title width (no magic spacer divs needed) */
+.top-bar{
+  width:100%;display:grid;grid-template-columns:auto 1fr auto;
+  align-items:center;column-gap:8px;margin-bottom:12px}
+.top-bar > .top-bar-title{text-align:center}
+
+/* Dark background screens - HOF, Results, Game Over */
+#s-hof.on, #s-results.on, #s-gameover.on{
+  background:#050f05;
+  background-image:none;
+}
+
+/* Dark pitch - same lines but dark green stripes */
+.pitch-dark{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:repeating-linear-gradient(180deg,#080808 0,#080808 55px,#0d0d0d 55px,#0d0d0d 110px);
+  display:none}
+.pitch-dark svg{position:absolute;inset:0;width:100%;height:100%;opacity:.5}
+
+/* Green flash overlay */
+#green-flash{position:fixed;inset:0;background:var(--green);opacity:0;
+  pointer-events:none;z-index:800;transition:opacity .25s ease}
+
+/* Score pulse */
+@keyframes scorepulse{
+  0%{transform:scale(1)}
+  40%{transform:scale(1.4)}
+  100%{transform:scale(1)}
+}
+
+/* DIVIDER */
+.div{width:100%;max-width:580px;height:1px;
+  background:linear-gradient(90deg,transparent,var(--green),transparent);
+  margin:12px 0;opacity:.35}
+
+@media(max-width:360px){.logo{font-size:22px}.hud{gap:3px}}
+@keyframes logopulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+
+/* ═══ XI BUILDER STYLES ═══ */
+
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --gold:#c8960c;--green:#00ff41;--orange:#ff6600;--red:#ff3300;
+  --px:'Press Start 2P',monospace;
+}
+#s-xi .xi-inner{font-family:var(--px);
+  display:flex;flex-direction:column;align-items:center;
+  min-height:100vh;padding:10px 6px 40px}
+#s-xi h1{font-size:8px;color:var(--gold);letter-spacing:3px;margin-bottom:10px;text-align:center}
+#wrap{position:relative;width:min(340px,94vw);aspect-ratio:68/52.5;touch-action:none}
+canvas#pitch{display:block;width:100%;height:100%}
+
+/* PLAYER DOTS */
+.pdot{
+  position:absolute;
+  display:flex;flex-direction:column;align-items:center;
+  cursor:pointer;z-index:10;user-select:none;touch-action:none;
+  transition:left .35s ease, top .35s ease;
+  transform:translate(-50%,-50%);
+}
+.pdot:active{cursor:grabbing}
+.pcircle{
+  width:34px;height:34px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--px);font-size:7px;
+  transition:background .2s;
+}
+.pdot:active .pcircle{transform:scale(1.12)}
+.pname{
+  font-size:6px;letter-spacing:.5px;margin-top:3px;
+  text-align:center;white-space:nowrap;
+  text-shadow:1px 1px 0 #000,0 0 6px #000,0 0 10px #000;
+  max-width:74px;overflow:hidden;text-overflow:ellipsis;
+  pointer-events:none}
+.empty .pcircle{border:2px dashed #2a2a2a;background:rgba(0,0,0,.45);color:#2a2a2a}
+.filled .pcircle{
+  border:3px solid;
+  background:rgba(0,0,0,.85);
+  font-size:11px;font-weight:bold;
+  box-shadow:0 0 12px rgba(0,0,0,.6), 0 2px 0 rgba(0,0,0,.4);
+}
+
+/* colours by group — empty uses dim group color, filled gets a tinted glow */
+.grp-gk .pcircle{border-color:#ffdd00!important;color:#ffdd00}
+.grp-gk.filled .pcircle{box-shadow:0 0 14px rgba(255,221,0,.45), 0 0 0 1px rgba(255,221,0,.3)}
+.grp-gk .pname{color:#ffdd00}
+.grp-df .pcircle{border-color:#88ff44!important;color:#88ff44}
+.grp-df.filled .pcircle{box-shadow:0 0 14px rgba(136,255,68,.45), 0 0 0 1px rgba(136,255,68,.3)}
+.grp-df .pname{color:#88ff44}
+.grp-mf .pcircle{border-color:#ff6600!important;color:#ff6600}
+.grp-mf.filled .pcircle{box-shadow:0 0 14px rgba(255,102,0,.45), 0 0 0 1px rgba(255,102,0,.3)}
+.grp-mf .pname{color:#ff6600}
+.grp-fw .pcircle{border-color:#ff2200!important;color:#ff2200}
+.grp-fw.filled .pcircle{box-shadow:0 0 14px rgba(255,34,0,.45), 0 0 0 1px rgba(255,34,0,.3)}
+.grp-fw .pname{color:#ff2200}
+
+/* Filled names sit on the pitch — bigger, bolder, white for premium feel */
+.filled .pname{
+  font-size:8px;font-weight:bold;color:#fff!important;letter-spacing:.6px;
+  text-shadow:1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000, 0 0 8px #000;
+}
+
+/* Chemistry highlight classes — written with higher specificity
+   (double class selector) so they always win over the .grp-* colours
+   that are also applied to the same dot */
+.pdot.chem-era .pcircle{
+  border-color:#dddddd!important;color:#dddddd!important;
+  box-shadow:0 0 0 1px #dddddd, 0 0 6px rgba(221,221,221,.5)!important}
+.pdot.chem-era .pname{color:#dddddd!important}
+
+.pdot.chem-club .pcircle{
+  border-color:#ff8800!important;color:#ff8800!important;
+  box-shadow:0 0 0 2px #ff8800, 0 0 12px rgba(255,136,0,.65)!important}
+.pdot.chem-club .pname{color:#ff8800!important}
+
+/* Both era + club — premium fusion, purple */
+.pdot.chem-both .pcircle{
+  border-color:#cc66ff!important;color:#cc66ff!important;
+  box-shadow:0 0 0 3px #cc66ff, 0 0 18px rgba(204,102,255,.85)!important;
+  outline:none!important}
+.pdot.chem-both .pname{color:#cc66ff!important}
+
+/* 1966 — golden glow, overrides all */
+.pdot.chem-1966 .pcircle{
+  border-color:#ffd700!important;color:#ffd700!important;
+  box-shadow:0 0 0 3px #ffd700,0 0 12px #ffd700!important;
+  outline:none!important}
+.pdot.chem-1966 .pname{color:#ffd700!important}
+
+/* ── LAYER 1: SLOT ADD CELEBRATION ── */
+/* Flash on the dot that was just added */
+@keyframes slotFlash{
+  0%  {box-shadow:0 0 0 0 #00ff88, 0 0 0 0 #00ff88}
+  40% {box-shadow:0 0 0 4px #00ff88, 0 0 20px 8px #00ff88}
+  100%{box-shadow:0 0 0 0 rgba(0,255,136,0), 0 0 0 0 rgba(0,255,136,0)}
+}
+.pdot.just-added .pcircle{animation:slotFlash .25s ease-out}
+
+/* Pulse glow on dots that share chemistry with the new one */
+@keyframes linkPulse{
+  0%  {transform:scale(1)}
+  40% {transform:scale(1.15)}
+  100%{transform:scale(1)}
+}
+.pdot.chem-linked-pulse .pcircle{animation:linkPulse .4s ease-out}
+
+/* Screen shake on big combo (XI builder) */
+@keyframes screenShake{
+  0%,100%{transform:translate(0,0)}
+  20%{transform:translate(-3px,1px)}
+  40%{transform:translate(3px,-1px)}
+  60%{transform:translate(-2px,-2px)}
+  80%{transform:translate(2px,2px)}
+}
+#wrap.shake{animation:screenShake .35s ease-in-out}
+
+/* ── QUIZ LIVE FEEDBACK ── */
+/* Popup floats above the quiz input when player scores */
+#quiz-popup{overflow:visible}
+.quiz-pop-line{
+  position:absolute;left:50%;bottom:8px;transform:translateX(-50%);
+  background:rgba(0,0,0,.92);border:1px solid currentColor;
+  padding:6px 14px;font-family:var(--px);font-size:12px;letter-spacing:2px;
+  max-width:90vw;text-align:center;word-wrap:break-word;
+  animation:popFloat 1.8s ease-out forwards}
+.quiz-pop-line.special{
+  box-shadow:0 0 20px currentColor;font-size:14px;padding:8px 18px;letter-spacing:2px}
+
+/* Screen shake for big streak milestones (quiz) */
+@keyframes gameShake{
+  0%,100%{transform:translate(0,0)}
+  20%{transform:translate(-4px,2px)}
+  40%{transform:translate(4px,-2px)}
+  60%{transform:translate(-3px,-3px)}
+  80%{transform:translate(3px,3px)}
+}
+#s-game.shake{animation:gameShake .4s ease-in-out}
+
+/* ── LAYER 2: CHEMISTRY POPUP ── */
+#chem-popup{
+  position:absolute;top:12px;left:50%;transform:translateX(-50%);
+  z-index:25;pointer-events:none;
+  display:flex;flex-direction:column;gap:4px;align-items:center;
+  max-width:min(280px,90vw);
+  opacity:0;transition:opacity .2s ease}
+#chem-popup.on{opacity:1}
+.chem-pop-line{
+  background:rgba(0,0,0,.85);border:1px solid currentColor;
+  padding:5px 12px;font-family:var(--px);font-size:13px;letter-spacing:2px;
+  max-width:100%;text-align:center;line-height:1.3;
+  word-break:break-word;
+  animation:popFloat 2.5s ease-out forwards}
+.chem-pop-line.big-combo{
+  box-shadow:0 0 20px currentColor}
+@keyframes popFloat{
+  0%   {transform:translateY(10px);opacity:0}
+  8%   {transform:translateY(0);opacity:1}
+  85%  {transform:translateY(-4px);opacity:1}
+  100% {transform:translateY(-14px);opacity:0}
+}
+
+/* ── CAPTAIN ARMBAND ── */
+/* Small "C" badge on top-right of captain's circle */
+.pdot.captain .pcircle::after{
+  content:"C";
+  position:absolute;
+  top:-6px;right:-6px;
+  width:14px;height:14px;
+  background:#ffd700;
+  color:#000;
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--px);font-size:8px;font-weight:bold;
+  border:1.5px solid #000;
+  box-shadow:0 0 6px #ffd700;
+  z-index:2;
+}
+.pdot.captain .pcircle{position:relative}
+
+/* Captain selection mode — subtle hover grow on eligible dots, dim empty dots */
+.pdot.cap-select-eligible{
+  cursor:pointer!important;
+  transition:transform .2s ease, left .35s ease, top .35s ease;
+}
+.pdot.cap-select-eligible:hover{
+  transform:translate(-50%,-50%) scale(1.15);
+  z-index:20;
+}
+.pdot.cap-select-eligible:hover .pcircle{
+  box-shadow:0 0 12px var(--gold);
+}
+.pdot.cap-select-dim{opacity:.25;pointer-events:none}
+
+/* LEGEND */
+
+/* TOAST */
+.toast{position:fixed;top:10px;left:50%;
+  transform:translateX(-50%) translateY(-80px);
+  background:#000;border:2px solid var(--green);color:var(--green);
+  font-family:var(--px);font-size:8px;padding:8px 14px;letter-spacing:2px;
+  z-index:999;max-width:90vw;text-align:center;
+  white-space:normal;word-wrap:break-word;transition:.2s;pointer-events:none}
+.toast.on{transform:translateX(-50%) translateY(0)}
+.toast.err{border-color:var(--red);color:var(--red)}
+.toast.warn{border-color:var(--gold);color:var(--gold)}
+
+/* MODAL */
+#modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);
+  z-index:100;align-items:flex-start;justify-content:center;
+  padding:20px 10px 20px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+#modal.on{display:flex}
+#mbox{background:#050f05;border:2px solid var(--green);
+  width:100%;max-width:420px;padding:16px 14px 28px;
+  /* Extra breathing room at the bottom so keyboard can't hide the confirm button */
+  margin-bottom:env(keyboard-inset-height, 60px)}
+#mtitle{font-size:7px;color:var(--green);letter-spacing:2px;margin-bottom:14px}
+
+/* DROPDOWN */
+.mrow{margin-bottom:12px}
+.mrow label{font-size:6px;color:#777;letter-spacing:1px;display:block;margin-bottom:6px}
+.msel{width:100%;background:#000;border:2px solid var(--green);color:#fff;
+  font-family:var(--px);font-size:9px;padding:10px 8px;outline:none;
+  letter-spacing:1px;cursor:pointer;appearance:none;-webkit-appearance:none}
+.msel option{background:#000;color:#fff;font-family:monospace;font-size:12px;padding:4px}
+.msel optgroup{font-family:monospace;font-size:11px}
+
+/* name + number row */
+#mname-row{display:flex;gap:8px;align-items:flex-end;margin-bottom:10px}
+.minp{background:#000;border:2px solid var(--green);color:#fff;
+  font-family:var(--px);font-size:13px;padding:8px;outline:none;letter-spacing:1px}
+#mname{flex:1;text-transform:uppercase}
+#mnum{width:62px;text-align:center}
+
+/* suggestions */
+
+/* buttons */
+#mbtns{display:flex;gap:6px;margin-top:12px}
+#msave{flex:2;background:var(--green);color:#000;border:none;
+  font-family:var(--px);font-size:8px;padding:11px;cursor:pointer}
+#mclear{flex:1;background:#000;color:#444;border:2px solid #222;
+  font-family:var(--px);font-size:6px;padding:11px;cursor:pointer}
+#mcancel{width:100%;margin-top:6px;background:#000;color:#333;
+  border:2px solid #111;font-family:var(--px);font-size:6px;padding:8px;cursor:pointer}
+
+/* ─── Animations & late additions ─── */
+
+@keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+
+/* Milestone reward pulse — used for LOCK IN button when XI hits 11/11 */
+@keyframes readyPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(200,150,12,.6)}
+  50%    {box-shadow:0 0 0 10px rgba(200,150,12,0)}
+}
+.milestone-ready{animation:readyPulse 1.4s ease-in-out infinite}
+
+/* Unlock overlay — giant icon glows while overlay is up */
+@keyframes unlockGlow{
+  0%,100%{transform:scale(1);filter:drop-shadow(0 0 20px rgba(170,136,255,.7))}
+  50%    {transform:scale(1.08);filter:drop-shadow(0 0 40px rgba(170,136,255,1))}
+}
+
+/* Elimination drama overlay — quick fade-out */
+@keyframes elimFlash{
+  0%   {opacity:0;background:rgba(120,0,0,0)}
+  10%  {opacity:1;background:rgba(120,0,0,.85)}
+  85%  {opacity:1;background:rgba(120,0,0,.85)}
+  100% {opacity:0;background:rgba(120,0,0,0)}
+}
+@keyframes elimSkull{
+  0%   {transform:scale(0) rotate(-45deg);opacity:0}
+  20%  {transform:scale(1.4) rotate(0deg);opacity:1}
+  35%  {transform:scale(1) rotate(0deg)}
+  85%  {transform:scale(1)}
+  100% {transform:scale(.9);opacity:.7}
+}
+
+/* Tier upgrade icon bounce */
+@keyframes tierBounce{
+  0%,100%{transform:scale(1) translateY(0)}
+  50%    {transform:scale(1.1) translateY(-6px)}
+}
+
+/* Newly-unlocked Title button pulses purple for first visit */
+@keyframes newUnlockPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(170,136,255,.7)}
+  50%    {box-shadow:0 0 0 12px rgba(170,136,255,0)}
+}
+.new-unlock-pulse{animation:newUnlockPulse 1.4s ease-in-out infinite}
+
+/* PUB MODE animations */
+@keyframes pubTeamPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(255,153,51,0.6)}
+  50%    {box-shadow:0 0 0 8px rgba(255,153,51,0)}
+}
+.pub-team-active{animation:pubTeamPulse 1.2s ease-in-out infinite}
+
+@keyframes pubShake{
+  0%,100%{transform:translate(0,0)}
+  25%{transform:translate(-6px,2px)}
+  50%{transform:translate(6px,-2px)}
+  75%{transform:translate(-4px,-2px)}
+}
+.pub-error{animation:pubShake .4s ease-in-out}
+
+@keyframes pubFadeOut{
+  0%{opacity:1;transform:scale(1)}
+  100%{opacity:.3;transform:scale(.95)}
+}
+.pub-eliminated{animation:pubFadeOut .6s ease-out forwards;text-decoration:line-through}
+
+
+/* ════════════════════════════════════════════════════════════════════
+   SETTINGS v3 — Styleguide-compliant components
+   Reusable for other screens (HoF, Results) when redesigned later
+   ════════════════════════════════════════════════════════════════════ */
+
+/* Section header — quiet, dim, letter-spaced */
+.s-section-header {
+  font-size: 9px;
+  color: var(--text-mute);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: var(--gap-3);
+  padding-left: var(--gap-1);
+}
+
+/* Divider — subtle 1px line between rows */
+.s-divider {
+  height: 1px;
+  background: #1a1a1a;
+  margin: 0;
+}
+
+/* Section spacing wrapper */
+.s-section {
+  width: 100%;
+  max-width: 380px;
+  margin-bottom: var(--gap-5);
+}
+
+/* Row — label left, value/control right */
+.s-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--gap-3) var(--gap-2);
+  transition: var(--t-norm);
+}
+
+.s-row-label {
+  font-size: 9px;
+  color: var(--text-dim);
+  letter-spacing: 1.5px;
+  font-family: var(--px);
+}
+
+.s-row-value {
+  font-size: 10px;
+  color: var(--text);
+  letter-spacing: 2px;
+  font-weight: bold;
+  font-family: var(--px);
+}
+
+.s-row-value.gold { color: var(--yellow); }
+.s-row-value.dim  { color: var(--text-mute); }
+
+/* Toggle / action button (compact, styleguide-compliant) */
+.s-toggle {
+  background: var(--green-soft);
+  border: 1px solid var(--green);
+  color: var(--green);
+  font-family: var(--px);
+  font-size: 8px;
+  padding: 7px 14px;
+  cursor: pointer;
+  letter-spacing: 1.5px;
+  min-width: 64px;
+  transition: var(--t-norm);
+}
+.s-toggle:hover {
+  box-shadow: var(--glow-green);
+  background: rgba(0,255,65,.18);
+}
+.s-toggle:active {
+  transform: scale(0.97);
+  transition: var(--t-fast);
+}
+
+/* Toggle — danger variant (red, for destructive actions) */
+.s-toggle.danger {
+  background: var(--red-soft);
+  border-color: var(--red);
+  color: var(--red);
+}
+.s-toggle.danger:hover {
+  box-shadow: var(--glow-red);
+  background: rgba(255,51,0,.18);
+}
+
+/* Toggle — gold variant (premium/info) */
+.s-toggle.gold {
+  background: var(--gold-soft);
+  border-color: #c8960c;
+  color: #c8960c;
+}
+.s-toggle.gold:hover {
+  box-shadow: var(--glow-gold);
+  background: rgba(200,150,12,.18);
+}
+
+/* Help icon — small circular '?' button in top-bar */
+.s-help-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--text-mute);
+  background: transparent;
+  color: var(--text-dim);
+  font-family: var(--px);
+  font-size: 10px;
+  cursor: pointer;
+  transition: var(--t-norm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+.s-help-icon:hover {
+  color: var(--yellow);
+  border-color: var(--yellow);
+  box-shadow: var(--glow-gold);
+}
+.s-help-icon:active { transform: scale(0.95); }
+
+/* Progress bar — refined, no harsh border */
+.s-progress {
+  width: 100%;
+  height: 12px;
+  background: var(--surface-2);
+  border-radius: 3px;
+  overflow: hidden;
+  margin: var(--gap-2) 0;
+}
+.s-progress-fill {
+  height: 100%;
+  background: var(--green);
+  transition: width .6s ease;
+  border-radius: 3px;
+}
+.s-progress-fill.gold { background: #c8960c; }
+
+/* Footer — quiet, end-of-page meta info */
+.s-footer {
+  width: 100%;
+  max-width: 380px;
+  text-align: center;
+  margin-top: var(--gap-6);
+  padding-top: var(--gap-4);
+  border-top: 1px solid #1a1a1a;
+}
+.s-footer-text {
+  font-size: 8px;
+  color: var(--text-mute);
+  letter-spacing: 2px;
+  line-height: 2;
+}
+.s-footer-text strong {
+  color: var(--text-dim);
+  font-weight: normal;
+}
+
+/* Modal — How To Play and similar (reusable) */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.8);
+  z-index: 100;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: var(--gap-3);
+  animation: modalFade var(--t-slow) ease-out;
+}
+.modal-backdrop.on { display: flex; }
+
+@keyframes modalFade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.modal-card {
+  background: var(--surface-3);
+  border: 2px solid var(--yellow);
+  width: 100%;
+  max-width: 380px;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: var(--gap-4) var(--gap-3);
+  position: relative;
+  animation: modalScale var(--t-slow) ease-out;
+}
+
+@keyframes modalScale {
+  from { transform: scale(.95); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+.modal-close {
+  position: absolute;
+  top: var(--gap-2);
+  right: var(--gap-2);
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-size: 18px;
+  cursor: pointer;
+  padding: 8px;
+  line-height: 1;
+  min-width: 36px;
+  min-height: 36px;
+  transition: var(--t-norm);
+}
+.modal-close:hover { color: var(--yellow); }
+
+.modal-title {
+  font-size: 11px;
+  color: var(--yellow);
+  letter-spacing: 3px;
+  text-align: center;
+  margin-bottom: var(--gap-4);
+  font-family: var(--px);
+}
+
+.modal-body {
+  font-size: 9px;
+  color: #ccc;
+  line-height: 2;
+  letter-spacing: .5px;
+  font-family: var(--px);
+}
+.modal-body .hl-green { color: var(--green); }
+.modal-body .hl-gold  { color: var(--yellow); }
+.modal-body .hl-dim   { color: var(--text-mute); }
+.modal-body .indent   { padding-left: var(--gap-4); display: inline-block; }
+
+/* Section header within modal (subdivides content by game mode) */
+.modal-section-header {
+  font-size: 10px;
+  color: var(--yellow);
+  letter-spacing: 2.5px;
+  margin: var(--gap-4) 0 var(--gap-2) 0;
+  padding-bottom: var(--gap-1);
+  border-bottom: 1px solid #2a2a2a;
+}
+.modal-body > .modal-section-header:first-child {
+  margin-top: 0;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   XI AFTER DARK — Retro Arcade (NIE teletext). Scoped do #s-xad.
+   Dziedziczy język wizualny Footy Legends: ciemne tło, Press Start 2P,
+   koła pozycji + glow (jak stare My Legendary XI). Era = mały akcent.
+   Minimalizm i natychmiastowość zostają. Bez P302/VT323/Ceefax.
+   ════════════════════════════════════════════════════════════════════ */
+#s-xad{
+  background:#0a0a0a; color:#eee;
+  font-family:var(--px); padding:14px 12px; overflow-y:auto; align-items:stretch;
+}
+#s-xad *{box-sizing:border-box}
+#s-xad .xad-wrap{width:100%;max-width:780px;margin:0 auto}
+
+#s-xad .xad-header{display:flex;justify-content:space-between;align-items:center;
+  border-bottom:2px solid #2a2a2a;padding-bottom:8px;margin-bottom:14px}
+#s-xad .xad-title{color:var(--gold);font-size:clamp(13px,3.4vw,18px);letter-spacing:1px}
+#s-xad .xad-exit{font-family:var(--px);font-size:12px;background:#000;color:#888;
+  border:2px solid #444;padding:6px 12px;cursor:pointer}
+#s-xad .xad-exit:hover{color:#fff;border-color:#888}
+
+/* ── intro: jeden przycisk ─────────────────────────────────────────── */
+#s-xad .xad-tag-line{color:#bbb;font-size:8px;letter-spacing:1px;text-align:center;margin:24px 0 18px}
+#s-xad .xad-bigbtn{
+  display:block;width:min(420px,92%);margin:0 auto 14px;
+  font-family:var(--px);font-size:clamp(12px,3.2vw,16px);letter-spacing:1px;
+  background:#000;color:var(--gold);border:3px solid var(--gold);
+  padding:18px;cursor:pointer;box-shadow:0 0 16px rgba(200,150,12,.25);
+}
+#s-xad .xad-bigbtn:hover{background:var(--gold);color:#000}
+/* ── EKRAN POWITALNY (kostka + ROLL THE SQUAD + tekst) ────────────── */
+#s-xad .xad-welcome{text-align:center;padding:8px 0 4px}
+#s-xad .xad-rollbtn{position:relative;animation:xadBtnPulse 1.8s ease-in-out infinite}
+@keyframes xadBtnPulse{
+  0%,100%{box-shadow:0 0 16px rgba(200,150,12,.25);transform:scale(1)}
+  50%{box-shadow:0 0 28px 4px rgba(255,200,40,.55);transform:scale(1.03)}
+}
+#s-xad .xad-rollbtn.rolling{animation:none;background:var(--gold);color:#000}
+#s-xad .xad-dice{display:inline-block;font-size:1.1em;vertical-align:middle}
+#s-xad .xad-dice.rolling{animation:xadDiceRoll .5s ease-in-out}
+@keyframes xadDiceRoll{
+  0%{transform:rotate(0) scale(1)} 25%{transform:rotate(180deg) scale(1.3)}
+  50%{transform:rotate(360deg) scale(1.1)} 75%{transform:rotate(540deg) scale(1.3)}
+  100%{transform:rotate(720deg) scale(1)}
+}
+#s-xad .xad-welcome-tag{font-size:8px;color:#9ad;letter-spacing:1.5px;margin-top:-4px;margin-bottom:14px;
+  text-shadow:1px 1px 0 #000,0 0 6px rgba(60,120,180,.4)}
+#s-xad .xad-welcome-cap{font-size:9px;color:#9a9a9a;letter-spacing:1px;line-height:1.6;margin-top:2px}
+/* ── version C: ekran startowy przed pierwszym rollem ─────────────── */
+#xad-draft.predeal .xad-formbar-row,
+#xad-draft.predeal .xad-sectlabel,
+#xad-draft.predeal #xad-actions,
+#xad-draft.predeal .xad-col-pool{display:none}
+#xad-draft.predeal .xad-cols{justify-content:center;border-top:1px solid #1a1a1a;border-bottom:1px solid #1a1a1a;padding:6px 0;margin-top:4px}
+#xad-draft.predeal .xad-col-pitch{position:static;background:none}
+#xad-draft.predeal .xad-pitch{width:56%;margin:0 auto}
+#xad-draft.predeal .pcircle{color:transparent}
+#xad-draft.predeal .pdot{cursor:pointer}
+#xad-predeal-foot{display:none;text-align:center;font-size:9px;letter-spacing:1px;color:#6a6a6a;line-height:1.6;margin:16px 0 10px}
+#xad-draft.predeal #xad-predeal-foot{display:block}
+/* kaskada pojawiania kart w puli po rzucie */
+#s-xad .xad-card.dealt-in{animation:xadDealIn .28s ease-out backwards}
+@keyframes xadDealIn{0%{opacity:0;transform:translateX(-12px)}100%{opacity:1;transform:translateX(0)}}
+#s-xad .xad-poolempty{font-size:8px;color:#777;letter-spacing:1px;line-height:1.8;padding:20px 8px;text-align:center}
+/* linia filtra pozycji nad pulą */
+#s-xad .xad-filterline-pool{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;padding:5px 7px;background:#1a1a0d;border:1px solid #3a3a1a}
+#s-xad .xad-filterline-pool .ff{font-size:8px;color:var(--gold);letter-spacing:1px}
+#s-xad .xad-showall{font-family:var(--px);font-size:7px;background:#000;color:#bbb;border:1px solid #555;padding:5px 8px;cursor:pointer;letter-spacing:.5px}
+#s-xad .xad-showall:hover{color:#fff;border-color:#999}
+/* pusty slot, który aktualnie filtruje pulę — podświetlony, żeby było wiadomo skąd filtr */
+#s-xad .pdot.filtering .pcircle, #s-classic .pdot.filtering .pcircle{border-style:solid;opacity:1;box-shadow:0 0 14px rgba(255,221,80,.6);border-color:var(--gold);color:var(--gold)}
+#s-xad .xad-hint{color:#777;font-size:7px;letter-spacing:1px;text-align:center;margin:14px auto;max-width:340px;line-height:1.8}
+
+/* ── formation bar (zmiana kształtu w trakcie) ─────────────────────── */
+#s-xad .xad-formbar-row{margin-bottom:10px}
+#s-xad .xad-formbar{display:flex;gap:5px;flex-wrap:wrap;justify-content:center}
+#s-xad .xad-formbtn{
+  font-family:var(--px);font-size:8px;letter-spacing:.5px;
+  background:#000;color:#888;border:2px solid #333;padding:7px 9px;cursor:pointer;
+}
+#s-xad .xad-formbtn:hover{color:#fff;border-color:#666}
+#s-xad .xad-formbtn.on{color:var(--gold);border-color:var(--gold);box-shadow:0 0 8px rgba(200,150,12,.3)}
+
+/* ── layout draftu ─────────────────────────────────────────────────── */
+#s-xad .xad-cols{display:flex;gap:12px;align-items:flex-start}
+#s-xad .xad-col-pool{flex:1 1 48%;min-width:0;order:1}      /* desktop: pula po lewej */
+#s-xad .xad-col-pitch{flex:1 1 52%;min-width:0;order:2}     /* desktop: boisko po prawej */
+@media(max-width:580px){
+  #s-xad{height:100dvh;overflow-y:auto;-webkit-overflow-scrolling:touch;overflow-anchor:none}  /* własny scroll → sticky działa względem s-xad; bez scroll-anchoringu (kaskada nie przesuwa widoku) */
+  #s-xad .xad-cols{flex-direction:column}
+  #s-xad .xad-col-pool,#s-xad .xad-col-pitch{flex:none;width:100%;order:0}
+  #s-xad .xad-pool{max-height:none;overflow:visible}        /* pula płynie swobodnie, BEZ własnego scrolla (jeden scroll: #s-xad) */
+  /* boisko przykleja się do góry; gdy scrollujesz pulę, kurczy się skokowo do połowy ekranu */
+  #s-xad .xad-col-pitch{position:sticky;top:0;z-index:5;background:#0a0a0a;
+    padding-bottom:6px;margin-bottom:6px;border-bottom:2px solid #1c4a12}
+  /* skok: boisko ograniczone wysokością (~42% ekranu), szerokość dobiera się do proporcji 3:4 */
+  #s-xad .xad-col-pitch.shrunk .xad-pitch{height:42vh;width:auto;aspect-ratio:3/4;margin:0 auto}
+  #s-xad .xad-col-pitch.shrunk .xad-sectlabel{margin-bottom:3px}
+  /* skurczone boisko = koła bliżej siebie, więc zmniejszamy je i nazwiska, żeby nie nachodziły */
+  #s-xad .xad-col-pitch.shrunk .pdot{width:44px}
+  #s-xad .xad-col-pitch.shrunk .pdot .pcircle{width:27px;height:27px;font-size:6px;border-width:2px}
+  #s-xad .xad-col-pitch.shrunk .pdot.filled .pcircle{font-size:7px}
+  #s-xad .xad-col-pitch.shrunk .pdot .pname{font-size:5px;margin-top:2px;max-width:50px;letter-spacing:0}
+  #s-xad .xad-col-pitch.shrunk .pcircle .eradot{width:6px;height:6px}
+}
+#s-xad .xad-sectlabel{font-size:8px;letter-spacing:1px;color:#999;margin-bottom:7px}
+#s-xad .xad-sectlabel b{color:var(--gold)}
+
+/* ── pula (lista, klik = wybór) ────────────────────────────────────── */
+#s-xad .xad-pool{display:flex;flex-direction:column;gap:3px}
+@media(min-width:581px){#s-xad .xad-pool{max-height:60vh;overflow-y:auto}}
+#s-xad .xad-card{display:flex;align-items:center;gap:7px;background:#141414;
+  border-left:4px solid #444;padding:7px 8px;cursor:pointer}
+#s-xad .xad-card:hover{background:#1e1e1e}
+#s-xad .xad-card.used{opacity:.25;cursor:default;text-decoration:line-through}
+#s-xad .xad-card .dot{width:8px;height:8px;border-radius:50%;flex:none;background:#666}
+#s-xad .xad-card .nm{flex:1;min-width:0;font-size:9px;letter-spacing:.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#s-xad .xad-card .meta{font-size:7px;color:#888;white-space:nowrap}
+#s-xad .xad-card .pos{font-size:7px;color:#bbb;width:26px;text-align:right;flex:none}
+/* lewy pasek karty = kolor grupy pozycji */
+#s-xad .xad-card.grp-gk{border-left-color:#ffdd00}
+#s-xad .xad-card.grp-df{border-left-color:#88ff44}
+#s-xad .xad-card.grp-mf{border-left-color:#ff6600}
+#s-xad .xad-card.grp-fw{border-left-color:#ff2200}
+/* era = mała kropka (akcent, nie główny kolor) */
+#s-xad .dot.era-c{background:#c060ff}
+#s-xad .dot.era-g{background:#ffb030}
+#s-xad .dot.era-m{background:#30c0ff}
+
+/* ── BOISKO: żywe koła + glow (serce pętli nagrody) ────────────────── */
+#s-xad .xad-pitch, #s-classic .xad-pitch{position:relative;width:100%;aspect-ratio:3/4;
+  background:
+    radial-gradient(ellipse at 50% 18%, rgba(200,235,215,.12) 0%, rgba(200,235,215,0) 50%),
+    radial-gradient(ellipse at 50% 46%, rgba(0,0,0,0) 55%, rgba(2,15,6,.45) 100%),
+    repeating-linear-gradient(to bottom, #1a5318 0, #1a5318 9%, #22641e 9%, #22641e 18%),
+    #14400c;
+  border:2px solid #1c4a12;overflow:hidden}
+#s-xad .xad-pitch::before, #s-classic .xad-pitch::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:rgba(255,255,255,.18)}
+#s-xad .xad-pitch::after, #s-classic .xad-pitch::after{content:"";position:absolute;left:50%;top:0;width:32%;aspect-ratio:1/1;
+  transform:translate(-50%,-50%);border:2px solid rgba(255,255,255,.16);border-radius:50%}
+#s-xad .xad-penalty, #s-classic .xad-penalty{position:absolute;left:50%;bottom:0;width:52%;height:17%;
+  transform:translateX(-50%);border:2px solid rgba(255,255,255,.16);border-bottom:none}
+#s-xad .xad-sixyard, #s-classic .xad-sixyard{position:absolute;left:50%;bottom:0;width:26%;height:7%;
+  transform:translateX(-50%);border:2px solid rgba(255,255,255,.12);border-bottom:none}
+
+#s-xad .pdot{position:absolute;transform:translate(-50%,-50%);
+  display:flex;flex-direction:column;align-items:center;cursor:pointer;width:64px}
+#s-xad .pdot .pcircle{
+  position:relative;width:38px;height:38px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--px);font-size:8px;border:3px solid;
+  background:rgba(0,0,0,.78);transition:transform .12s, box-shadow .2s;
+}
+#s-xad .pdot.empty .pcircle{border-style:dashed;opacity:.55;animation:xadSlotBreathe 2.4s ease-in-out infinite}
+@keyframes xadSlotBreathe{0%,100%{opacity:.4}50%{opacity:.7}}
+#s-xad .pdot .pname{font-size:7px;margin-top:4px;color:#fff;letter-spacing:.4px;
+  text-shadow:1px 1px 0 #000,-1px 1px 0 #000,1px -1px 0 #000,-1px -1px 0 #000,0 0 6px #000;
+  max-width:74px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;pointer-events:none}
+/* kolory grup pozycji + glow gdy wypełnione (jak stare My Legendary XI) */
+#s-xad .grp-gk .pcircle{border-color:#ffdd00;color:#ffdd00}
+#s-xad .pdot.grp-gk.filled .pcircle{box-shadow:0 0 16px rgba(255,221,0,.55),0 0 0 1px rgba(255,221,0,.35)}
+#s-xad .grp-df .pcircle{border-color:#88ff44;color:#88ff44}
+#s-xad .pdot.grp-df.filled .pcircle{box-shadow:0 0 16px rgba(136,255,68,.55),0 0 0 1px rgba(136,255,68,.35)}
+#s-xad .grp-mf .pcircle{border-color:#ff6600;color:#ff6600}
+#s-xad .pdot.grp-mf.filled .pcircle{box-shadow:0 0 16px rgba(255,102,0,.55),0 0 0 1px rgba(255,102,0,.35)}
+#s-xad .grp-fw .pcircle{border-color:#ff2200;color:#ff2200}
+#s-xad .pdot.grp-fw.filled .pcircle{box-shadow:0 0 16px rgba(255,34,0,.55),0 0 0 1px rgba(255,34,0,.35)}
+#s-xad .pdot.filled .pcircle{font-size:9px;font-weight:bold;color:#fff}
+/* efekt wskoczenia zawodnika (pętla nagrody) */
+#s-xad .pcircle.pop{animation:xadPop .26s ease-out}
+@keyframes xadPop{0%{transform:scale(.4);opacity:.3}60%{transform:scale(1.18)}100%{transform:scale(1)}}
+/* era jako mała kropka na obwodzie koła */
+#s-xad .pcircle .eradot{position:absolute;top:-2px;right:-2px;width:9px;height:9px;border-radius:50%;border:1px solid #000}
+#s-xad .eradot.era-c{background:#c060ff}
+#s-xad .eradot.era-g{background:#ffb030}
+#s-xad .eradot.era-m{background:#30c0ff}
+
+/* ── akcje ─────────────────────────────────────────────────────────── */
+#s-xad .xad-flashline{color:#ff5555;font-size:8px;letter-spacing:.5px;min-height:14px;text-align:center;margin:8px 0}
+#s-xad .xad-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:6px 0 10px}
+#s-xad .xad-actions .btn{width:auto;flex:1 1 auto;max-width:280px;margin:0;
+  padding:8px 8px;font-size:9px;line-height:1.2;border-width:2px;letter-spacing:1px}
+#s-xad .xad-actions #xad-lock-btn:disabled{background:#141414;border-color:#3a3a3a;color:#5a5a5a;cursor:default}
+#s-xad .xad-actions #xad-reroll-btn:disabled{background:#141414;border-color:#3a3a3a;color:#5a5a5a;cursor:default}
+/* 11/11 — LOCK IN woła o uwagę */
+#s-xad .xad-actions .btn.ready{background:#1c6b12;border-color:#39d11a;color:#eafff0;
+  animation:xadLockPulse 1.1s ease-in-out infinite}
+@keyframes xadLockPulse{0%,100%{box-shadow:0 0 0 2px #39d11a,0 0 10px rgba(57,209,26,.35)}50%{box-shadow:0 0 0 2px #39d11a,0 0 20px rgba(57,209,26,.7)}}
+
+/* ── reveal ────────────────────────────────────────────────────────── */
+#s-xad #xad-reveal{text-align:center}
+#s-xad .xad-tag{display:inline-block;background:#44dd66;color:#000;padding:2px 10px;font-size:9px;letter-spacing:1px;margin-bottom:8px}
+#s-xad .xad-headline{font-size:clamp(15px,4.5vw,26px);color:var(--gold);margin:8px 0;line-height:1.2;letter-spacing:1px}
+#s-xad .xad-headline.mythic{color:#44dd66;text-shadow:0 0 12px rgba(68,221,102,.5)}
+#s-xad .xad-flavor{font-size:9px;color:#9bd;letter-spacing:1px;margin-bottom:10px}
+#s-xad .xad-mixedname{font-size:clamp(14px,4vw,22px);color:#fff;margin:8px 0;letter-spacing:1px}
+#s-xad .xad-score{font-size:clamp(30px,9vw,52px);color:#fff;margin:12px 0 2px}
+#s-xad .xad-score::after{content:" PTS";font-size:12px;color:#888}
+#s-xad .xad-lineup-note{font-size:8px;color:#888;letter-spacing:1px;margin-bottom:12px}
+#s-xad .xad-readout{text-align:left;max-width:440px;margin:14px auto;display:flex;flex-direction:column;gap:3px}
+#s-xad .xad-pitch-reveal{max-width:440px;margin:14px auto 0;aspect-ratio:3/4}
+#s-xad .xad-pitch-reveal .pclub{font-size:5px;color:#999;letter-spacing:0;margin-top:1px;
+  text-shadow:1px 1px 0 #000,0 0 4px #000;max-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;pointer-events:none}
+/* REVEAL: obwodka = WYLACZNIE spojnosc (nie pozycja). Pozycja jest juz w srodku kola (ST/CM/CB).
+   Baza neutralna; zloto(narr)/magenta(arch)/era nakladaja sie wyzej przez wieksza specyficznosc. */
+#s-xad .xad-pitch-reveal .pdot .pcircle{border-color:#6f6f6f !important;color:#fff !important;box-shadow:0 0 10px rgba(255,255,255,.12) !important}
+#s-xad .xad-pitch-reveal .pdot .pname{color:#cfcfcf !important;text-shadow:1px 1px 0 #000,-1px 1px 0 #000,1px -1px 0 #000,-1px -1px 0 #000,0 0 6px #000}
+/* GLOW POWIĄZAŃ — warstwa 1: rdzeń wykrytej narracji = złoty perfect glow (silny, wspólny dla wszystkich narracji) */
+#s-xad .xad-pitch-reveal .pdot.link-narr .pcircle{
+  border:3px solid #ffe680 !important; color:#fff !important;
+  box-shadow:0 0 26px 6px rgba(255,215,64,.95), 0 0 0 3px rgba(255,215,64,.85) !important;
+  background:rgba(40,30,0,.85) !important;
+}
+#s-xad .xad-pitch-reveal .pdot.link-narr .pname{color:#ffe680 !important;text-shadow:1px 1px 0 #000,0 0 8px rgba(255,215,64,.6)}
+/* rdzeń ARCHETYPU = magenta perfect glow (ten sam efekt co narracja, inny kolor → osobny typ odkrycia) */
+#s-xad .xad-pitch-reveal .pdot.link-arch .pcircle{
+  border:3px solid #ff7ae0 !important; color:#fff !important;
+  box-shadow:0 0 26px 6px rgba(255,90,210,.95), 0 0 0 3px rgba(255,90,210,.85) !important;
+  background:rgba(40,0,32,.85) !important;
+}
+#s-xad .xad-pitch-reveal .pdot.link-arch .pname{color:#ff7ae0 !important;text-shadow:1px 1px 0 #000,0 0 8px rgba(255,90,210,.6)}
+/* EASTER EGG 1966 — koszulka Anglii zamiast koła, z biało-czerwonym glow */
+#s-xad .pdot.p66 .shirt66, #s-classic .pdot.p66 .shirt66{width:40px;height:40px;display:flex;align-items:center;justify-content:center;
+  filter:drop-shadow(0 0 10px rgba(255,255,255,.9)) drop-shadow(0 0 16px rgba(200,16,46,.7))}
+#s-xad .pdot.p66 .shirt66 svg, #s-classic .pdot.p66 .shirt66 svg{width:100%;height:100%}
+#s-xad .pdot.p66 .pname, #s-classic .pdot.p66 .pname{color:#fff !important;text-shadow:1px 1px 0 #000,0 0 8px rgba(200,16,46,.7)}
+#s-xad .xad-col-pitch.shrunk .pdot.p66 .shirt66{width:28px;height:28px}
+/* warstwa 2: reszta z dominujacej ery = OBRYS + glow w kolorze ery (tlo spojnosci, slabsze niz zloto/magenta) */
+#s-xad .xad-pitch-reveal .pdot.link-era.era-c .pcircle{border-color:#c060ff !important;color:#fff !important;box-shadow:0 0 16px 2px rgba(192,96,255,.7) !important}
+#s-xad .xad-pitch-reveal .pdot.link-era.era-g .pcircle{border-color:#ffb030 !important;color:#fff !important;box-shadow:0 0 16px 2px rgba(255,176,48,.7) !important}
+#s-xad .xad-pitch-reveal .pdot.link-era.era-m .pcircle{border-color:#30c0ff !important;color:#fff !important;box-shadow:0 0 16px 2px rgba(48,192,255,.7) !important}
+#s-xad .xad-pitch-reveal .pdot.link-era.era-c .pname{color:#c060ff !important}
+#s-xad .xad-pitch-reveal .pdot.link-era.era-g .pname{color:#ffb030 !important}
+#s-xad .xad-pitch-reveal .pdot.link-era.era-m .pname{color:#30c0ff !important}
+/* ALSO NOTICED: drugi KLUB w reszcie = cyan (wlasny kolor, nie myli sie z magenta Club Tribute). Slabszy niz rdzen. */
+#s-xad .xad-pitch-reveal .pdot.link-also-club .pcircle{border-color:#22d8d8 !important;color:#fff !important;box-shadow:0 0 18px 3px rgba(34,216,216,.65) !important}
+#s-xad .xad-pitch-reveal .pdot.link-also-club .pname{color:#22d8d8 !important}
+#s-xad .xad-row{display:flex;justify-content:space-between;align-items:center;background:#141414;border-left:4px solid #444;padding:6px 9px;font-size:9px}
+#s-xad .xad-row.grp-gk{border-left-color:#ffdd00}
+#s-xad .xad-row.grp-df{border-left-color:#88ff44}
+#s-xad .xad-row.grp-mf{border-left-color:#ff6600}
+#s-xad .xad-row.grp-fw{border-left-color:#ff2200}
+#s-xad .xad-row .rp{color:#888;font-size:7px}
+
+/* ════════════════════════════════════════════════
+   HOME SCREEN v2 — bohater XI After Dark + jednolite kafelki
+   Cel: koniec misz-maszu. Mniejsze logo, hero z boiskiem w tle,
+   wszystkie kafelki ten sam ciemny styl + jeden złoty akcent.
+════════════════════════════════════════════════ */
+.home-brand{text-align:center;margin:10px 0 16px}
+.home-brand .ball{font-size:30px;animation:spin 10s linear infinite;display:block;margin-bottom:6px}
+.home-brand .logo{font-size:clamp(16px,5vw,20px);line-height:1.3;color:var(--green);letter-spacing:1px;text-shadow:2px 2px 0 #000}
+.home-brand .tag{font-size:6.5px;color:#9ab98a;letter-spacing:1.5px;margin-top:7px;text-shadow:1px 1px 0 #000,0 0 4px #000}
+
+/* TILES — jednolite */
+.home-tiles{width:100%;display:flex;flex-direction:column;gap:7px}
+.home-tile{
+  width:100%;background:#000;border:1px solid #2a2a2a;border-left:3px solid #555;
+  border-radius:3px;padding:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:space-between;
+  transition:border-color .15s,background .15s;
+}
+.home-tile:hover,.home-tile:active{background:#0f0f0f;border-color:#444}
+.home-tile .label{font-size:11px;color:#ddd;letter-spacing:1.5px;display:flex;align-items:center;gap:9px}
+.home-tile .label .ic{font-size:13px}
+.home-tile .label .ic-svg{flex-shrink:0;display:block}
+.home-tile .meta{font-size:6.5px;color:#888;letter-spacing:1px;text-align:right}
+.home-tile .chev{font-size:11px;color:#555}
+.home-tile-desc{font-size:6.5px;color:#ffffff;letter-spacing:1.2px;padding:0 4px 2px 19px;margin-top:-3px;text-shadow:1px 1px 0 #000,1px 2px 2px rgba(0,0,0,.95),0 0 6px #000,0 3px 5px rgba(0,0,0,.85)}
+
+/* XI After Dark — główny, złoty (ten sam rozmiar, inny akcent) */
+.home-tile.gold{
+  border-color:var(--gold);border-left-color:var(--gold);
+  background:linear-gradient(135deg,#140e03 0%,#000 70%);
+  box-shadow:0 0 10px rgba(200,150,12,.2);
+}
+.home-tile.gold:hover,.home-tile.gold:active{background:linear-gradient(135deg,#1c1404 0%,#050505 70%);border-color:var(--gold)}
+.home-tile.gold .label{color:var(--gold);font-size:13px;text-shadow:1px 1px 0 #000}
+.home-tile.gold .chev{color:var(--gold)}
+
+/* subrow (playing as) + progress — spójne */
+.home-subrow{width:100%;display:flex;justify-content:space-between;align-items:center;padding:8px 4px;margin-top:4px;font-size:7px;color:#aaa;letter-spacing:1.5px;cursor:pointer;text-shadow:1px 1px 0 #000,0 0 4px #000}
+.home-subrow .edit{color:var(--gold);border:1px solid #444;border-radius:3px;padding:3px 7px;font-size:7px}
+
+/* trzy delikatne strzałki na XI After Dark — sygnał "kliknij, zacznij" */
+.home-tile .chev-3{color:var(--gold);letter-spacing:1px;font-size:13px;animation:chev3 2s ease-in-out infinite}
+@keyframes chev3{0%,100%{opacity:.45}50%{opacity:1}}
+
+/* era jako wyróżniony przycisk w kafelku quizu */
+.home-tile .era-pick{color:var(--gold);border:1px solid var(--gold);border-radius:3px;padding:5px 9px;font-size:7px;letter-spacing:1px}
+.home-tile .era-pick #title-era-name{color:#fff}
+
+/* ERA TILES — spójne z ekranem startowym (ciemne, kolorowy pasek = era) */
+.era-tile{
+  width:100%;background:#000;border:1px solid #2a2a2a;border-left:4px solid var(--era,#888);
+  border-radius:3px;padding:15px 18px;cursor:pointer;text-align:left;
+  font-family:var(--px);transition:background .15s,border-color .15s,box-shadow .15s;
+}
+.era-tile:hover,.era-tile:active{background:#0f0f0f;border-color:var(--era,#888);box-shadow:0 0 12px color-mix(in srgb,var(--era,#888) 30%,transparent)}
+.era-tile .era-name{font-size:clamp(11px,3vw,14px);color:var(--era,#fff);letter-spacing:2px;text-shadow:1px 1px 0 #000}
+.era-tile .era-meta{font-size:7.5px;color:#9a9a9a;margin-top:7px;letter-spacing:1px;text-shadow:1px 1px 0 #000}
+.era-tile .era-count{font-size:7px;color:var(--era,#666);opacity:.7;margin-top:4px;letter-spacing:1px}
+
+
+/* ── LEGACY (Etap 1) ── */
+#s-legacy .lg-sec{font-size:10px;letter-spacing:3px;margin:6px 0 8px;display:flex;align-items:center;gap:8px;width:100%}
+#s-legacy .lg-sec .lg-ic{font-size:14px}
+#s-legacy .lg-sec.xad{color:var(--gold)}
+#s-legacy .lg-sec.quiz{color:#7ec8ff}
+#s-legacy .lg-count{font-size:8px;letter-spacing:2px;color:#888;margin-bottom:10px;width:100%}
+#s-legacy .lg-count b{color:#fff;font-size:11px;margin-left:4px}
+#s-legacy .lg-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;width:100%}
+#s-legacy .lg-card{background:#0c0c0c;border:1px solid #1c1c1c;padding:8px 3px;text-align:center;min-height:66px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border-radius:2px}
+#s-legacy .lg-card.locked{opacity:.4}
+#s-legacy .lg-card .lg-emoji{font-size:18px;line-height:1}
+#s-legacy .lg-card .lg-name{font-size:6px;letter-spacing:.4px;color:#ddd;line-height:1.25}
+#s-legacy .lg-card .lg-rar{font-size:5px;letter-spacing:1px}
+#s-legacy .lg-card.r-legendary{border-color:#ffb030}
+#s-legacy .lg-card.r-legendary .lg-rar{color:#ffb030}
+#s-legacy .lg-card.r-epic{border-color:#c060ff}
+#s-legacy .lg-card.r-epic .lg-rar{color:#c060ff}
+#s-legacy .lg-card.r-rare{border-color:#30c0ff}
+#s-legacy .lg-card.r-rare .lg-rar{color:#30c0ff}
+#s-legacy .lg-card.r-common{border-color:#5e5e5e}
+#s-legacy .lg-card.r-common .lg-rar{color:#888}
+#s-legacy .lg-hint{font-size:7px;color:#666;letter-spacing:1px;margin-top:10px;text-align:center;width:100%}
+#s-legacy .lg-divider{height:1px;background:#1c1c1c;width:100%;margin:18px 0}
+#s-legacy .lg-row{font-size:9px;letter-spacing:2px;color:#aaa;margin-bottom:7px;width:100%}
+#s-legacy .lg-row b{color:#fff;float:right;letter-spacing:1px}
+
+
+/* ── Etap 5: licznik postępu na revealu ── */
+.xad-legacy-progress{text-align:center;margin:18px auto 2px;padding:10px 0;border-top:1px solid #1c1c1c;border-bottom:1px solid #1c1c1c;max-width:300px}
+.xad-legacy-progress .xlp-lbl{font-size:7px;letter-spacing:3px;color:#777;margin-bottom:5px}
+.xad-legacy-progress .xlp-count{font-size:12px;letter-spacing:2px;color:var(--gold)}
+.xad-legacy-progress .xlp-bar{height:8px;background:#0d0d0d;border:1px solid #222;margin:8px auto;max-width:220px;overflow:hidden}
+.xad-legacy-progress .xlp-fill{height:100%;background:linear-gradient(90deg,#b8860b,var(--gold));transition:width .6s ease;box-shadow:0 0 8px rgba(255,214,0,.4)}
+
+/* ── Etap 4: popup odkrycia ── */
+#xad-story-pop{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:9999;background:rgba(0,0,0,.72);pointer-events:none}
+#xad-story-pop.show{display:flex;pointer-events:auto;animation:xspFade .25s ease}
+#xad-story-pop .xsp-card{background:#0a0a0a;border:2px solid var(--gold);padding:22px 26px;text-align:center;max-width:280px;box-shadow:0 0 40px rgba(255,214,0,.35);animation:xspPop .35s cubic-bezier(.2,1.4,.4,1)}
+#xad-story-pop .xsp-top{font-size:8px;letter-spacing:3px;color:#aaa;line-height:1.7;margin-bottom:14px}
+#xad-story-pop .xsp-emoji{font-size:44px;line-height:1;margin-bottom:10px}
+#xad-story-pop .xsp-name{font-size:15px;letter-spacing:2px;color:var(--gold);margin-bottom:12px}
+#xad-story-pop .xsp-rar{font-size:8px;letter-spacing:1px;color:#888}
+#xad-story-pop .xsp-tac{margin-top:14px;padding-top:12px;border-top:1px solid #222}
+#xad-story-pop .xsp-tac-label{font-size:11px;letter-spacing:2px;color:#39d11a;margin-bottom:5px}
+#xad-story-pop .xsp-tac-desc{font-size:8px;letter-spacing:1px;color:#888;line-height:1.5}
+@keyframes xspFade{from{opacity:0}to{opacity:1}}
+@keyframes xspPop{from{transform:scale(.82);opacity:0}to{transform:scale(1);opacity:1}}
+
+/* Saved Squads — podgląd składu z Legacy (Etap 2) — bottom sheet */
+#xad-squad-view{position:fixed;inset:0;z-index:1000;display:none;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.6)}
+#xad-squad-view.show{display:flex;animation:xspFade .2s ease}
+#xad-squad-view .xsv-card{background:#0a0a0a;border-top:2px solid var(--gold);border-radius:14px 14px 0 0;padding:10px 16px 24px;max-width:440px;width:100%;text-align:center;box-shadow:0 -8px 40px rgba(255,214,0,.25);max-height:90vh;overflow-y:auto;animation:xsvUp .32s cubic-bezier(.2,1,.3,1)}
+@keyframes xsvUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+#xad-squad-view .xsv-handle{width:38px;height:4px;border-radius:2px;background:#444;margin:2px auto 12px}
+#xad-squad-view .xsv-name{font-family:var(--px);font-size:14px;color:var(--gold);letter-spacing:2px;line-height:1.3;margin-bottom:10px}
+#xad-squad-view .xsv-best{font-family:var(--px);font-size:8px;color:#888;letter-spacing:3px;margin-bottom:3px}
+#xad-squad-view .xsv-score{font-family:var(--px);font-size:30px;color:#fff;line-height:1;margin-bottom:12px}
+#xad-squad-view .xad-pitch{position:relative;width:100%;max-width:300px;aspect-ratio:3/4;margin:0 auto;
+  background:radial-gradient(ellipse at 50% 30%, #15400c 0%, #0e2e08 70%, #0a230600 100%), #0c2207;
+  border:2px solid #1c4a12;overflow:hidden}
+#xad-squad-view .xad-pitch::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:rgba(255,255,255,.18)}
+#xad-squad-view .xad-pitch::after{content:"";position:absolute;left:50%;top:0;width:32%;aspect-ratio:1/1;transform:translate(-50%,-50%);border:2px solid rgba(255,255,255,.16);border-radius:50%}
+#xad-squad-view .xad-penalty{position:absolute;left:50%;bottom:0;width:52%;height:17%;transform:translateX(-50%);border:2px solid rgba(255,255,255,.16);border-bottom:none}
+#xad-squad-view .xad-sixyard{position:absolute;left:50%;bottom:0;width:26%;height:7%;transform:translateX(-50%);border:2px solid rgba(255,255,255,.16);border-bottom:none}
+#xad-squad-view .pclub{font-size:5px;color:#999;letter-spacing:0;margin-top:1px;text-shadow:1px 1px 0 #000,0 0 4px #000;max-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;pointer-events:none}
+#xad-squad-view .pcircle .eradot{position:absolute;top:-2px;right:-2px;width:9px;height:9px;border-radius:50%;border:1px solid #000}
+#xad-squad-view .eradot.era-c{background:#c060ff}
+#xad-squad-view .eradot.era-g{background:#ffb030}
+#xad-squad-view .eradot.era-m{background:#30c0ff}
+#xad-squad-view .xsv-foot{font-family:var(--px);font-size:8px;color:#666;letter-spacing:1px;margin-top:12px}
+#xad-squad-view .xsv-empty{font-family:var(--px);font-size:9px;color:#888;line-height:1.7;padding:22px 0}
+/* sygnał, że kafel jest klikalny */
+.lg-card.found{cursor:pointer;transition:transform .12s,border-color .12s}
+.lg-card.found:hover{border-color:var(--gold);transform:translateY(-2px)}
+.lg-card.found:active{transform:scale(.97)}
+.lg-tap-hint{font-family:var(--px);font-size:7px;letter-spacing:1px;color:#7a7a7a;text-align:center;margin:2px 0 8px}
+
+/* ══ CLASSIC XI (build your dream England XI) ══ */
+#s-classic .cl-head{display:flex;justify-content:space-between;align-items:center;width:100%;margin-bottom:6px}
+#s-classic .cl-title{color:var(--yellow);font-size:13px;letter-spacing:1px;font-weight:bold}
+.cl-back{font-size:8px;padding:8px 10px}
+#s-classic .cl-sub{color:var(--grey);font-size:7px;line-height:1.5;text-align:center;margin-bottom:10px}
+#s-classic .cl-formbar{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-bottom:8px}
+.cl-form{background:#001a05;border:1px solid var(--green-dim);color:var(--grey);font-family:var(--px);font-size:7px;padding:7px 8px;cursor:pointer;letter-spacing:1px}
+.cl-form.on{border-color:var(--green);color:var(--green)}
+#s-classic .cl-count{color:var(--yellow);font-size:8px;letter-spacing:2px;text-align:center;margin:4px 0 10px}
+.cl-search{width:100%;background:#000;border:1px solid var(--green-dim);padding:10px;margin-bottom:10px;box-sizing:border-box}
+.cl-search-label{display:flex;justify-content:space-between;align-items:center;gap:8px;color:var(--yellow);font-size:7px;letter-spacing:1px;margin-bottom:6px}
+.cl-close{color:#fff;background:var(--green-dim);font-size:8px;letter-spacing:1px;padding:5px 8px;cursor:pointer;white-space:nowrap}
+.cl-input{width:100%;background:#001205;border:1px solid var(--green);color:var(--green);font-family:var(--px);font-size:11px;padding:10px;outline:none;box-sizing:border-box}
+.cl-sugg{margin-top:6px;display:flex;flex-direction:column}
+.cl-sg{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 8px;border-bottom:1px solid #102810;cursor:pointer}
+.cl-sg:active{background:var(--green-soft)}
+.cl-sg-n{color:#fff;font-size:9px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cl-sg-c{color:#666;font-size:6px;letter-spacing:1px;white-space:nowrap}
+.cl-hint{color:#666;font-size:7px;padding:8px 4px;text-align:center}
+.cl-done{width:100%;margin-top:4px;background:var(--green);border-color:var(--green);color:#000;font-size:11px;padding:14px}
+.cl-clear{color:var(--red);font-size:6px;letter-spacing:1px;margin-left:6px;cursor:pointer}
+
+/* CLASSIC — widok koszulek (przełącznik .viewing) */
+#s-classic.viewing #cl-formbar,#s-classic.viewing #cl-count,#s-classic.viewing #cl-pitch,#s-classic.viewing #cl-search,#s-classic.viewing #cl-done,#s-classic.viewing .cl-sub{display:none !important}
+#cl-view{display:none}
+#s-classic.viewing #cl-view{display:block}
+.cl-view-title{color:var(--yellow);font-size:11px;letter-spacing:2px;text-align:center;margin:2px 0 10px}
+.cl-edit{width:100%;margin-top:12px;background:#000;border:2px solid var(--green-dim);color:var(--green);font-family:var(--px);font-size:10px;padding:13px;cursor:pointer}
+
+/* CLASSIC — wpisywanie: panel szukania przypięty na górze (podpowiedzi nad klawiaturą), reszta chowana */
+#s-classic.searching #cl-formbar,#s-classic.searching #cl-count,#s-classic.searching .cl-sub{display:none}
+#s-classic.searching #cl-search{position:fixed;top:6px;left:50%;transform:translateX(-50%);width:min(440px,92vw);z-index:2000;box-shadow:0 6px 24px rgba(0,0,0,.85);max-height:60vh;overflow:auto}
+/* CLASSIC reveal — wygenerowany podpis (jak After Dark) */
+.cl-view-story{text-align:center;margin-top:12px}
+.cl-story-name{color:var(--yellow);font-size:13px;letter-spacing:1px;line-height:1.4}
+.cl-story-desc{color:var(--grey);font-size:10px;margin-top:6px;line-height:1.6}
+/* CLASSIC — kropki ery (jak After Dark) + tytuł klikalny */
+#s-classic .pcircle{position:relative}
+#s-classic .pcircle .eradot{position:absolute;top:-2px;right:-2px;width:9px;height:9px;border-radius:50%;border:1px solid #000}
+#s-classic .pdot.p66 .shirt66{position:relative}
+#s-classic .pdot.p66 .eradot{position:absolute;top:-1px;right:-3px;width:9px;height:9px;border-radius:50%;border:1px solid #000}
+#s-classic .eradot.era-c{background:#c060ff}
+#s-classic .eradot.era-g{background:#ffb030}
+#s-classic .eradot.era-m{background:#30c0ff}
+#cl-view-title{cursor:pointer}
+/* drugi człon podtytułu (interpretacja reszty składu) */
+#s-xad .xad-flavor-rest{font-size:8px;color:#9bd;letter-spacing:1px;font-style:italic;margin-top:-4px;margin-bottom:10px;opacity:.7}
+#s-classic .cl-story-rest{color:var(--grey);font-size:8px;font-style:italic;letter-spacing:1px;margin-top:5px;opacity:.95}
+/* CLASSIC — przyciski karty (SHARE / SAVE / EDIT) */
+.cl-card-actions{display:flex;flex-direction:column;gap:10px;margin-top:16px;width:100%;max-width:380px;margin-left:auto;margin-right:auto}
+.cl-card-actions .btn{width:100%}
+.cl-share{border-color:var(--yellow);color:var(--yellow)}
+/* CLASSIC — modal nazwy w tonie gry */
+.cl-modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.78);display:flex;align-items:center;justify-content:center;z-index:9999;padding:24px}
+.cl-modal{background:#0a1a0a;border:3px solid var(--yellow);border-radius:8px;padding:22px 18px;max-width:340px;width:100%;text-align:center;box-shadow:0 0 0 2px #000,0 12px 44px rgba(0,0,0,.6)}
+.cl-modal-t{color:var(--yellow);font-size:13px;letter-spacing:1px;margin-bottom:16px}
+.cl-modal-in{width:100%;box-sizing:border-box;background:#000;border:2px solid var(--yellow);color:#fff;font-family:inherit;font-size:13px;padding:11px;text-align:center;letter-spacing:1px;margin-bottom:16px}
+.cl-modal-btns{display:flex;gap:10px}
+.cl-modal-btns .btn{flex:1}
+.cl-modal-ok{border-color:var(--yellow);color:var(--yellow)}
+.cl-modal-hint{color:var(--grey);font-size:8px;margin-top:12px;letter-spacing:1px}
+
+
+/* Ukryty stary widget postępu "X/25 → unlock blind draft" (ekran tytułowy). */
+#title-progress{display:none!important;}
+
+/* ── Cień osadzenia pod WYPEŁNIONYMI graczami na boisku w grze (jak na karcie) ──
+   tylko filled / p66; puste sloty (duchy) zostają bez cienia */
+#s-xad .pdot.filled:not(.p66)::after, #s-classic .pdot.filled:not(.p66)::after{
+  content:"";position:absolute;left:50%;top:34px;width:32px;height:9px;
+  transform:translateX(-50%);pointer-events:none;z-index:-1;
+  background:radial-gradient(ellipse at center, rgba(0,0,0,.5) 0%, rgba(0,0,0,0) 72%);
+}
+#s-xad .pdot.p66::after, #s-classic .pdot.p66::after{
+  content:"";position:absolute;left:50%;top:37px;width:36px;height:10px;
+  transform:translateX(-50%);pointer-events:none;z-index:-1;
+  background:radial-gradient(ellipse at center, rgba(0,0,0,.5) 0%, rgba(0,0,0,0) 72%);
+}
+/* mniejsze boisko (shrunk) — cień proporcjonalnie wyżej/mniejszy */
+#s-xad .xad-col-pitch.shrunk .pdot.filled:not(.p66)::after{top:25px;width:24px;height:7px}
+#s-xad .xad-col-pitch.shrunk .pdot.p66::after{top:27px;width:26px;height:7px}
+
+/* Subtelny połysk na kołach After Dark W GRZE (builder + reveal) — spójnie z kartą.
+   Światło z góry; tylko wypełnione koła; nie rusza glow ani obwódki (box-shadow zostaje). */
+#s-xad .pdot.filled .pcircle{
+  background: radial-gradient(circle at 50% 28%, rgba(255,255,255,.17) 0%, rgba(255,255,255,0) 62%), rgba(0,0,0,.85);
+}
+
+/* ── UJAWNIENIE HISTORII: piłka + "lampki" rdzenia + mała ikona replay ── */
+#s-xad .xad-pitch-reveal .pdot{transition:opacity .25s ease}
+#s-xad .xad-pitch-reveal .pdot.story-dormant{opacity:.45}          /* lampka zgaszona */
+#s-xad .xad-pitch-reveal .pdot.story-lit{opacity:1}                /* lampka zapalona */
+#s-xad .xad-pitch-reveal .pdot.story-lit .pcircle,
+#s-xad .xad-pitch-reveal .pdot.story-lit .shirt66{animation:xadStoryPop .42s ease-out}
+@keyframes xadStoryPop{0%{transform:scale(1)}40%{transform:scale(1.16)}100%{transform:scale(1)}}
+
+#s-xad .xad-story-ball{
+  position:absolute;width:18px;height:18px;z-index:30;pointer-events:none;
+  display:flex;align-items:center;justify-content:center;transition:opacity .15s ease;
+}
+#s-xad .xad-story-ball-i{           /* piłka ⚽ jak na ekranie głównym — kręci się w locie */
+  font-size:16px;line-height:1;display:block;
+  animation:spin 1.4s linear infinite;
+  filter:drop-shadow(0 1px 2px rgba(0,0,0,.6));
+}
+#s-xad .xad-story-replay{
+  position:absolute;right:6px;bottom:6px;z-index:31;width:22px;height:22px;padding:0;
+  display:flex;align-items:center;justify-content:center;border:none;border-radius:50%;
+  background:rgba(0,0,0,.28);color:#e8d9a0;opacity:.4;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+#s-xad .xad-story-replay:hover,#s-xad .xad-story-replay:active{opacity:.85}
