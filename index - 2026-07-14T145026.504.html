@@ -1,0 +1,1422 @@
+<!DOCTYPE html>
+<html lang="en" translate="no">
+<head>
+  <meta name="google" content="notranslate">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content, viewport-fit=cover">
+  <!-- Google Analytics (GA4) — consent-gated (UK GDPR / PECR) -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    var FL_GA_ID = 'G-S5GCVT5T2V';
+    var FL_VERSION = "v353";   // MUSI byc rowne CACHE_VERSION w service-worker.js — bump oba razem
+    window['ga-disable-'+FL_GA_ID] = true;   // GA off until explicit consent
+    var FL_GA_LOADED = false;
+    function flConsent(){ try{ return localStorage.getItem('fl_consent'); }catch(e){ return null; } }
+    function loadGA(){
+      window['ga-disable-'+FL_GA_ID] = false;
+      if(FL_GA_LOADED) return;
+      FL_GA_LOADED = true;
+      var s = document.createElement('script');
+      s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=' + FL_GA_ID;
+      document.head.appendChild(s);
+      gtag('js', new Date());
+      gtag('config', FL_GA_ID);
+    }
+    function flTrack(n,p){ try{ if(flConsent()==='granted' && window.gtag){ var q=p||{}, o={}; for(var k in q){ o[k]=q[k]; } o.v=FL_VERSION; gtag('event', n, o); } }catch(e){} }
+    window.flTrack = flTrack;
+    // Monitoring bledow -> GA js_error (za zgoda, bez PII: tylko nazwa pliku, msg obciete, max 5/sesje)
+    (function(){
+      var _errN=0;
+      function _rep(kind,msg,src,line){
+        try{
+          if(flConsent()!=='granted' || _errN>=5) return;
+          _errN++;
+          var fn = src ? (''+src).split('/').pop().split('?')[0] : '';
+          flTrack('js_error', { kind:kind, msg:(''+msg).slice(0,100), src:fn.slice(0,60), line:line||0 });
+        }catch(e){}
+      }
+      window.addEventListener('error', function(e){ _rep('error', (e&&e.message)||'error', (e&&e.filename)||'', (e&&e.lineno)||0); });
+      window.addEventListener('unhandledrejection', function(e){ var r=e&&e.reason; _rep('promise', (r&&r.message)||(''+r)||'rejection', '', 0); });
+    })();
+    if(flConsent()==='granted') loadGA();
+  </script>
+<title>Footy Legends — Build Your England XI</title>
+<meta name="description" content="A retro browser game for English football fans. Build your own XI, discover hidden stories, and find out what your Footy DNA says about you.">
+<link rel="canonical" href="https://footylegendsquiz.co.uk/">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Game",
+  "name": "Footy Legends Quiz",
+  "description": "Name England players and build your Legendary XI. Free football quiz with 805 legends, chemistry scoring, and shareable XI builder.",
+  "url": "https://footylegendsquiz.co.uk/",
+  "applicationCategory": "Game",
+  "operatingSystem": "Web",
+  "genre": "Sports Trivia",
+  "inLanguage": "en"
+}
+</script>
+<meta property="og:title" content="Footy Legends — English Football, Build &amp; Discover">
+<meta property="og:description" content="Draw 30 legends. Build your XI. Discover the story you made — 20 hidden stories to find. Free retro game for English football fans.">
+<meta property="og:image" content="https://footylegendsquiz.co.uk/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Footy Legends — your football DNA and your England XI">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://footylegendsquiz.co.uk/">
+<meta property="og:site_name" content="Footy Legends">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Footy Legends — English Football, Build &amp; Discover">
+<meta name="twitter:description" content="Draw 30 legends. Build your XI. Discover the story you made — 20 hidden stories to find.">
+<meta name="twitter:image" content="https://footylegendsquiz.co.uk/og-image.jpg">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Footy Legends">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0a0a0a">
+<link rel="apple-touch-icon" href="data:image/jpeg;base64,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">
+<link rel="icon" type="image/jpeg" href="data:image/jpeg;base64,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">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+/* CONFETTI — celebration on new personal best */
+.confetti-container{
+  position:fixed;top:0;left:0;width:100vw;height:100vh;
+  pointer-events:none;z-index:9999;overflow:hidden;
+}
+.confetti-piece{
+  position:absolute;top:-20px;width:10px;height:14px;
+  opacity:0.9;
+  animation:confettiFall linear forwards;
+}
+@keyframes confettiFall{
+  0%   {transform:translateY(0) rotate(0deg);opacity:1}
+  100% {transform:translateY(110vh) rotate(720deg);opacity:0.6}
+}
+
+/* ── Title screen settings cog — utility, ale WIDOCZNE.
+   Settings to ważna opcja (HoF reset, mute, name change).
+   4 states per styleguide: default / hover / active / transition. */
+.title-settings-cog:hover{
+  border-color:var(--gold) !important;
+  background:rgba(0,0,0,.75) !important;
+}
+.title-settings-cog:active{
+  transform:scale(.94);
+  border-color:var(--gold) !important;
+}
+</style>
+</head>
+<body>
+
+<div class="pitch">
+  <svg viewBox="0 0 800 560" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <rect x="28" y="18" width="744" height="524" fill="none" stroke="white" stroke-width="3"/>
+    <line x1="400" y1="18" x2="400" y2="542" stroke="white" stroke-width="2.5"/>
+    <circle cx="400" cy="280" r="78" fill="none" stroke="white" stroke-width="2.5"/>
+    <circle cx="400" cy="280" r="4" fill="white"/>
+    <rect x="28" y="158" width="125" height="244" fill="none" stroke="white" stroke-width="2.5"/>
+    <rect x="28" y="208" width="52" height="144" fill="none" stroke="white" stroke-width="2.5"/>
+    <rect x="8" y="238" width="20" height="84" fill="none" stroke="white" stroke-width="2"/>
+    <circle cx="138" cy="280" r="4" fill="white"/>
+    <path d="M153,218 A78,78 0 0,1 153,342" fill="none" stroke="white" stroke-width="2.5"/>
+    <rect x="647" y="158" width="125" height="244" fill="none" stroke="white" stroke-width="2.5"/>
+    <rect x="720" y="208" width="52" height="144" fill="none" stroke="white" stroke-width="2.5"/>
+    <rect x="772" y="238" width="20" height="84" fill="none" stroke="white" stroke-width="2"/>
+    <circle cx="662" cy="280" r="4" fill="white"/>
+    <path d="M647,218 A78,78 0 0,0 647,342" fill="none" stroke="white" stroke-width="2.5"/>
+    <path d="M28,36 A20,20 0 0,1 48,18" fill="none" stroke="white" stroke-width="2"/>
+    <path d="M752,18 A20,20 0 0,1 772,36" fill="none" stroke="white" stroke-width="2"/>
+    <path d="M28,524 A20,20 0 0,0 48,542" fill="none" stroke="white" stroke-width="2"/>
+    <path d="M752,542 A20,20 0 0,0 772,524" fill="none" stroke="white" stroke-width="2"/>
+  </svg>
+</div>
+
+<!-- Portrait pitch — mobile portrait + title screen only (overlay, .pitch stays untouched) -->
+<div class="pitch-portrait">
+  <svg viewBox="0 0 560 800" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+    <rect x="28" y="28" width="504" height="744" fill="none" stroke="white" stroke-width="3"/>
+    <line x1="28" y1="400" x2="532" y2="400" stroke="white" stroke-width="2.5"/>
+    <circle cx="280" cy="400" r="78" fill="none" stroke="white" stroke-width="2.5"/>
+    <circle cx="280" cy="400" r="4" fill="white"/>
+    <rect x="158" y="28" width="244" height="125" fill="none" stroke="white" stroke-width="2.5"/>
+    <rect x="208" y="28" width="144" height="52" fill="none" stroke="white" stroke-width="2.5"/>
+    <rect x="238" y="8" width="84" height="20" fill="none" stroke="white" stroke-width="2"/>
+    <circle cx="280" cy="138" r="4" fill="white"/>
+    <path d="M218,153 A78,78 0 0,0 342,153" fill="none" stroke="white" stroke-width="2.5"/>
+    <rect x="158" y="647" width="244" height="125" fill="none" stroke="white" stroke-width="2.5"/>
+    <rect x="208" y="720" width="144" height="52" fill="none" stroke="white" stroke-width="2.5"/>
+    <rect x="238" y="772" width="84" height="20" fill="none" stroke="white" stroke-width="2"/>
+    <circle cx="280" cy="662" r="4" fill="white"/>
+    <path d="M218,647 A78,78 0 0,1 342,647" fill="none" stroke="white" stroke-width="2.5"/>
+    <path d="M28,48 A20,20 0 0,1 48,28" fill="none" stroke="white" stroke-width="2"/>
+    <path d="M512,28 A20,20 0 0,1 532,48" fill="none" stroke="white" stroke-width="2"/>
+    <path d="M28,752 A20,20 0 0,0 48,772" fill="none" stroke="white" stroke-width="2"/>
+    <path d="M512,772 A20,20 0 0,0 532,752" fill="none" stroke="white" stroke-width="2"/>
+  </svg>
+</div>
+
+<!-- Dark pitch for HOF/Results/GameOver screens -->
+<div class="pitch-dark">
+  <svg viewBox="0 0 800 560" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <rect x="28" y="18" width="744" height="524" fill="none" stroke="white" stroke-width="3"/>
+    <line x1="400" y1="18" x2="400" y2="542" stroke="white" stroke-width="2.5"/>
+    <circle cx="400" cy="280" r="78" fill="none" stroke="white" stroke-width="2.5"/>
+    <circle cx="400" cy="280" r="4" fill="white"/>
+    <rect x="28" y="158" width="125" height="244" fill="none" stroke="white" stroke-width="2.5"/>
+    <rect x="28" y="208" width="52" height="144" fill="none" stroke="white" stroke-width="2.5"/>
+    <rect x="8" y="238" width="20" height="84" fill="none" stroke="white" stroke-width="2"/>
+    <circle cx="138" cy="280" r="4" fill="white"/>
+    <path d="M153,218 A78,78 0 0,1 153,342" fill="none" stroke="white" stroke-width="2.5"/>
+    <rect x="647" y="158" width="125" height="244" fill="none" stroke="white" stroke-width="2.5"/>
+    <rect x="720" y="208" width="52" height="144" fill="none" stroke="white" stroke-width="2.5"/>
+    <rect x="772" y="238" width="20" height="84" fill="none" stroke="white" stroke-width="2"/>
+    <circle cx="662" cy="280" r="4" fill="white"/>
+    <path d="M647,218 A78,78 0 0,0 647,342" fill="none" stroke="white" stroke-width="2.5"/>
+    <path d="M28,36 A20,20 0 0,1 48,18" fill="none" stroke="white" stroke-width="2"/>
+    <path d="M752,18 A20,20 0 0,1 772,36" fill="none" stroke="white" stroke-width="2"/>
+    <path d="M28,524 A20,20 0 0,0 48,542" fill="none" stroke="white" stroke-width="2"/>
+    <path d="M752,542 A20,20 0 0,0 772,524" fill="none" stroke="white" stroke-width="2"/>
+  </svg>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="streak-flash" id="sflash"></div>
+<!-- Red flash overlay for wrong answer -->
+<div id="red-flash" style="position:fixed;inset:0;background:var(--red);opacity:0;
+  pointer-events:none;z-index:800;transition:opacity .35s ease"></div>
+<div id="green-flash" style="position:fixed;inset:0;background:var(--green);opacity:0;
+  pointer-events:none;z-index:800;transition:opacity .25s ease"></div>
+
+<!-- FOUND PLAYERS MODAL -->
+<div class="modal-overlay" id="modal-legends" onclick="closeModal()">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-title">⚽ YOUR LEGENDS (<span id="modal-count">0</span>)</div>
+    <div class="modal-list" id="modal-list"></div>
+    <button class="btn modal-close" onclick="closeModal()">✕ CLOSE</button>
+  </div>
+</div>
+
+<!-- Change-name modal — invoked from title and results pencil buttons -->
+<div class="modal-overlay" id="modal-changename" onclick="closeChangeNameModal()">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-title">✏ CHANGE YOUR NAME</div>
+    <input class="inp" id="inp-changename" type="text" maxlength="14"
+      placeholder="YOUR NAME..."
+      autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false"
+      style="margin:14px 0;text-transform:uppercase">
+    <button class="btn" onclick="confirmChangeName()">▶ SAVE</button>
+    <button class="btn btn-dim modal-close" onclick="closeChangeNameModal()">✕ CANCEL</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════
+     TITLE
+════════════════════════════ -->
+<div class="screen mid on" id="s-title" style="position:relative">
+  <!-- Settings — utility w rogu, ale WIDOCZNE i klikalne.
+       Settings to ważna opcja (HoF reset, mute, change name) — Mike musi znajdować bez polowania.
+       4 states: default visible, hover full, active scale, 200ms ease. -->
+  <button
+    onclick="go('s-settings')"
+    title="Settings"
+    aria-label="Settings"
+    class="title-settings-cog"
+    style="position:absolute;
+      top:calc(env(safe-area-inset-top, 0px) + 14px);
+      right:14px;
+      background:rgba(0,0,0,.55);
+      border:1px solid #555;
+      border-radius:6px;
+      color:var(--gold);
+      font-size:22px;
+      width:42px;
+      height:42px;
+      padding:0;
+      cursor:pointer;
+      opacity:1;
+      transition:opacity 200ms ease-out, transform 200ms ease-out, border-color 200ms ease-out;
+      z-index:5;
+      line-height:1;
+      display:flex;
+      align-items:center;
+      justify-content:center">⚙</button>
+  <!-- HOW TO PLAY — dostepne, ale nienarzucone. Nowy gracz sam znajdzie. -->
+  <button
+    onclick="openHowToPlay()"
+    aria-label="How to play"
+    class="title-settings-cog"
+    style="position:absolute;
+      top:calc(env(safe-area-inset-top, 0px) + 14px);
+      right:64px;
+      background:rgba(0,0,0,.55);
+      border:1px solid #555;
+      border-radius:6px;
+      color:var(--gold);
+      font-size:20px;
+      width:42px;
+      height:42px;
+      padding:0;
+      cursor:pointer;
+      opacity:1;
+      transition:opacity 200ms ease-out, transform 200ms ease-out, border-color 200ms ease-out;
+      z-index:5;
+      line-height:1;
+      display:flex;
+      align-items:center;
+      justify-content:center">?</button>
+  <div class="home-brand">
+    <span class="ball">⚽</span>
+    <div class="logo">FOOTY LEGENDS</div>
+    <h1 class="visually-hidden">ENGLAND FOOTBALL QUIZ</h1>
+    <div class="tag">ENGLISH FOOTBALL · BUILD &amp; DISCOVER</div>
+  </div>
+
+  <div style="width:100%;max-width:360px">
+    <!-- TILES — wszystkie równe; XI After Dark złoty (główny), reszta szara -->
+    <div class="home-tiles">
+      <div class="home-tile gold" id="title-xad-btn" onclick="openXAD()" role="button" tabindex="0" aria-label="Play XI After Dark">
+        <span class="label"><svg class="ic-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><rect x="4" y="2.5" width="16" height="19" rx="1.5"/><rect x="9" y="1" width="6" height="3" rx="1" fill="currentColor"/><circle cx="9" cy="7" r="1.1" fill="currentColor" stroke="none"/><circle cx="15" cy="7" r="1.1" fill="currentColor" stroke="none"/><circle cx="7.5" cy="12" r="1.1" fill="currentColor" stroke="none"/><circle cx="11" cy="12" r="1.1" fill="currentColor" stroke="none"/><circle cx="13.5" cy="12" r="1.1" fill="currentColor" stroke="none"/><circle cx="16.5" cy="12" r="1.1" fill="currentColor" stroke="none"/><circle cx="9" cy="17" r="1.1" fill="currentColor" stroke="none"/><circle cx="15" cy="17" r="1.1" fill="currentColor" stroke="none"/></svg> PLAY</span>
+        <span class="chev chev-3">›››</span>
+      </div>
+      <div class="home-tile-desc">build an XI · discover the story</div>
+      <div class="home-tile" onclick="openClassic()" role="button" tabindex="0">
+        <span class="label"><span class="ic">⚽</span> BUILD XI</span>
+        <span class="chev">›</span>
+      </div>
+      <div class="home-tile-desc">build your dream England XI</div>
+      <div class="home-tile" onclick="openLegend()" role="button" tabindex="0">
+        <span class="label"><span class="ic">🧬</span> MY FOOTY LEGEND</span>
+        <span class="chev">›</span>
+      </div>
+      <div class="home-tile-desc" id="legend-desc">identity forming &middot; 0/10</div>
+      <div class="home-tile" onclick="openLegacy()" role="button" tabindex="0">
+        <span class="label"><span class="ic">🏛️</span> LEGACY</span>
+        <span class="chev">›</span>
+      </div>
+      <div class="home-tile-desc">your stories · your legends</div>
+
+      <!-- Quick Quiz — bonus, nie filar. Osobno pod kreska. -->
+      <div class="home-sep"></div>
+      <div class="home-tile" onclick="kickOff()" role="button" tabindex="0">
+        <span class="label"><span class="ic">📋</span> QUICK QUIZ</span>
+        <span class="meta era-pick" id="title-era-info" onclick="event.stopPropagation();changeEra()">ERA: <span id="title-era-name">ALL TIME</span> ›</span>
+      </div>
+      <div class="home-tile-desc">name England legends · beat the clock</div>
+    </div>
+  </div>
+
+  <!-- Playing as — subtle line, only visible if user has stored name -->
+  <div id="title-playing-as" class="home-subrow" onclick="changeName()" style="display:none;max-width:360px">
+    <span>PLAYING AS <span id="title-playing-name" style="color:#ccc"></span></span>
+    <span class="edit">✏ EDIT</span>
+  </div>
+
+  <!-- Progress widget — visible once you've discovered some players -->
+  <div id="title-progress" style="display:none;width:100%;max-width:360px;margin-top:14px;padding:10px 12px;background:#000;border:1px solid #333">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+      <span id="title-progress-label" style="font-size:8px;color:#888;letter-spacing:2px">LEGENDS</span>
+      <span style="display:flex;align-items:center;gap:10px">
+        <!-- Streak badge — small, retention layer, hidden when streak=0 -->
+        <span id="title-streak" style="display:none;font-size:8px;color:var(--gold);letter-spacing:1.5px">
+          🔥 <span id="title-streak-n">0</span>
+        </span>
+        <span id="title-progress-count" style="font-size:10px;color:var(--gold);letter-spacing:1px;font-weight:bold">0 / 100</span>
+      </span>
+    </div>
+    <div style="background:#111;border:1px solid #222;height:6px;margin-bottom:6px">
+      <div id="title-progress-bar" style="background:var(--gold);height:100%;width:0%;transition:width .6s ease"></div>
+    </div>
+    <div id="title-progress-hint" style="font-size:6px;color:#555;letter-spacing:2px;text-align:center">—</div>
+  </div>
+
+  <div style="height:18px"></div>
+</div>
+
+<!-- ════════════════════════════
+     SCREEN: XI AFTER DARK (Model B) — Teletext
+     One Round Machine: formation → draft → reveal
+════════════════════════════ -->
+<!-- ════ LEGACY ════ -->
+<div class="screen" id="s-legacy" style="padding:10px 6px 40px;align-items:center;background:#050505">
+  <div style="width:100%;max-width:460px;display:flex;align-items:center;margin-bottom:14px;position:relative">
+    <button class="btn-back" onclick="go('s-title')">MENU</button>
+    <div style="font-size:8px;color:var(--gold);letter-spacing:3px;position:absolute;left:0;right:0;text-align:center;pointer-events:none">🏛️ LEGACY</div>
+  </div>
+  <div id="legacy-body" style="width:100%;max-width:460px"></div>
+</div>
+
+<div class="screen" id="s-xad">
+ <div class="xad-wrap">
+  <div class="xad-header">
+    <span class="xad-title">XI AFTER DARK</span>
+    <button class="xad-exit" onclick="go('s-title')">✕</button>
+  </div>
+
+  <!-- draft: puste boisko + ROLL THE SQUAD od razu, bez ekranu-bramki -->
+  <div id="xad-draft" style="display:none">
+    <div id="xad-welcome" class="xad-welcome">
+      <div class="xad-welcome-tag">Build your XI.<br>Discover the story.</div>
+      <button id="xad-pick-btn" class="xad-bigbtn xad-rollbtn" onclick="xadDraw()">
+        <span class="xad-dice" id="xad-dice">🎲</span> ROLL THE SQUAD
+      </button>
+      <div class="xad-welcome-cap">Draw 30 legends<br>and build your XI</div>
+    </div>
+    <div class="xad-formbar-row">
+      <div id="xad-formbar" class="xad-formbar"></div>
+    </div>
+    <div class="xad-cols">
+      <div class="xad-col-pitch">
+        <div class="xad-sectlabel">YOUR XI · <b id="xad-count">0</b>/11</div>
+        <div id="xad-actions" class="xad-actions">
+          <button id="xad-reroll-btn" class="btn btn-y" onclick="xadReroll()">🎲 RE-ROLL (1×)</button>
+          <button id="xad-lock-btn" class="btn" disabled onclick="xadLockXI()">⚽ LOCK IN</button>
+        </div>
+        <div id="xad-pitch" class="xad-pitch"><div class="xad-penalty"></div><div class="xad-sixyard"></div></div>
+      </div>
+      <div class="xad-col-pool">
+        <div class="xad-sectlabel">POOL · TAP TO PICK</div>
+        <div id="xad-filterline" class="xad-filterline-pool" style="display:none"></div>
+        <div id="xad-pool" class="xad-pool"></div>
+      </div>
+    </div>
+    <div id="xad-predeal-foot" class="xad-predeal-foot">Hidden stories<br>waiting to be found</div>
+    <div id="xad-flash" class="xad-flashline"></div>
+  </div>
+
+  <!-- reveal -->
+  <div id="xad-reveal" style="display:none">
+    <div id="xad-reveal-body"></div>
+    <button class="btn btn-primary" style="margin-top:18px" onclick="xadPlayAgain()">▶ PLAY AGAIN</button>
+    <button class="btn" style="margin-top:8px" onclick="xadShareCard()">📤 SHARE</button>
+    <div style="text-align:center;margin-top:10px"><button class="btn-back" onclick="go('s-title')">MENU</button></div>
+    <div style="margin-top:18px;text-align:center">
+      <a href="https://buymeacoffee.com/xiafterdark" target="_blank" rel="noopener" style="color:var(--gold);opacity:.65;text-decoration:none;font-size:11px;letter-spacing:1px">☕ Enjoying this? Buy me a coffee</a>
+    </div>
+  </div>
+ </div>
+</div>
+
+<!-- Unlock overlay — full-screen celebration, reused for both blind draft & XI unlocks -->
+<!-- PWA update prompt — shown when service worker detects a new build -->
+<div id="sw-update-banner" style="display:none;position:fixed;top:0;left:0;right:0;
+  background:#aa88ff;color:#000;font-family:var(--px);font-size:8px;letter-spacing:2px;
+  padding:10px 14px;text-align:center;cursor:pointer;z-index:900;
+  box-shadow:0 2px 8px rgba(0,0,0,.5)" onclick="applySWUpdate()">
+  🔄 NEW VERSION — TAP TO RELOAD
+</div>
+
+<div id="unlock-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:500;align-items:center;justify-content:center;flex-direction:column;padding:20px" onclick="dismissUnlockOverlay()">
+  <div style="text-align:center;max-width:340px">
+    <div style="font-size:14px;color:#888;letter-spacing:4px;margin-bottom:12px">✨ NEW MODE ✨</div>
+    <div style="font-size:42px;margin-bottom:18px;animation:unlockGlow 1.6s ease-in-out infinite">🔓</div>
+    <div id="unlock-mode-name" style="font-size:20px;color:#aa88ff;letter-spacing:4px;font-weight:bold;margin-bottom:12px;text-shadow:0 0 30px #aa88ff">BLIND DRAFT</div>
+    <div id="unlock-desc" style="font-size:9px;color:#ccc;letter-spacing:2px;line-height:1.8;margin-bottom:28px">
+      YOU'VE DISCOVERED<br>25 LEGENDS<br><br>
+      <span style="color:#888;font-size:7px">A NEW CHALLENGE AWAITS</span>
+    </div>
+    <button id="unlock-try-btn" onclick="event.stopPropagation();acceptUnlockOverlay()" style="width:100%;background:#aa88ff;border:none;color:#000;font-family:var(--px);font-size:11px;padding:14px;cursor:pointer;letter-spacing:3px;font-weight:bold;margin-bottom:8px">🎲 TAP TO TRY</button>
+    <button onclick="event.stopPropagation();dismissUnlockOverlay()" style="width:100%;background:transparent;border:1px solid #444;color:#666;font-family:var(--px);font-size:8px;padding:10px;cursor:pointer;letter-spacing:2px">LATER</button>
+  </div>
+</div>
+
+<!-- Elimination drama flash — pub mode -->
+<div id="elim-overlay" style="display:none;position:fixed;inset:0;background:rgba(120,0,0,.85);z-index:500;align-items:center;justify-content:center;flex-direction:column;padding:20px;animation:elimFlash 1.5s ease-out forwards">
+  <div style="text-align:center">
+    <div style="font-size:80px;margin-bottom:12px;animation:elimSkull 1.5s ease-out">☠️</div>
+    <div id="elim-team-name" style="font-size:24px;color:#fff;letter-spacing:6px;font-weight:bold;text-shadow:0 0 30px #ff0000,0 0 60px #ff0000;margin-bottom:8px">TEAM A</div>
+    <div style="font-size:11px;color:#ffaaaa;letter-spacing:5px">ELIMINATED</div>
+  </div>
+</div>
+
+<!-- Tier upgrade celebration — when crossing badge milestone -->
+<div id="tier-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:500;align-items:center;justify-content:center;flex-direction:column;padding:20px" onclick="dismissTierOverlay()">
+  <div style="text-align:center;max-width:340px">
+    <div style="font-size:11px;color:#888;letter-spacing:4px;margin-bottom:14px">⭐ TIER UNLOCKED ⭐</div>
+    <div id="tier-icon" style="font-size:60px;margin-bottom:14px;animation:tierBounce 1.4s ease-in-out infinite">🏆</div>
+    <div id="tier-name" style="font-size:18px;color:var(--gold);letter-spacing:4px;font-weight:bold;margin-bottom:8px;text-shadow:0 0 30px var(--gold)">SUNDAY PLAYER</div>
+    <div id="tier-sub" style="font-size:8px;color:#aaa;letter-spacing:2px;margin-bottom:24px">26 LEGENDS DISCOVERED</div>
+    <button onclick="event.stopPropagation();dismissTierOverlay()" style="width:100%;background:var(--gold);border:none;color:#000;font-family:var(--px);font-size:10px;padding:12px;cursor:pointer;letter-spacing:3px;font-weight:bold">CONTINUE</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════
+     ENTER NAME
+════════════════════════════ -->
+<div class="screen mid" id="s-name">
+  <div class="hdr">ENTER YOUR NAME</div>
+  <div style="width:100%;max-width:380px">
+    <input class="inp" id="inp-name" type="text" maxlength="14"
+      placeholder="YOUR NAME..."
+      autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false"
+      style="margin-bottom:14px;text-transform:uppercase">
+    <button class="btn" onclick="confirmName()">NEXT →</button>
+    <button class="btn-back" onclick="go('s-title')">MENU</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════
+     SAVE SCORE (post-game name capture)
+════════════════════════════ -->
+<div class="screen mid" id="s-savescore">
+  <div class="hdr">SAVE YOUR SCORE</div>
+  <div style="width:100%;max-width:380px">
+    <div id="ss-score" style="font-size:22px;text-align:center;color:var(--green);margin-bottom:6px;letter-spacing:2px"></div>
+    <div style="font-size:8px;text-align:center;color:#ccc;letter-spacing:2px;margin-bottom:18px;text-shadow:1px 1px 0 #000,0 0 4px #000">PUT YOUR NAME ON THE LEADERBOARD</div>
+    <input class="inp" id="inp-savename" type="text" maxlength="14"
+      placeholder="YOUR NAME..."
+      autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false"
+      style="margin-bottom:14px;text-transform:uppercase">
+    <button class="btn" onclick="confirmSaveName()">▶ SAVE</button>
+    <button class="btn btn-dim" onclick="skipSaveName()">SKIP →</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════
+     ERA SELECT
+════════════════════════════ -->
+<div class="screen mid" id="s-era">
+  <div class="hdr">CHOOSE YOUR ERA</div>
+  <div style="width:100%;max-width:400px;display:flex;flex-direction:column;gap:9px">
+
+    <button class="era-tile" onclick="startEra('C')" style="--era:#c8960c">
+      <div class="era-name">🏆 CLASSICS</div>
+      <div class="era-meta">1960 – 1992 · PRE-PREMIER LEAGUE</div>
+      <div class="era-count">143 legends</div>
+    </button>
+
+    <button class="era-tile" onclick="startEra('G')" style="--era:#00ff41">
+      <div class="era-name">⭐ GOLDEN ERA</div>
+      <div class="era-meta">1992 – 2010 · PREMIER LEAGUE GOLDEN AGE</div>
+      <div class="era-count">431 legends</div>
+    </button>
+
+    <button class="era-tile" onclick="startEra('M')" style="--era:#ff6600">
+      <div class="era-name">🔥 MODERN</div>
+      <div class="era-meta">2010 – NOW · NEW GENERATION</div>
+      <div class="era-count">231 legends</div>
+    </button>
+
+    <button class="era-tile" onclick="startEra('ALL')" style="--era:#aaa">
+      <div class="era-name">🎯 ALL TIME</div>
+      <div class="era-meta">1960 – NOW · THE ULTIMATE CHALLENGE</div>
+      <div class="era-count">805 legends</div>
+    </button>
+
+    <button class="btn-back" onclick="go('s-title')">MENU</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════
+     GAME SCREEN
+════════════════════════════ -->
+<div class="screen" id="s-game" style="padding-top:8px;padding-bottom:10px">
+
+  <!-- HUD — compact, sticky top -->
+  <div class="hud" style="position:sticky;top:0;z-index:50;background:transparent">
+    <div class="hc">
+      <div class="lbl">SCORE</div>
+      <div class="hv t-y" id="g-score">0</div>
+    </div>
+    <div class="hc" style="border-color:#111">
+      <div class="lbl">TIME</div>
+      <div class="hv t-g" id="g-time">60</div>
+    </div>
+    <div class="hc">
+      <div class="lbl">PLAYER</div>
+      <div style="font-size:7px;color:#fff;margin-top:4px;letter-spacing:1px;line-height:1.5" id="g-pname"></div>
+    </div>
+  </div>
+
+  <!-- Timer bar -->
+  <div class="tbar-wrap">
+    <div class="tbar"><div class="tbar-fill" id="g-tbar" style="width:100%"></div></div>
+  </div>
+
+  <!-- Lives -->
+  <div class="lives-row">
+    <span style="font-size:7px;color:var(--grey);letter-spacing:2px">LIVES</span>
+    <span class="life" id="lf0">⚽</span>
+    <span class="life" id="lf1">⚽</span>
+    <span class="life" id="lf2">⚽</span>
+    <span style="font-size:7px;color:var(--grey);margin-left:auto;letter-spacing:1px" id="g-best"></span>
+    <span style="font-size:7px;color:var(--grey);margin-left:8px;letter-spacing:1px" id="g-streak"></span>
+  </div>
+
+  <!-- Live feedback popup — floats above the input when player hits correct -->
+  <div id="quiz-popup" style="position:relative;width:100%;max-width:580px;height:0;margin:0 auto;pointer-events:none;z-index:20"></div>
+
+  <!-- Onboarding hint — shown only on first-ever quiz, hidden after first guess -->
+  <div id="g-hint" style="display:none;font-size:7px;color:#ccc;letter-spacing:2px;text-align:center;margin-bottom:6px;text-shadow:1px 1px 0 #000,0 0 4px #000">
+    TYPE FOOTBALL PLAYERS YOU KNOW
+  </div>
+
+  <!-- Input — sticky above keyboard -->
+  <div id="g-input-row" style="display:flex;gap:8px;width:100%;max-width:580px;margin-bottom:8px">
+    <input class="inp" id="g-inp" type="text"
+      placeholder="E.G. ROONEY, BECKHAM, OWEN..."
+      autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false"
+      style="flex:1;text-transform:uppercase"
+      inputmode="text">
+    <button onclick="handleSubmit()" style="background:var(--green);border:none;
+      color:#000;font-family:var(--px);font-size:18px;padding:0 18px;cursor:pointer;
+      font-weight:bold;min-width:58px;flex-shrink:0">✓</button>
+  </div>
+
+  <!-- Found tags — lista zgadniętych graczy -->
+  <div class="ans-wrap" id="g-tags"></div>
+
+  <!-- Progress -->
+  <div class="prog-wrap">
+    <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+      <span style="font-size:7px;color:#ccc;text-shadow:1px 1px 0 #000" id="g-mode-label">CLASSIC</span>
+      <span style="font-size:7px;color:var(--green);text-shadow:1px 1px 0 #000" id="g-prog-txt">0 found</span>
+    </div>
+    <div class="prog-bar"><div class="prog-fill" id="g-prog-fill" style="width:0%"></div></div>
+  </div>
+
+  <div id="g-game-footer" style="margin-top:10px;width:100%;max-width:580px;display:flex;gap:8px">
+    <button class="btn btn-dim" style="flex:1;padding:8px;font-size:8px" onclick="confirmQuit()">END GAME</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════
+     RESULTS
+════════════════════════════ -->
+<div class="screen" id="s-results" style="padding-top:20px;align-items:center;background:#050f05">
+
+  <div class="score-reveal" id="r-score">0</div>
+  <div style="font-size:8px;color:var(--grey);letter-spacing:2px;text-align:center;margin-bottom:24px" id="r-sub">LEGENDS FOUND</div>
+
+  <div style="text-align:center;margin-bottom:20px">
+    <div style="font-size:26px;margin-bottom:6px" id="r-stars">⭐</div>
+    <div style="font-size:clamp(10px,3vw,14px);color:var(--yellow);letter-spacing:2px" id="r-rating">GREAT EFFORT!</div>
+  </div>
+
+  <!-- Best run comparison — shows only if user has a previous score in this era -->
+  <div id="r-compare" style="display:none;width:100%;max-width:400px;margin-bottom:14px;
+    padding:10px 14px;background:#000;border:2px solid var(--gold);text-align:center">
+    <div style="font-size:7px;color:#888;letter-spacing:2px;margin-bottom:6px">VS YOUR BEST</div>
+    <div style="font-size:11px;color:var(--gold);letter-spacing:2px" id="r-compare-text">—</div>
+  </div>
+
+  <!-- Streak badge — shows only if user has a 3+ day streak -->
+  <div id="r-streak-badge" style="display:none;width:100%;max-width:400px;margin-bottom:20px;
+    padding:8px 14px;background:#000;border:2px solid #ff6600;text-align:center;
+    font-size:11px;color:#ff6600;letter-spacing:2px"></div>
+
+  <!-- SHARE -->
+  <div style="width:100%;max-width:400px;margin-bottom:14px">
+    <div style="font-size:8px;color:var(--yellow);text-align:center;letter-spacing:2px;margin-bottom:10px">— SHARE YOUR SCORE —</div>
+    <div class="share-row">
+      <button class="share-btn" onclick="shareWA()" title="WhatsApp">
+        <span class="share-icon">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        </span>
+      </button>
+      <button class="share-btn" onclick="shareX()" title="X / Twitter">
+        <span class="share-icon">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="#fff"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.253 5.622 5.91-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        </span>
+      </button>
+      <button class="share-btn" onclick="shareFB()" title="Facebook">
+        <span class="share-icon">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        </span>
+      </button>
+      <button class="share-btn" onclick="shareMessenger()" title="Messenger">
+        <span class="share-icon">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="#0084FF"><path d="M12 0C5.373 0 0 4.974 0 11.111c0 3.498 1.744 6.614 4.469 8.652V24l4.088-2.242c1.092.301 2.246.464 3.443.464 6.627 0 12-4.974 12-11.111S18.627 0 12 0zm1.191 14.963l-3.055-3.26-5.963 3.26L10.732 8l3.131 3.259L19.752 8l-6.561 6.963z"/></svg>
+        </span>
+      </button>
+      <button class="share-btn" onclick="shareCopy(false)" title="Copy to clipboard" id="copy-btn">
+        <span class="share-icon">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="#aaa"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+        </span>
+        <span id="copy-lbl" style="font-size:7px;display:block;margin-top:2px;color:#aaa">COPY</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="div"></div>
+
+  <!-- PRIMARY ACTION: play again -->
+  <div style="width:100%;max-width:380px;margin-bottom:14px">
+    <button class="btn" onclick="playAgain()">▶ PLAY AGAIN</button>
+    <div style="margin-top:18px;text-align:center">
+      <a href="https://buymeacoffee.com/xiafterdark" target="_blank" rel="noopener" style="color:var(--gold);opacity:.65;text-decoration:none;font-size:11px;letter-spacing:1px">☕ Enjoying this? Buy me a coffee</a>
+    </div>
+  </div>
+
+  <!-- TERTIARY: mode breakdown (era stat) -->
+  <div class="box" style="max-width:460px;margin-bottom:16px;text-align:center">
+    <div class="lbl" style="margin-bottom:8px" id="r-mode-lbl">CLASSIC MODE</div>
+    <div style="font-size:11px;color:#fff;margin-bottom:10px" id="r-stat"></div>
+    <div style="height:10px;background:#0d0d0d;border:1px solid #1a1a1a;overflow:hidden">
+      <div id="r-bar" style="height:100%;width:0%;background:var(--green);transition:width 1s .4s ease"></div>
+    </div>
+  </div>
+
+  <!-- Nick + edit (less prominent now, near bottom) -->
+  <div onclick="changeName()" style="font-size:8px;color:var(--grey);letter-spacing:3px;margin-bottom:14px;text-align:center;cursor:pointer;padding:4px"><span id="r-name"></span> <span style="color:var(--gold);padding:4px 8px;margin-left:4px;font-size:11px;border:1px solid #444;border-radius:3px" title="CHANGE NAME">✏ EDIT</span></div>
+
+  <!-- SECONDARY: view legends + main menu -->
+  <div style="width:100%;max-width:380px">
+    <button class="btn btn-dim" style="margin-bottom:6px" onclick="openModal()">👁 VIEW ALL MY LEGENDS</button>
+    <button class="btn-back" onclick="go('s-title')">MENU</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════
+     GAME OVER (lives)
+════════════════════════════ -->
+<div class="screen mid" id="s-gameover" style="background:#050f05">
+  <div style="font-size:clamp(14px,4vw,20px);color:var(--red);letter-spacing:2px;
+    text-align:center;margin-bottom:6px">GAME OVER</div>
+  <div style="font-size:8px;color:var(--grey);text-align:center;letter-spacing:2px;
+    margin-bottom:20px">3 WRONG ANSWERS</div>
+  <div style="font-size:clamp(50px,16vw,80px);color:var(--yellow);text-align:center;
+    text-shadow:3px 3px 0 #553300;margin-bottom:4px;
+    animation:bigpop .4s cubic-bezier(.34,1.56,.64,1) both" id="go-score">0</div>
+  <div style="font-size:8px;color:var(--grey);text-align:center;
+    letter-spacing:2px;margin-bottom:20px">LEGENDS FOUND</div>
+
+  <!-- Best run comparison -->
+  <div id="go-compare" style="display:none;width:100%;max-width:400px;margin-bottom:14px;
+    padding:10px 14px;background:#000;border:2px solid var(--gold);text-align:center">
+    <div style="font-size:7px;color:#888;letter-spacing:2px;margin-bottom:6px">VS YOUR BEST</div>
+    <div style="font-size:11px;color:var(--gold);letter-spacing:2px" id="go-compare-text">—</div>
+  </div>
+
+  <!-- Streak badge (game over) -->
+  <div id="go-streak-badge" style="display:none;width:100%;max-width:400px;margin-bottom:20px;
+    padding:8px 14px;background:#000;border:2px solid #ff6600;text-align:center;
+    font-size:11px;color:#ff6600;letter-spacing:2px"></div>
+
+  <!-- SHARE on game over too -->
+  <div style="width:100%;max-width:400px;margin-bottom:16px">
+    <div style="font-size:8px;color:var(--yellow);text-align:center;letter-spacing:2px;margin-bottom:10px">— SHARE YOUR SCORE —</div>
+    <div class="share-row">
+      <button class="share-btn" onclick="shareWA(true)">
+        <span class="share-icon">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        </span>
+      </button>
+      <button class="share-btn" onclick="shareX(true)">
+        <span class="share-icon">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="#fff"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.253 5.622 5.91-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        </span>
+      </button>
+      <button class="share-btn" onclick="shareFB(true)">
+        <span class="share-icon">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        </span>
+      </button>
+      <button class="share-btn" onclick="shareMessenger(true)" title="Messenger">
+        <span class="share-icon">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="#0084FF"><path d="M12 0C5.373 0 0 4.974 0 11.111c0 3.498 1.744 6.614 4.469 8.652V24l4.088-2.242c1.092.301 2.246.464 3.443.464 6.627 0 12-4.974 12-11.111S18.627 0 12 0zm1.191 14.963l-3.055-3.26-5.963 3.26L10.732 8l3.131 3.259L19.752 8l-6.561 6.963z"/></svg>
+        </span>
+      </button>
+      <button class="share-btn" onclick="shareCopy(true)" id="copy-btn2">
+        <span class="share-icon">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="#aaa"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+        </span>
+        <span id="copy-lbl2" style="font-size:7px;display:block;margin-top:2px;color:#aaa">COPY</span>
+      </button>
+    </div>
+  </div>
+
+  <div style="width:100%;max-width:360px">
+    <button class="btn btn-dim" style="margin-bottom:6px" onclick="openModal()">👁 VIEW ALL MY LEGENDS</button>
+    <button class="btn" onclick="playAgain()">▶ PLAY AGAIN</button>
+    <button class="btn-back" onclick="go('s-title')">MENU</button>
+    <div style="margin-top:18px;text-align:center">
+      <a href="https://buymeacoffee.com/xiafterdark" target="_blank" rel="noopener" style="color:var(--gold);opacity:.65;text-decoration:none;font-size:11px;letter-spacing:1px">☕ Enjoying this? Buy me a coffee</a>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════
+     HALL OF FAME
+════════════════════════════ -->
+<div class="screen" id="s-hof" style="padding:10px 6px 40px;align-items:center;background:#050f05">
+  <div style="width:100%;max-width:420px;display:flex;flex-direction:column;align-items:center">
+
+    <!-- Top bar with back button -->
+    <div class="top-bar">
+      <button class="btn-back" onclick="go('s-title')">MENU</button>
+      <div class="top-bar-title" style="font-size:8px;color:var(--gold);letter-spacing:3px">🏆 HALL OF FAME</div>
+      <div></div>
+    </div>
+
+    <!-- Era tabs -->
+    <div style="display:flex;gap:4px;width:min(380px,94vw);margin-bottom:12px">
+      <button id="hof-tab-ALL" onclick="renderHOF('ALL')"
+        style="flex:1;background:#000;border:2px solid var(--gold);color:var(--gold);font-family:var(--px);
+        font-size:6px;padding:10px 2px;cursor:pointer;letter-spacing:1px;opacity:1">🎯<br>ALL TIME</button>
+      <button id="hof-tab-C" onclick="renderHOF('C')"
+        style="flex:1;background:#000;border:2px solid #c8960c;color:#c8960c;font-family:var(--px);
+        font-size:6px;padding:10px 2px;cursor:pointer;letter-spacing:1px;opacity:0.45">🏆<br>CLASSICS</button>
+      <button id="hof-tab-G" onclick="renderHOF('G')"
+        style="flex:1;background:#000;border:2px solid var(--green);color:var(--green);font-family:var(--px);
+        font-size:6px;padding:10px 2px;cursor:pointer;letter-spacing:1px;opacity:0.45">⭐<br>GOLDEN</button>
+      <button id="hof-tab-M" onclick="renderHOF('M')"
+        style="flex:1;background:#000;border:2px solid #ff6600;color:#ff6600;font-family:var(--px);
+        font-size:6px;padding:10px 2px;cursor:pointer;letter-spacing:1px;opacity:0.45">🔥<br>MODERN</button>
+    </div>
+
+    <!-- Leaderboard list -->
+    <div style="width:min(380px,94vw);background:#000;border:2px solid var(--gold);padding:12px 10px">
+      <div id="hof-list" style="padding:0"></div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ════════════════════════════
+     MY LEGENDARY XI
+════════════════════════════ -->
+<div class="screen" id="s-xi" style="padding:10px 6px 40px;align-items:center">
+  <div style="width:100%;max-width:420px;display:flex;flex-direction:column;align-items:center">
+    <div class="top-bar" style="margin-bottom:8px">
+      <button class="btn-back" onclick="go('s-title')">MENU</button>
+      <div class="top-bar-title" style="font-size:8px;color:var(--gold);letter-spacing:3px"><svg width="12" height="12" viewBox="0 0 24 24" style="vertical-align:middle;margin-right:4px" xmlns="http://www.w3.org/2000/svg"><path d="M 5 6 L 8 4 L 9 5 L 12 6 L 15 5 L 16 4 L 19 6 L 20 9 L 17 10 L 17 19 L 7 19 L 7 10 L 4 9 Z" fill="#fff" stroke="#000" stroke-width="0.8"/><rect x="13" y="6" width="2" height="13" fill="#c8102e"/><rect x="11" y="10" width="6" height="2" fill="#c8102e"/></svg>MY LEGENDARY XI</div>
+      <div></div>
+    </div>
+
+<div style="width:min(340px,94vw);margin-bottom:6px;display:flex;gap:6px;flex-wrap:wrap" id="formation-btns">
+  <button onclick="setFormation('442')" style="flex:1;background:#000;border:1px solid #333;color:#888;font-family:var(--px);font-size:6px;padding:6px 2px;cursor:pointer;letter-spacing:1px">4·4·2</button>
+  <button onclick="setFormation('433')" style="flex:1;background:#000;border:1px solid #333;color:#888;font-family:var(--px);font-size:6px;padding:6px 2px;cursor:pointer;letter-spacing:1px">4·3·3</button>
+  <button onclick="setFormation('352')" style="flex:1;background:#000;border:1px solid #333;color:#888;font-family:var(--px);font-size:6px;padding:6px 2px;cursor:pointer;letter-spacing:1px">3·5·2</button>
+  <button onclick="setFormation('532')" style="flex:1;background:#000;border:1px solid #333;color:#888;font-family:var(--px);font-size:6px;padding:6px 2px;cursor:pointer;letter-spacing:1px">5·3·2</button>
+  <button onclick="setFormation('4231')" style="flex:1;background:#000;border:1px solid #333;color:#888;font-family:var(--px);font-size:6px;padding:6px 2px;cursor:pointer;letter-spacing:1px">4·2·3·1</button>
+  <button onclick="setFormation('343')" style="flex:1;background:#000;border:1px solid #333;color:#888;font-family:var(--px);font-size:6px;padding:6px 2px;cursor:pointer;letter-spacing:1px">3·4·3</button>
+</div>
+<!-- Pitch + bench side-by-side row (bench only visible in blind draft mode) -->
+<div id="xi-pitch-row" style="display:flex;gap:8px;align-items:flex-start;width:min(340px,94vw)">
+  <div id="wrap" style="flex:1;min-width:0"><canvas id="pitch"></canvas><div id="chem-popup"></div></div>
+
+  <!-- BLIND DRAFT BENCH — only visible in blind draft sessions -->
+  <div id="xi-bench-wrap" style="display:none;width:38%;flex-shrink:0;background:#000;border:2px solid #aa88ff;padding:6px">
+    <div style="font-size:6px;color:#aa88ff;letter-spacing:2px;margin-bottom:4px;text-align:center">🎲 BENCH</div>
+    <div id="bench-hint" style="font-size:5px;color:#666;letter-spacing:1px;margin-bottom:6px;text-align:center">TAP LEGEND</div>
+    <div id="xi-bench" style="display:flex;flex-direction:column;gap:2px;max-height:340px;overflow-y:auto;-webkit-overflow-scrolling:touch"></div>
+  </div>
+</div>
+
+<div style="width:min(340px,94vw);margin-top:8px">
+  <div id="xi-hint" style="display:none;width:100%;background:rgba(170,136,255,.08);border:1px solid #aa88ff;padding:8px 10px;margin-bottom:8px;font-size:7px;color:#aa88ff;letter-spacing:2px;text-align:center;line-height:1.5">
+    💡 TAP A LEGEND ON THE BENCH, THEN TAP A SLOT
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+    <span style="font-size:6px;color:#999;letter-spacing:1px;text-shadow:1px 1px 0 #000,0 0 4px #000">PLAYERS ADDED</span>
+    <span id="xi-counter" style="font-size:7px;color:#999;letter-spacing:2px;text-shadow:1px 1px 0 #000,0 0 4px #000">0/11</span>
+  </div>
+  <button id="cap-btn" onclick="beginCaptainSelect()"
+    style="display:none;width:100%;background:#000;border:2px solid var(--gold);color:var(--gold);font-family:var(--px);font-size:8px;padding:10px;cursor:pointer;letter-spacing:2px;margin-bottom:6px;transition:all .3s">
+    ⚡ SELECT CAPTAIN
+  </button>
+  <div id="cap-hint" style="display:none;font-size:6px;color:#ccc;letter-spacing:1px;text-align:center;margin-bottom:6px;line-height:1.5;padding:0 8px;text-shadow:1px 1px 0 #000,0 0 4px #000">
+    💡 CAPTAIN ADDS UP TO +20 CHEMISTRY POINTS
+  </div>
+  <button id="chem-btn" onclick="lockInXI()" disabled
+    style="width:100%;background:#000;border:2px solid #222;color:#333;font-family:var(--px);font-size:8px;padding:12px;cursor:not-allowed;letter-spacing:2px;transition:all .3s">
+    🔒 LOCK IN
+  </button>
+</div>
+
+<!-- CHEMISTRY RESULTS — shown inline below pitch -->
+<div id="chem-results" style="display:none;width:min(340px,94vw);margin-top:0;background:#000;border:2px solid var(--gold);border-top:none;padding:16px 14px">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+    <div style="font-size:7px;color:#888;letter-spacing:2px">TEAM CHEMISTRY</div>
+    <div id="chem-score" style="font-size:22px;color:var(--gold);letter-spacing:3px;font-weight:bold"></div>
+  </div>
+  <div id="chem-bar-wrap" style="background:#111;height:10px;border:1px solid #333;margin-bottom:12px;border-radius:1px">
+    <div id="chem-bar" style="height:100%;width:0%;transition:width 1s ease;border-radius:1px"></div>
+  </div>
+  <div id="chem-title" style="font-size:11px;color:#fff;letter-spacing:2px;margin-bottom:12px;line-height:1.6;text-align:center;font-weight:bold"></div>
+  <div id="chem-breakdown" style="font-size:8px;color:#bbb;letter-spacing:1px;line-height:1.9"></div>
+</div>
+
+<!-- Empty-state hint — visible only when 0/11 placed.
+     Hidden permanently after first slot is filled (clean UI). -->
+<div id="xi-empty-hint" style="visibility:hidden;opacity:0;width:min(340px,94vw);margin-top:24px;text-align:center;font-size:10px;color:#ccc;letter-spacing:2px;line-height:1.6;transition:opacity .25s ease,visibility .25s;text-shadow:1px 1px 0 #000,0 0 4px #000">
+  EVERY PICK BUILDS CHEMISTRY
+</div>
+
+</div></div>
+
+<!-- ════════════════════════════
+     MY LEGENDARY XI — LOCKED RESULT
+════════════════════════════ -->
+<div class="screen" id="s-xi-locked" style="padding:10px 6px 40px;align-items:center">
+  <div style="width:100%;max-width:420px;display:flex;flex-direction:column;align-items:center">
+    <div class="top-bar" style="margin-bottom:8px">
+      <button class="btn-back" onclick="go('s-title')">MENU</button>
+      <div class="top-bar-title" style="font-size:8px;color:var(--gold);letter-spacing:3px"><svg width="12" height="12" viewBox="0 0 24 24" style="vertical-align:middle;margin-right:4px" xmlns="http://www.w3.org/2000/svg"><path d="M 5 6 L 8 4 L 9 5 L 12 6 L 15 5 L 16 4 L 19 6 L 20 9 L 17 10 L 17 19 L 7 19 L 7 10 L 4 9 Z" fill="#fff" stroke="#000" stroke-width="0.8"/><rect x="13" y="6" width="2" height="13" fill="#c8102e"/><rect x="11" y="10" width="6" height="2" fill="#c8102e"/></svg>LEGENDARY XI</div>
+      <div></div>
+    </div>
+
+    <!-- Mini pitch — display only, no interaction -->
+    <div id="wrap-locked" style="position:relative;width:min(340px,94vw);aspect-ratio:68/52.5;pointer-events:none">
+      <canvas id="pitch-locked" style="display:block;width:100%;height:100%"></canvas>
+    </div>
+
+    <!-- LOCKED IN badge -->
+    <div id="locked-badge" style="width:min(340px,94vw);margin-top:10px;padding:10px;background:#000;border:2px solid var(--green);color:var(--green);font-family:var(--px);font-size:9px;letter-spacing:3px;text-align:center">
+      ✓ LOCKED IN · <span id="locked-score">0</span> PTS
+    </div>
+
+    <!-- Results panel -->
+    <div style="width:min(340px,94vw);margin-top:10px;background:#000;border:2px solid var(--gold);padding:16px 14px">
+      <!-- Stars + title -->
+      <div id="locked-stars" style="font-size:18px;text-align:center;margin-bottom:4px"></div>
+      <div id="locked-title" style="font-size:10px;color:var(--gold);letter-spacing:3px;text-align:center;margin-bottom:4px"></div>
+      <div id="locked-starlabel" style="font-size:7px;color:#888;letter-spacing:2px;text-align:center;margin-bottom:12px"></div>
+
+      <!-- Big score -->
+      <div id="locked-big-score" style="font-size:36px;color:var(--gold);text-align:center;letter-spacing:3px;font-weight:bold;margin-bottom:4px">0</div>
+      <div style="font-size:7px;color:#666;text-align:center;letter-spacing:2px;margin-bottom:14px">PTS</div>
+
+      <!-- Captain bar -->
+      <div id="locked-captain" style="display:none;width:100%;padding:8px 10px;background:#1a1200;border:1px solid var(--gold);color:var(--gold);font-family:var(--px);font-size:8px;letter-spacing:2px;text-align:center;margin-bottom:14px"></div>
+
+      <!-- Breakdown -->
+      <div id="locked-breakdown" style="font-size:6px;color:#666;letter-spacing:1px;line-height:2;margin-bottom:12px"></div>
+
+      <!-- Time -->
+      <div id="locked-time" style="font-size:7px;color:#666;letter-spacing:2px;text-align:center;margin-bottom:12px"></div>
+    </div>
+
+    <!-- Action buttons -->
+    <button id="share-btn" onclick="shareLockedResult()"
+      style="width:min(340px,94vw);margin-top:8px;background:var(--green);border:none;color:#000;font-family:var(--px);font-size:9px;padding:14px;cursor:pointer;letter-spacing:2px;font-weight:bold">
+      📤 SHARE RESULT
+    </button>
+    <button id="new-draft-btn" onclick="drawBlindDraft()"
+      style="display:none;width:min(340px,94vw);margin-top:6px;background:#aa88ff;border:none;color:#000;font-family:var(--px);font-size:9px;padding:12px;cursor:pointer;letter-spacing:2px;font-weight:bold">
+      🎲 NEW DRAFT
+    </button>
+    <button onclick="unlockXI()"
+      style="width:min(340px,94vw);margin-top:6px;background:#000;border:2px solid #444;color:#888;font-family:var(--px);font-size:8px;padding:12px;cursor:pointer;letter-spacing:2px">
+      🔓 UNLOCK &amp; EDIT XI
+    </button>
+  </div>
+</div>
+
+<div id="modal" onclick="modalBackdropClick(event)">
+<div id="mbox" style="position:relative">
+  <button onclick="closeSlotModal()" style="position:absolute;top:8px;right:8px;background:none;border:none;color:#444;font-size:18px;cursor:pointer;padding:4px 8px;line-height:1;min-width:36px;min-height:36px">✕</button>
+  <div class="mrow">
+    <select id="mpos" class="msel" onchange="onPosChange()">
+      <optgroup label="── GOALKEEPER ──">
+        <option value="GK">GK — Goalkeeper</option>
+      </optgroup>
+      <optgroup label="── DEFENDERS ──">
+        <option value="RB">RB — Right Back</option>
+        <option value="CB">CB — Centre Back</option>
+        <option value="LB">LB — Left Back</option>
+        <option value="RWB">RWB — Right Wing Back</option>
+        <option value="LWB">LWB — Left Wing Back</option>
+        <option value="SW">SW — Sweeper</option>
+      </optgroup>
+      <optgroup label="── MIDFIELDERS ──">
+        <option value="CM">CM — Central Midfield</option>
+        <option value="DM">DM — Defensive Mid</option>
+        <option value="AM">AM — Attacking Mid</option>
+        <option value="RM">RM — Right Midfield</option>
+        <option value="LM">LM — Left Midfield</option>
+        <option value="RW">RW — Right Wing</option>
+        <option value="LW">LW — Left Wing</option>
+      </optgroup>
+      <optgroup label="── FORWARDS ──">
+        <option value="ST">ST — Striker</option>
+        <option value="SS">SS — Second Striker</option>
+      </optgroup>
+    </select>
+  </div>
+
+  <div id="mname-row">
+    <div style="flex:1">
+      <label style="font-size:6px;color:#777;letter-spacing:1px;display:block;margin-bottom:6px">PLAYER NAME</label>
+      <input id="mname" class="minp" type="text" maxlength="20"
+        placeholder="TYPE NAME..." autocomplete="off"
+        oninput="onNameInput()"
+        onkeydown="if(event.key==='Enter'){event.preventDefault();saveSlot();}"
+        autocorrect="off" spellcheck="false">
+    </div>
+    <div>
+      <label style="font-size:6px;color:#777;letter-spacing:1px;display:block;margin-bottom:6px">SHIRT #</label>
+      <input id="mnum" class="minp" type="number" min="1" max="99" value="2">
+    </div>
+  </div>
+  <div id="mconfirm" style="font-size:7px;letter-spacing:1px;margin-top:6px;min-height:14px"></div>
+  <div id="mbtns">
+    <button id="msave" onclick="saveSlot()">✓ CONFIRM</button>
+    <button id="mclear" onclick="clearSlot()">✕ CLEAR</button>
+  </div>
+  <button id="mcancel" onclick="closeSlotModal()">← CANCEL</button>
+</div>
+</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════
+     SETTINGS (rules + options + about)
+════════════════════════════ -->
+<div class="screen" id="s-settings" style="padding:10px 6px 40px;align-items:center;background:#050f05">
+  <div style="width:100%;max-width:420px;display:flex;flex-direction:column;align-items:center">
+
+    <!-- Top bar — with help icon on the right -->
+    <div class="top-bar">
+      <button class="btn-back" onclick="go('s-title')">MENU</button>
+      <div class="top-bar-title" style="font-size:8px;color:var(--yellow);letter-spacing:3px">⚙ SETTINGS</div>
+    </div>
+
+    <!-- ── OPTIONS ── -->
+    <div class="s-section" style="margin-top:var(--gap-4)">
+      <div class="s-section-header">Options</div>
+
+      <div class="s-row">
+        <span class="s-row-label">🔊 SOUND</span>
+        <button id="opt-sound" class="s-toggle" onclick="toggleSound()">ON</button>
+      </div>
+      <div class="s-divider"></div>
+
+      <div class="s-row">
+        <span class="s-row-label">🍪 ANALYTICS</span>
+        <button id="opt-cookies" class="s-toggle" onclick="toggleCookies()">OFF</button>
+      </div>
+      <div class="s-divider"></div>
+
+      <div class="s-row">
+        <span class="s-row-label">🗑 RESET ALL PROGRESS</span>
+        <button class="s-toggle danger" onclick="resetHOF()">RESET</button>
+      </div>
+    </div>
+
+    <!-- ── FOOTER ── -->
+    <div class="s-footer">
+      <div class="s-footer-text">
+        <strong>FOOTY LEGENDS</strong><br>
+        footylegendsquiz.co.uk<br>
+        <span onclick="openPrivacy()" style="color:var(--gold);cursor:pointer;text-decoration:underline;letter-spacing:1px">PRIVACY</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════════════════════
+     MODAL: HOW TO PLAY
+     Covers all 4 game modes (quiz, XI, pub, blind draft)
+════════════════════════════ -->
+<div class="modal-backdrop" id="modal-howto" onclick="if(event.target===this) closeHowToPlay()">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeHowToPlay()" aria-label="Close">✕</button>
+    <div class="modal-title">📖 HOW TO PLAY</div>
+    <div class="modal-body">
+      <span class="hl-dim">English football legends, 1960 to today.<br>Four ways to play with them.</span><br><br>
+
+      <!-- ── XI AFTER DARK — glowna gra ── -->
+      <div class="modal-section-header">🌙 XI AFTER DARK <span class="hl-dim">· the main game</span></div>
+      Draw 30 legends. Build your XI.<br>
+      <span class="hl-green">LOCK IN to reveal the story you made.</span><br>
+      <span class="hl-dim indent">1966 Heroes · Class of 92 · Foxes 2016 … 20 to find</span><br><br>
+
+      <!-- ── BUILD XI — kreator ── -->
+      <div class="modal-section-header">⚽ BUILD XI <span class="hl-dim">· create</span></div>
+      Your own England XI. Any player, any era.<br>
+      <span class="hl-dim indent">Start empty, get surprised, or use a story you've unlocked.</span><br><br>
+
+      <!-- ── MY FOOTY LEGEND — tozsamosc ── -->
+      <div class="modal-section-header">🧬 MY FOOTY LEGEND <span class="hl-dim">· who you are</span></div>
+      The game reads your picks and tells you<br>
+      what kind of fan you really are.<br><br>
+
+      <!-- ── LEGACY — pamiec ── -->
+      <div class="modal-section-header">🏛 LEGACY <span class="hl-dim">· what the game remembers</span></div>
+      Your stories. Your observations.<br>
+      <span class="hl-dim indent">The game is watching how you play.</span><br><br>
+
+      <!-- ── QUICK QUIZ — bonus ── -->
+      <div class="modal-section-header">📋 QUICK QUIZ <span class="hl-dim">· bonus</span></div>
+      Name England legends against the clock.<br>
+      <span class="hl-dim indent">Surname or full name — <span class="hl-green">"Kane"</span> or <span class="hl-green">"Harry Kane"</span></span>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════
+     MODAL: PRIVACY
+════════════════════════════ -->
+<div class="modal-backdrop" id="modal-privacy" onclick="if(event.target===this) closePrivacy()">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closePrivacy()" aria-label="Close">✕</button>
+    <div class="modal-title">🔒 PRIVACY</div>
+    <div class="modal-body">
+      <span class="hl-dim">No sign-up. No accounts. We don't collect your name, email or any personal data.</span><br><br>
+
+      <div class="modal-section-header">What's stored</div>
+      Your progress — name, discovered stories, saved squads and quiz scores —<br>
+      <span class="hl-green">stays only in your browser</span><br>
+      <span class="hl-dim indent">Clearing your browser data wipes it.</span><br><br>
+
+      <div class="modal-section-header">Analytics</div>
+      We use Google Analytics to see how the game is played — <span class="hl-green">only if you tap Accept</span><br>
+      <span class="hl-dim indent">Turn it off anytime in Settings · no ads · we never collect your name or email</span><br><br>
+
+      <div class="modal-section-header">Third parties</div>
+      The retro font and analytics load from Google<br>
+      <span class="hl-dim indent">Google may receive your IP address</span><br>
+      External links open third-party sites with their own policies.
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════
+     SCREEN: COLLECTION
+════════════════════════════ -->
+<div class="screen" id="s-collection" style="padding:10px 6px 40px;align-items:center;background:#050f05">
+  <div style="width:100%;max-width:420px;display:flex;flex-direction:column;align-items:center">
+
+    <!-- Top bar -->
+    <div class="top-bar">
+      <button class="btn-back" onclick="go('s-title')">MENU</button>
+      <div class="top-bar-title" style="font-size:8px;color:var(--gold);letter-spacing:3px">📋 COLLECTION</div>
+      <div></div>
+    </div>
+
+    <!-- Stats panel -->
+    <div style="width:min(380px,94vw);background:#000;border:2px solid var(--gold);padding:14px 12px;margin-bottom:10px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <span style="font-size:8px;color:#ccc;letter-spacing:1px">⚽ LEGENDS DISCOVERED</span>
+        <span id="coll-count" style="font-size:12px;color:var(--gold);letter-spacing:2px;font-weight:bold">0 / 799</span>
+      </div>
+      <div style="background:#111;border:1px solid #333;height:12px;margin-bottom:10px">
+        <div id="coll-bar" style="background:var(--gold);height:100%;width:0%;transition:width .5s ease"></div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 0;border-top:1px solid #222">
+        <span style="font-size:8px;color:#ccc;letter-spacing:1px;padding-top:8px">🏆 TIER</span>
+        <span id="coll-badge" style="font-size:9px;color:#888;letter-spacing:2px;font-weight:bold;padding-top:8px">—</span>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 0">
+        <span style="font-size:7px;color:#666;letter-spacing:1px">NEXT</span>
+        <span id="coll-next" style="font-size:8px;color:#666;letter-spacing:1px">—</span>
+      </div>
+    </div>
+
+    <!-- Breakdown per era -->
+    <div style="width:min(380px,94vw);background:#000;border:2px solid var(--gold);padding:14px 12px;margin-bottom:10px">
+      <div style="font-size:8px;color:var(--gold);letter-spacing:3px;margin-bottom:10px;text-align:center">BY ERA</div>
+      <div id="coll-era-breakdown" style="display:flex;flex-direction:column;gap:8px"></div>
+    </div>
+
+    <!-- All tiers preview -->
+    <div style="width:min(380px,94vw);background:#000;border:2px solid var(--gold);padding:14px 12px">
+      <div style="font-size:8px;color:var(--gold);letter-spacing:3px;margin-bottom:10px;text-align:center">ALL TIERS</div>
+      <div id="coll-tiers" style="display:flex;flex-direction:column;gap:6px"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════════════════════
+     SCREEN: BLIND DRAFT INTRO
+     Explains rules + DRAW button
+════════════════════════════ -->
+<div class="screen" id="s-blind-intro" style="padding:10px 6px 40px;align-items:center;background:#050f05">
+  <div style="width:100%;max-width:420px;display:flex;flex-direction:column;align-items:center">
+
+    <div class="top-bar" style="margin-bottom:16px">
+      <button class="btn-back" onclick="go('s-title')">MENU</button>
+      <div class="top-bar-title" style="font-size:10px;color:#aa88ff;letter-spacing:3px">🎲 BLIND DRAFT</div>
+      <div></div>
+    </div>
+
+    <div style="width:min(380px,94vw);background:#000;border:2px solid #aa88ff;padding:20px 14px;margin-bottom:14px">
+      <div style="font-size:10px;color:#aa88ff;letter-spacing:3px;margin-bottom:14px;text-align:center">HOW IT WORKS</div>
+      <div style="font-size:8px;color:#ccc;letter-spacing:1px;line-height:2">
+        <div style="margin-bottom:10px">🎯 <span style="color:#aa88ff">25 LEGENDS DRAWN</span><br><span style="color:#888;font-size:7px">FROM YOUR COLLECTION</span></div>
+        <div style="margin-bottom:10px">⚽ <span style="color:#aa88ff">PICK YOUR 11</span><br><span style="color:#888;font-size:7px">ANY POSITION YOU WANT</span></div>
+        <div style="margin-bottom:10px">🧪 <span style="color:#aa88ff">CHEMISTRY MATTERS</span><br><span style="color:#888;font-size:7px">CLUB / ERA / CAPTAIN / 1966 BONUSES</span></div>
+        <div>🏆 <span style="color:#aa88ff">HALL OF FAME</span><br><span style="color:#888;font-size:7px">BEST DRAFTS SAVED SEPARATELY</span></div>
+      </div>
+    </div>
+
+    <div id="blind-pool-status" style="width:min(380px,94vw);background:#000;border:1px solid #333;padding:10px;margin-bottom:14px;text-align:center;font-size:7px;color:#888;letter-spacing:2px">
+      POOL: 0 PLAYERS AVAILABLE
+    </div>
+
+    <button class="btn" onclick="drawBlindDraft()" style="width:min(380px,94vw);font-size:12px;padding:16px;background:#aa88ff;border-color:#aa88ff;color:#000">🎲 DRAW 25 LEGENDS</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════
+     SCREEN: BLIND DRAFT PICKER
+     Grid of 20 players — pick 11, then to XI builder
+════════════════════════════ -->
+<div class="screen" id="s-blind-pick" style="padding:10px 6px 40px;align-items:center;background:#050f05">
+  <div style="width:100%;max-width:420px;display:flex;flex-direction:column;align-items:center">
+
+    <div class="top-bar">
+      <button class="btn btn-dim" onclick="abandonBlindDraft()" style="width:auto;padding:8px 14px;font-size:9px">✕ CANCEL</button>
+      <div class="top-bar-title" style="font-size:10px;color:#aa88ff;letter-spacing:3px">🎲 PICK YOUR 11</div>
+      <div></div>
+    </div>
+
+    <div style="width:min(380px,94vw);background:#000;border:2px solid #aa88ff;padding:10px 12px;margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center;font-size:8px;letter-spacing:2px">
+        <span style="color:#888">SELECTED</span>
+        <span id="blind-pick-count" style="color:#aa88ff;font-size:14px;font-weight:bold">0 / 11</span>
+      </div>
+      <div style="background:#111;border:1px solid #333;height:8px;margin-top:8px">
+        <div id="blind-pick-bar" style="background:#aa88ff;height:100%;width:0%;transition:width .3s ease"></div>
+      </div>
+    </div>
+
+    <div id="blind-pick-grid" style="width:min(380px,94vw);background:#000;border:2px solid #aa88ff;padding:10px;display:flex;flex-direction:column;gap:4px;max-height:420px;overflow-y:auto;-webkit-overflow-scrolling:touch"></div>
+
+    <button class="btn" id="blind-confirm-btn" onclick="confirmBlindPick()" disabled style="width:min(380px,94vw);margin-top:12px;font-size:11px;padding:14px;background:#333;border-color:#333;color:#666">LOCK IN 11/11</button>
+    <button class="btn btn-dim" id="blind-reroll-btn" onclick="rerollBlindDraft()" style="width:min(380px,94vw);margin-top:6px;font-size:8px;padding:10px">🎲 RE-ROLL UNPICKED (1x)</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════
+     SCREEN: PUB SETUP
+     Team count + era + team names (all on one screen)
+════════════════════════════ -->
+<div class="screen" id="s-pub-setup" style="padding:10px 6px 40px;align-items:center;background:#050f05">
+  <div style="width:100%;max-width:420px;display:flex;flex-direction:column;align-items:center">
+
+    <div class="top-bar" style="margin-bottom:16px">
+      <button class="btn-back" onclick="go('s-title')">MENU</button>
+      <div class="top-bar-title" style="font-size:10px;color:var(--green);letter-spacing:3px">🍺 LAST TEAM STANDING</div>
+      <div></div>
+    </div>
+
+    <div style="width:min(380px,94vw);background:#000;border:2px solid var(--green);padding:18px 14px;margin-bottom:14px">
+      <div style="font-size:8px;color:var(--green);letter-spacing:2px;margin-bottom:8px">🍻 TEAMS</div>
+      <div style="font-size:6px;color:#888;letter-spacing:1px;margin-bottom:12px;line-height:1.6">
+        HOW MANY TEAMS?
+      </div>
+      <div id="pub-team-count-row" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+    </div>
+
+    <div style="width:min(380px,94vw);background:#000;border:2px solid var(--green);padding:18px 14px;margin-bottom:14px">
+      <div style="font-size:8px;color:var(--green);letter-spacing:2px;margin-bottom:10px">✏️ TEAM NAMES</div>
+      <div id="pub-names-row" style="display:flex;flex-direction:column;gap:6px"></div>
+    </div>
+
+    <div style="width:min(380px,94vw);background:#000;border:2px solid var(--green);padding:18px 14px;margin-bottom:14px">
+      <div style="font-size:8px;color:var(--green);letter-spacing:2px;margin-bottom:8px">🎯 ERA</div>
+      <div id="pub-era-row" style="display:flex;flex-direction:column;gap:6px"></div>
+    </div>
+
+    <div style="width:min(380px,94vw);background:#000;border:1px solid #333;padding:10px 12px;margin-bottom:14px">
+      <div style="font-size:6px;color:#888;letter-spacing:1px;line-height:1.8">
+        RULES — Each team gets 3 ❤️. Type a player in 30s.<br>
+        Wrong / time out / repeat = lose a life. Last team standing wins.
+      </div>
+    </div>
+
+    <button class="btn" id="pub-setup-start" onclick="startPubSession()" style="width:min(380px,94vw);font-size:12px;padding:16px;background:var(--green);border-color:var(--green);color:#000">▶ START GAME</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════
+     SCREEN: PUB GAME
+     Main rotating hot-potato gameplay
+════════════════════════════ -->
+<div class="screen" id="s-pub-game" style="padding:8px 6px 20px;align-items:center;background:#050f05">
+  <div style="width:100%;max-width:420px;display:flex;flex-direction:column;align-items:center">
+
+    <!-- Top bar: mode label + era -->
+    <div style="width:100%;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <div style="font-size:8px;color:var(--green);letter-spacing:2px">🍺 LAST TEAM STANDING</div>
+      <div id="pub-game-era" style="font-size:7px;color:#888;letter-spacing:1px">—</div>
+    </div>
+
+    <!-- Team lives display -->
+    <div id="pub-lives-row" style="width:min(380px,94vw);background:#000;border:2px solid #333;padding:10px 12px;margin-bottom:12px;display:flex;flex-direction:column;gap:5px"></div>
+
+    <!-- Timer -->
+    <div style="width:min(380px,94vw);background:#000;border:2px solid var(--green);padding:10px;margin-bottom:12px;text-align:center">
+      <div id="pub-timer" style="font-size:36px;color:var(--green);letter-spacing:4px;font-weight:bold;line-height:1">30</div>
+      <div style="background:#222;height:6px;margin-top:8px;border:1px solid #333">
+        <div id="pub-timer-bar" style="background:var(--green);height:100%;width:100%;transition:width .2s linear"></div>
+      </div>
+    </div>
+
+    <!-- Input -->
+    <div id="pub-feedback" style="min-height:24px;font-size:12px;letter-spacing:2px;font-weight:bold;margin-bottom:8px;text-align:center"></div>
+    <div style="display:flex;gap:8px;width:min(380px,94vw);margin-bottom:8px">
+      <input class="inp" id="pub-inp" type="text"
+        placeholder="TYPE A PLAYER..."
+        autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false"
+        style="flex:1;text-transform:uppercase"
+        inputmode="text">
+      <button id="pub-submit" onclick="pubSubmit()" style="background:var(--green);border:none;
+        color:#000;font-family:var(--px);font-size:18px;padding:0 18px;cursor:pointer;
+        font-weight:bold;min-width:58px;flex-shrink:0">✓</button>
+    </div>
+
+    <!-- Used players counter -->
+    <div style="font-size:6px;color:#555;letter-spacing:2px;margin-top:8px">
+      PLAYERS USED: <span id="pub-used-count" style="color:#888">0</span>
+    </div>
+
+    <button class="btn btn-dim" onclick="abandonPubSession()" style="width:min(380px,94vw);margin-top:14px;font-size:8px;padding:10px">✕ END GAME</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════
+     SCREEN: PUB LEADERBOARD (FINAL)
+════════════════════════════ -->
+<div class="screen" id="s-pub-leaderboard" style="padding:10px 6px 40px;align-items:center;background:#050f05">
+  <div style="width:100%;max-width:420px;display:flex;flex-direction:column;align-items:center">
+
+    <div style="font-size:12px;color:var(--green);letter-spacing:4px;margin-top:10px;margin-bottom:14px">🏆 LAST TEAM STANDING</div>
+    <div style="font-size:64px;margin-bottom:14px;animation:tierBounce 1.6s ease-in-out infinite">🏆</div>
+    <div id="pub-winner-name" style="font-size:24px;color:#ffd700;letter-spacing:5px;font-weight:bold;margin-bottom:6px;text-shadow:0 0 30px #ffd700,0 0 60px #ffd700;text-align:center">—</div>
+    <div id="pub-winner-sub" style="font-size:9px;color:#ffd700;letter-spacing:3px;margin-bottom:24px;opacity:.8">CHAMPIONS</div>
+
+    <div style="width:min(380px,94vw);background:#000;border:2px solid var(--green);padding:16px 12px;margin-bottom:14px">
+      <div style="font-size:8px;color:var(--green);letter-spacing:3px;margin-bottom:12px;text-align:center">FINAL RESULTS</div>
+      <div id="pub-final-board" style="display:flex;flex-direction:column;gap:6px"></div>
+    </div>
+
+    <div style="width:min(380px,94vw);background:#000;border:1px solid #333;padding:10px 12px;margin-bottom:14px;text-align:center">
+      <div style="font-size:6px;color:#666;letter-spacing:2px;margin-bottom:4px">TOTAL PLAYERS GUESSED</div>
+      <div id="pub-total-guesses" style="font-size:14px;color:#ffd700;letter-spacing:2px;font-weight:bold">0</div>
+    </div>
+
+    <button class="btn" onclick="openPubSetup()" style="width:min(380px,94vw);font-size:11px;padding:14px;background:var(--green);border-color:var(--green);color:#000;margin-bottom:6px">▶ NEW GAME</button>
+    <button class="btn-back" onclick="go('s-title')">MENU</button>
+  </div>
+</div>
+
+<div class="screen" id="s-classic" style="padding:10px 6px 40px;align-items:center;background:#050f05">
+  <div style="width:min(440px,96vw)">
+    <div class="cl-head">
+      <span class="cl-title">⚽ BUILD XI</span>
+      <button class="btn-back" onclick="go('s-title')">MENU</button>
+    </div>
+    <div class="cl-sub">Build your England XI — anyone, anywhere. Tap a spot, then pick.</div>
+    <div id="cl-formbar" class="cl-formbar"></div>
+    <div id="cl-newbar" class="cl-newbar">
+      <button id="cl-new-btn" class="cl-new-btn" onclick="window.clOpenNew&&clOpenNew()">NEW XI ▼</button>
+      <div id="cl-new-bd" class="cl-new-bd" style="display:none" onclick="window.clCloseNew&&clCloseNew()"></div>
+      <div id="cl-new-menu" class="cl-new-menu" style="display:none"></div>
+    </div>
+    <div id="cl-count" class="cl-count">YOUR XI · 0/11</div>
+    <div id="cl-pitch" class="xad-pitch"></div>
+    <button id="cl-done" class="btn cl-done" style="display:none" onclick="window.clViewXI&&window.clViewXI()">✓ XI COMPLETE · VIEW</button>
+    <div id="cl-backdrop" class="cl-backdrop" onclick="window.clCloseSearch&&clCloseSearch()"></div>
+    <div id="cl-search" class="cl-search cl-builder">
+      <div id="cl-search-label" class="cl-search-label">type a name</div>
+      <input id="cl-input" class="cl-input" type="text" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="search name or club..." oninput="clSearch(this.value)">
+      <div id="cl-filters" class="cl-filters">
+        <span class="cl-chip cl-eC" onclick="window.clToggleEra&&clToggleEra('C',this)"><i></i>CLASSIC</span>
+        <span class="cl-chip cl-eG" onclick="window.clToggleEra&&clToggleEra('G',this)"><i></i>GOLDEN</span>
+        <span class="cl-chip cl-eM" onclick="window.clToggleEra&&clToggleEra('M',this)"><i></i>MODERN</span>
+        <select id="cl-pos" class="cl-pos" onchange="window.clSetPos&&clSetPos(this.value)"><option value="">POS</option><option>GK</option><option>DF</option><option>MF</option><option>FW</option></select>
+      </div>
+      <div id="cl-sugg" class="cl-sugg"></div>
+    </div>
+    <div id="cl-actions" class="cl-actions" style="display:none"></div>
+    <div id="cl-view">
+      <div id="cl-view-title" class="cl-view-title" onclick="window.clEditName&&window.clEditName()">MY ENGLAND XI</div>
+      <div id="cl-view-pitch" class="xad-pitch"></div>
+      <div id="cl-view-story" class="cl-view-story"></div>
+      <div class="cl-card-actions">
+        <button class="btn cl-share" onclick="window.clShareCard&&window.clShareCard()">📤 SHARE</button>
+        <button class="btn cl-save" onclick="window.clSaveXI&&window.clSaveXI()">💾 SAVE XI</button>
+        <button class="btn cl-edit" onclick="window.clEditXI&&window.clEditXI()">← EDIT XI</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<script src="db.js"></script>
+<script src="storage.js"></script>
+<!-- ── MY FOOTY LEGEND screen ── -->
+<style>
+  #s-legend{padding:12px 14px 50px;align-items:center;background:#050505}
+  #legend-body{width:100%;max-width:360px;text-align:center;color:#f3efe2}
+  .legend-back{background:none;border:none;color:#9a967f;font-family:inherit;font-size:11px;cursor:pointer;padding:4px 0;display:block}
+  .legend-title{color:#e9c46a;font-size:16px;letter-spacing:2px;margin-top:2px}
+  .legend-tier{color:#7d7a68;font-size:10px;letter-spacing:1px;margin:5px 0 4px}
+  .legend-radar{margin:0 auto;max-width:320px}
+  .legend-leg{font-size:11px;color:#bfb9a4;margin:0 0 10px;letter-spacing:1px}
+  .legend-rows{border-top:1px solid #1e1e1a;max-width:300px;margin:0 auto}
+  .legend-row{display:flex;justify-content:space-between;font-size:12px;padding:5px 2px;border-bottom:1px solid #141410}
+  .legend-row .lk{color:#7d7a68;letter-spacing:1px} .legend-row .lv{color:#f3efe2}
+  .legend-soon{font-size:10px;color:#5f5c4e;margin:12px 0 14px;letter-spacing:1px}
+  .legend-share{background:#e9c46a;color:#0a0a0a;border:none;font-family:inherit;font-size:13px;letter-spacing:2px;padding:10px 26px;border-radius:6px;cursor:pointer}
+</style>
+<div class="screen" id="s-legend">
+  <div id="legend-body"></div>
+</div>
+<script src="core.js"></script>
+<script src="game.js"></script>
+<script src="xad.js"></script>
+<script src="classic.js"></script>
+
+<!-- ── Cookie consent bar (slim, bottom) + control mirrored into Settings ── -->
+<style>
+.fl-cbar{position:fixed;left:0;right:0;bottom:0;z-index:9999;background:#0a140a;border-top:2px solid #e9c46a;padding:10px 14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-family:inherit}
+.fl-cbar-msg{flex:1;min-width:180px;font-size:10px;line-height:1.6;color:#bfcdbf}
+.fl-cbar-msg b{color:#fff}
+.fl-cbar-btns{display:flex;gap:8px}
+.fl-cbar-acc{background:#00ff88;color:#04140a;border:none;font-family:inherit;font-size:10px;padding:9px 16px;border-radius:4px;cursor:pointer}
+.fl-cbar-rej{background:transparent;color:#e9c46a;border:2px solid #e9c46a;font-family:inherit;font-size:10px;padding:7px 16px;border-radius:4px;cursor:pointer}
+.s-toggle.off{opacity:.5}
+</style>
+<div id="fl-cookie-bar" class="fl-cbar" style="display:none">
+  <div class="fl-cbar-msg"><b>Analytics cookies?</b> Your game saves on your device either way.</div>
+  <div class="fl-cbar-btns">
+    <button class="fl-cbar-acc" onclick="flCookieChoice('granted')">ACCEPT</button>
+    <button class="fl-cbar-rej" onclick="flCookieChoice('denied')">REJECT</button>
+  </div>
+</div>
+<script>
+  function updateCookieBtn(){
+    var b=document.getElementById('opt-cookies'); if(!b) return;
+    var on=(flConsent()==='granted');
+    b.textContent= on?'ON':'OFF';
+    if(on) b.classList.remove('off'); else b.classList.add('off');
+  }
+  function flCookieChoice(v){
+    try{ localStorage.setItem('fl_consent', v); }catch(e){}
+    var bar=document.getElementById('fl-cookie-bar'); if(bar) bar.style.display='none';
+    if(v==='granted'){ if(typeof loadGA==='function') loadGA(); }
+    else { try{ window['ga-disable-'+FL_GA_ID]=true; }catch(e){} }
+    updateCookieBtn();
+  }
+  function toggleCookies(){
+    var on=(flConsent()==='granted');
+    if(on){
+      try{ localStorage.setItem('fl_consent','denied'); }catch(e){}
+      try{ window['ga-disable-'+FL_GA_ID]=true; }catch(e){}
+      if(typeof toast==='function') toast('🍪 ANALYTICS OFF','');
+    } else {
+      try{ localStorage.setItem('fl_consent','granted'); }catch(e){}
+      if(typeof loadGA==='function') loadGA();
+      if(typeof toast==='function') toast('🍪 ANALYTICS ON','');
+    }
+    updateCookieBtn();
+  }
+  (function(){
+    var c=null; try{ c=localStorage.getItem('fl_consent'); }catch(e){}
+    if(!c){ var bar=document.getElementById('fl-cookie-bar'); if(bar) bar.style.display='flex'; }
+    updateCookieBtn();
+    if(typeof updateLegendTile==="function") updateLegendTile();
+  })();
+</script>
+</body>
+</html>
